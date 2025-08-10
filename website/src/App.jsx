@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+// --- CORRECTED IMPORTS ---
+// The paths now exactly match your file names (e.g., Button.jsx)
+import { Button } from "@/components/ui/Button.jsx";
+import { Card, CardContent } from "@/components/ui/Card.jsx";
+import { Input } from "@/components/ui/Input.jsx";
+import { Textarea } from "@/components/ui/Textarea.jsx";
 import {
   ArrowRight,
   Mail,
@@ -85,7 +87,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
             <a href="#about" className="hover:opacity-80">About</a>
             <a href="#contact" className="hover:opacity-80">Contact</a>
           </nav>
-          <Button asChild className="rounded-full bg-gray-200 text-black hover:bg-white">
+          <Button asChild className="rounded-full bg-gray-200 text-black hover:bg-white px-4 py-2 text-sm">
             <a href="#contact" className="flex items-center gap-2"><Mail className="h-4 w-4" /> Hire me</a>
           </Button>
         </div>
@@ -122,15 +124,15 @@ export default function PortfolioSlideshowBlackGreyFull() {
                 Clean topology. Strong silhouettes. Real‑time ready. I design modular kits, polished lookbooks, and readable game assets.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                <Button asChild size="lg" className="rounded-full bg-gray-200 text-black hover:bg-white">
+                <Button asChild size="lg" className="rounded-full bg-gray-200 text-black hover:bg-white px-6 py-3">
                   <a href="#work" className="flex items-center gap-2">View Work <ArrowRight className="h-4 w-4" /></a>
                 </Button>
-                <Button variant="secondary" asChild size="lg" className="rounded-full border border-gray-300 text-gray-100 hover:bg-gray-700">
+                <Button variant="secondary" asChild size="lg" className="rounded-full border border-gray-300 text-gray-100 hover:bg-gray-700 px-6 py-3">
                   <a href="#about" className="flex items-center gap-2">About <ChevronRight className="h-4 w-4" /></a>
                 </Button>
               </div>
               <div className="mt-8 flex items-center gap-3">
-                <Button variant="outline" size="sm" className="rounded-full border-gray-400 text-gray-200 hover:bg-gray-700" onClick={() => setIsPlaying((p) => !p)}>
+                <Button variant="outline" size="sm" className="rounded-full border border-gray-400 text-gray-200 hover:bg-gray-700 px-3 py-1 text-sm flex items-center" onClick={() => setIsPlaying((p) => !p)}>
                   {isPlaying ? <><Pause className="h-4 w-4 mr-1" /> Pause</> : <><PlayIcon className="h-4 w-4 mr-1" /> Play</>}
                 </Button>
                 <div className="flex gap-1">
@@ -244,7 +246,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
                     <Textarea placeholder="Project brief" rows={6} className="rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
                     <div className="flex items-center justify-between pt-2">
                       <p className="text-xs text-gray-500">By sending, you agree to be contacted back.</p>
-                      <Button type="submit" className="rounded-full bg-gray-200 text-black hover:bg-white">Send</Button>
+                      <Button type="submit" className="rounded-full bg-gray-200 text-black hover:bg-white px-4 py-2">Send</Button>
                     </div>
                   </form>
                 </CardContent>
