@@ -1,8 +1,22 @@
 import React from 'react';
+import { cloneElement } from 'react';
 
-// A simple functional component that mimics the Shadcn Button
-// It passes through any classes and props, so it's very flexible.
-export const Button = ({ asChild = false, className, ...props }) => {
-  const Comp = asChild ? React.Fragment : 'button';
-  return <Comp className={className} {...props} />;
+// This is a more robust version of the Button component that correctly
+// handles the 'asChild' prop, which was causing the crash.
+export const Button = ({ asChild = false, className, children, ...props }) => {
+  if (asChild && React.isValidElement(children)) {
+    // If 'asChild' is true, we clone the child element (like an <a> tag)
+    // and merge the button's props and className onto it.
+    return cloneElement(children, {
+      className: `${children.props.className || ''} ${className}`.trim(),
+      ...props,
+    });
+  }
+
+  // If 'asChild' is false, we render a normal button.
+  return (
+    <button className={className} {...props}>
+      {children}
+    </button>
+  );
 };

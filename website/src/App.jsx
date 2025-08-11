@@ -23,31 +23,28 @@ const colors = {
   text: "text-gray-100",
 };
 
-// Reverted to the original project data for the work grid
-const projects = [
+// --- NEW --- Add your manual projects here
+// You can add as many projects as you want to this array.
+const manualProjects = [
+  // Example Manual Project with a VIDEO:
   {
-    title: "Crystal Grid — Light Puzzle",
-    tags: ["Game Art", "3D", "Shaders"],
-    img: "https://picsum.photos/seed/crystal/2000/1200",
-    blurb: "A stylized real‑time environment exploring emissive crystals and light propagation puzzles.",
+    title: "Manually Added Video Project",
+    tags: ["Featured", "Animation"],
+    // The 'img' will be used as a poster/thumbnail for the video
+    img: "https://picsum.photos/seed/manualvideo/2000/1200", 
+    // Add the 'video' property with a link to your video file.
+    video: "https://youtu.be/ZfSN77J8tL4?feature=shared",
+    blurb: "This project was added manually and includes a video that will autoplay in the project grid.",
+    link: "#", 
   },
+  // Example Manual Project with an IMAGE:
   {
-    title: "Hard‑Surface Drone Kit",
-    tags: ["Hard Surface", "Sub‑D", "Texturing"],
-    img: "https://picsum.photos/seed/drone/2000/1200",
-    blurb: "Modular drone kit with interchangeable payloads, optimized for real‑time engines.",
-  },
-  {
-    title: "Fashion Vis — Clo3D Capsule",
-    tags: ["Clo3D", "Lookbook", "Render"],
-    img: "https://picsum.photos/seed/fashion/2000/1200",
-    blurb: "Digital garments rendered for an editorial lookbook with procedural fabrics.",
-  },
-  {
-    title: "Akari — 3D Puzzle Prototype",
-    tags: ["Gameplay", "Level Design", "UE"],
-    img: "https://picsum.photos/seed/akari/2000/1200",
-    blurb: "Translating paper‑puzzle logic into spatial 3D levels with atmospheric lighting.",
+    title: "Manually Added Image Project",
+    tags: ["Showcase", "Still"],
+    img: "https://picsum.photos/seed/manual2/2000/1200",
+    video: null, // Set video to null for image-only projects
+    blurb: "This project only has an image and will be displayed normally.",
+    link: "#",
   },
 ];
 
@@ -63,7 +60,61 @@ const marquee = [
 ];
 
 export default function PortfolioSlideshowBlackGreyFull() {
-  // All slideshow state and logic has been removed.
+  const [projects, setProjects] = useState(manualProjects); // Start with manual projects
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchArtstationProjects = async () => {
+      const ARTSTATION_USERNAME = 'wintercg'; 
+      const rssUrl = `https://www.artstation.com/${ARTSTATION_USERNAME}.rss`;
+      const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        
+        console.log("ArtStation API Response:", data);
+
+        if (data.status === 'ok' && data.items) {
+          const formattedProjects = data.items
+            .map(item => {
+              if (!item.content) return null;
+              
+              const regex = /(https:\/\/cdna?\.artstation\.com\/p\/assets\/images\/images\/[^"]+)/;
+              const match = item.content.match(regex);
+              const imgSrc = match ? match[0] : null;
+
+              if (!imgSrc) return null;
+
+              const descriptionHtml = new DOMParser().parseFromString(item.content, 'text/html');
+              const blurbText = descriptionHtml.body.textContent || "";
+
+              return {
+                title: item.title,
+                tags: item.categories || [],
+                img: imgSrc,
+                video: null,
+                blurb: blurbText.trim().substring(0, 150) + '...',
+                link: item.link,
+              };
+            })
+            .filter(Boolean);
+
+          // Combine manual projects with fetched projects
+          setProjects([...manualProjects, ...formattedProjects]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch ArtStation projects:", error);
+        // If fetch fails, we will just show the manual projects
+        setProjects(manualProjects);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchArtstationProjects();
+  }, []);
+
 
   return (
     <div className={`min-h-screen ${colors.background} ${colors.text}`}>
@@ -82,12 +133,10 @@ export default function PortfolioSlideshowBlackGreyFull() {
         </div>
       </header>
 
-      {/* Hero */}
+      {/* Hero (now uses a static background) */}
       <section id="top" className="relative pt-24 md:pt-28">
         <div className="relative h-[78vh] min-h-[560px] w-full overflow-hidden">
           <div className="absolute inset-0">
-            {/* --- VIDEO BACKGROUND --- */}
-            {/* Change "your-video-filename.mp4" to the name of the file you uploaded. */}
             <video
               autoPlay
               loop
@@ -118,7 +167,6 @@ export default function PortfolioSlideshowBlackGreyFull() {
                   <a href="#about" className="flex items-center gap-2">About <ChevronRight className="h-4 w-4" /></a>
                 </Button>
               </div>
-              {/* The slideshow controls have been removed */}
             </div>
           </div>
         </div>
@@ -145,38 +193,61 @@ export default function PortfolioSlideshowBlackGreyFull() {
       <section id="work" className="py-20 md:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight mb-10">Selected Work</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
-            {projects.map((p, i) => (
-              <motion.div
-                key={p.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.6, delay: i * 0.05 }}
-                className={`${i % 4 === 0 ? "lg:col-span-7" : i % 4 === 1 ? "lg:col-span-5" : i % 4 === 2 ? "lg:col-span-5" : "lg:col-span-7"}`}
-              >
-                <Card className="overflow-hidden rounded-3xl border-gray-700 group bg-gray-900">
-                  <CardContent className="p-0">
-                    <div className="relative">
-                      <img src={p.img} alt={p.title} className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white opacity-0 group-hover:opacity-100 transition-opacity">
-                        <div className="flex gap-2 mb-3 flex-wrap">
-                          {p.tags.map((t) => (
-                            <span key={t} className="px-2 py-1 rounded-full text-xs border border-white/30 bg-black/40 backdrop-blur">
-                              {t}
-                            </span>
-                          ))}
+          {isLoading ? (
+            <p>Loading projects...</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
+              {projects.map((p, i) => (
+                <motion.div
+                  key={p.title + i}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, delay: i * 0.05 }}
+                  className={`${i % 4 === 0 ? "lg:col-span-7" : i % 4 === 1 ? "lg:col-span-5" : i % 4 === 2 ? "lg:col-span-5" : "lg:col-span-7"}`}
+                >
+                  <a href={p.link} target="_blank" rel="noopener noreferrer">
+                    <Card className="overflow-hidden rounded-3xl border-gray-700 group bg-gray-900">
+                      <CardContent className="p-0">
+                        <div className="relative">
+                          {/* --- NEW --- Conditionally render video or image */}
+                          {p.video ? (
+                            <video 
+                              autoPlay 
+                              loop 
+                              muted 
+                              playsInline 
+                              src={p.video} 
+                              poster={p.img} // Use the image as a poster/thumbnail
+                              className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]" 
+                            />
+                          ) : (
+                            <img 
+                              src={p.img} 
+                              alt={p.title} 
+                              className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-[1.02]" 
+                            />
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex gap-2 mb-3 flex-wrap">
+                              {p.tags.map((t) => (
+                                <span key={t} className="px-2 py-1 rounded-full text-xs border border-white/30 bg-black/40 backdrop-blur">
+                                  {t}
+                                </span>
+                              ))}
+                            </div>
+                            <h3 className="text-xl md:text-2xl font-semibold">{p.title}</h3>
+                            <p className="mt-2 text-sm md:text-base text-gray-300 max-w-xl">{p.blurb}</p>
+                          </div>
                         </div>
-                        <h3 className="text-xl md:text-2xl font-semibold">{p.title}</h3>
-                        <p className="mt-2 text-sm md:text-base text-gray-300 max-w-xl">{p.blurb}</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+                      </CardContent>
+                    </Card>
+                  </a>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
