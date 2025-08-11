@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-// --- CORRECTED IMPORTS ---
-// The paths now exactly match your file names (e.g., Button.jsx)
 import { Button } from "@/components/ui/Button.jsx";
 import { Card, CardContent } from "@/components/ui/Card.jsx";
 import { Input } from "@/components/ui/Input.jsx";
@@ -25,6 +23,7 @@ const colors = {
   text: "text-gray-100",
 };
 
+// Reverted to the original project data for the work grid
 const projects = [
   {
     title: "Crystal Grid — Light Puzzle",
@@ -64,17 +63,7 @@ const marquee = [
 ];
 
 export default function PortfolioSlideshowBlackGreyFull() {
-  const slides = useMemo(() => projects.map((p) => p.img), []);
-  const [index, setIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-
-  useEffect(() => {
-    if (!isPlaying || slides.length === 0) return;
-    const id = setInterval(() => {
-      setIndex((i) => (i + 1) % slides.length);
-    }, 4500);
-    return () => clearInterval(id);
-  }, [isPlaying, slides.length]);
+  // All slideshow state and logic has been removed.
 
   return (
     <div className={`min-h-screen ${colors.background} ${colors.text}`}>
@@ -97,18 +86,16 @@ export default function PortfolioSlideshowBlackGreyFull() {
       <section id="top" className="relative pt-24 md:pt-28">
         <div className="relative h-[78vh] min-h-[560px] w-full overflow-hidden">
           <div className="absolute inset-0">
-            <AnimatePresence initial={false} mode="popLayout">
-              <motion.img
-                key={index}
-                src={slides[index]}
-                alt="Project background slide"
-                className="absolute inset-0 h-full w-full object-cover"
-                initial={{ opacity: 0, scale: 1.04 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0.1, scale: 1.02 }}
-                transition={{ duration: 1.2, ease: "easeOut" }}
-              />
-            </AnimatePresence>
+            {/* --- VIDEO BACKGROUND --- */}
+            {/* Change "your-video-filename.mp4" to the name of the file you uploaded. */}
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover"
+              src="/your-video-filename.mp4" 
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
           </div>
 
@@ -131,21 +118,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
                   <a href="#about" className="flex items-center gap-2">About <ChevronRight className="h-4 w-4" /></a>
                 </Button>
               </div>
-              <div className="mt-8 flex items-center gap-3">
-                <Button variant="outline" size="sm" className="rounded-full border border-gray-400 text-gray-200 hover:bg-gray-700 px-3 py-1 text-sm flex items-center" onClick={() => setIsPlaying((p) => !p)}>
-                  {isPlaying ? <><Pause className="h-4 w-4 mr-1" /> Pause</> : <><PlayIcon className="h-4 w-4 mr-1" /> Play</>}
-                </Button>
-                <div className="flex gap-1">
-                  {slides.map((_, i) => (
-                    <button
-                      key={i}
-                      aria-label={`Go to slide ${i + 1}`}
-                      onClick={() => setIndex(i)}
-                      className={`h-1.5 w-6 rounded-full transition-opacity ${i === index ? "bg-gray-200 opacity-100" : "bg-gray-400 opacity-60 hover:opacity-90"}`}
-                    />
-                  ))}
-                </div>
-              </div>
+              {/* The slideshow controls have been removed */}
             </div>
           </div>
         </div>
