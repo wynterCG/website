@@ -1,9 +1,7 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
+import React, { useEffect, useState, useMemo, useRef, useCallback, memo } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button.jsx";
 import { Card, CardContent } from "@/components/ui/Card.jsx";
-import { Input } from "@/components/ui/Input.jsx";
-import { Textarea } from "@/components/ui/Textarea.jsx";
 import {
   Mail, Sparkles,
   Play as PlayIcon, X as XIcon, ChevronLeft, ChevronRight as CaretRight
@@ -239,43 +237,19 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
   );
 }
 
-/* ---------- Page ---------- */
-export default function PortfolioSlideshowBlackGreyFull() {
-  const [projects] = useState(projectsData);
-  const [lightbox, setLightbox] = useState({ open: false, project: null, index: 0 });
-  const marquee = useMemo(() => ["3ds Max","Maya","Blender","Substance","Unreal Engine","Unity","ZBrush","Clo3D"], []);
-
-  // Hover preview
-  const [hovered, setHovered] = useState(null);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const videoRefs = useRef({});
-  const isPlaying = (i) => (hovered === i) || (!hasInteracted && i === 0);
-
-  useEffect(() => {
-    Object.entries(videoRefs.current).forEach(([idx, el]) => {
-      if (!el) return;
-      const i = Number(idx);
-      if (isPlaying(i)) { el.play?.().catch(() => {}); } else { el.pause?.(); }
-    });
-  }, [hovered, hasInteracted]);
-
-  const spanFor = (i) =>
-    i % 4 === 0 ? "lg:col-span-7" :
-    i % 4 === 1 ? "lg:col-span-5" :
-    i % 4 === 2 ? "lg:col-span-5" : "lg:col-span-7";
-
-  /* ---------- CONTACT FORM (Formspree) ---------- */
+/* ---------- Contact Form (isolated + memo to keep DOM stable) ---------- */
+const ContactFormCard = memo(function ContactFormCard() {
   const FORMSPREE_ENDPOINT = "https://formspree.io/f/movlrwyk";
   const [formData, setFormData] = useState({ name: "", email: "", company: "", message: "" });
   const [formStatus, setFormStatus] = useState("idle"); // idle | sending | success | error
   const honeypotRef = useRef(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
+    setFormData((p) => (p[name] === value ? p : { ...p, [name]: value }));
+  }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     if (honeypotRef.current && honeypotRef.current.value) { setFormStatus("success"); return; }
     setFormStatus("sending");
@@ -307,28 +281,208 @@ export default function PortfolioSlideshowBlackGreyFull() {
       console.error("Submission failed:", err);
       setFormStatus("error");
     }
-  };
+  }, [formData]);
+
+  // Capture handlers: prevent ancestor listeners from interfering
+  const stopAll = useCallback((e) => {
+    e.stopPropagation();
+  }, []);
+
+  return (
+    <Card
+      className="rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[0_10px_40px_-15px_rgba(0,0,0,0.7)]"
+      onClickCapture={stopAll}
+      onMouseDownCapture={stopAll}
+      onFocusCapture={stopAll}
+      onKeyDownCapture={stopAll}
+    >
+      <CardContent className="p-6 sm:p-8 lg:p-10">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6" noValidate>
+          {/* Honeypot (hidden) */}
+          <input
+            ref={honeypotRef}
+            name="_gotcha"
+            className="hidden"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+          />
+
+          {/* Row: Name + Email */}
+          <div className="grid sm:grid-cols-2 gap-6">
+            <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
+              <label htmlFor="cf-name" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400 px-4 pt-3">
+                Your name
+              </label>
+              <div className="px-4 pb-4 pt-1">
+                <input
+                  id="cf-name"
+                  name="name"
+                  required
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  className="h-11 w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3"
+                />
+              </div>
+            </div>
+
+            <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
+              <label htmlFor="cf-email" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400 px-4 pt-3">
+                Email
+              </label>
+              <div className="px-4 pb-4 pt-1">
+                <input
+                  id="cf-email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="h-11 w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Company */}
+          <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
+            <label htmlFor="cf-company" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400 px-4 pt-3">
+              Company (optional)
+            </label>
+            <div className="px-4 pb-4 pt-1">
+              <input
+                id="cf-company"
+                name="company"
+                value={formData.company}
+                onChange={handleInputChange}
+                className="h-11 w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3"
+              />
+            </div>
+          </div>
+
+          {/* Project brief */}
+          <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
+            <label htmlFor="cf-message" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400 px-4 pt-3">
+              Project brief
+            </label>
+            <div className="px-4 pb-4 pt-1">
+              <textarea
+                id="cf-message"
+                name="message"
+                rows={8}
+                required
+                value={formData.message}
+                onChange={handleInputChange}
+                className="w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3 py-2"
+              />
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-2 flex items-center justify-between">
+            <p className="text-xs text-gray-500" aria-live="polite">
+              {formStatus === "success" && "Thanks! I’ll get back to you soon."}
+              {formStatus === "error" && "Something went wrong. Please try again."}
+              {formStatus === "idle" && "By sending, you agree to be contacted back."}
+              {formStatus === "sending" && "Sending…"}
+            </p>
+            <Button
+              type="submit"
+              disabled={formStatus === "sending"}
+              className="rounded-full bg-white text-black hover:bg-gray-100 px-6 py-2 h-11 shadow-[0_6px_20px_-6px_rgba(255,255,255,0.35)]"
+            >
+              {formStatus === "sending" ? "Sending…" : "Send"}
+            </Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
+});
+
+/* ---------- Blog helpers ---------- */
+const fmtDate = (iso) =>
+  iso ? new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "2-digit" }) : "";
+
+/* ---------- Page ---------- */
+export default function PortfolioSlideshowBlackGreyFull() {
+  const [projects] = useState(projectsData);
+  const [lightbox, setLightbox] = useState({ open: false, project: null, index: 0 });
+  const marquee = useMemo(() => ["3ds Max","Maya","Blender","Substance","Unreal Engine","Unity","ZBrush","Clo3D"], []);
+
+  // Blog state (latest 3)
+  const [blog, setBlog] = useState({ items: [], status: "idle" });
+
+  // Hover preview
+  const [hovered, setHovered] = useState(null);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const videoRefs = useRef({});
+  const isPlaying = (i) => (hovered === i) || (!hasInteracted && i === 0);
+
+  useEffect(() => {
+    Object.entries(videoRefs.current).forEach(([idx, el]) => {
+      if (!el) return;
+      const i = Number(idx);
+      if (isPlaying(i)) { el.play?.().catch(() => {}); } else { el.pause?.(); }
+    });
+  }, [hovered, hasInteracted]);
+
+  const spanFor = (i) =>
+    i % 4 === 0 ? "lg:col-span-7" :
+    i % 4 === 1 ? "lg:col-span-5" :
+    i % 4 === 2 ? "lg:col-span-5" : "lg:col-span-7";
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
 
-  /* small helper to render a big outlined field wrapper */
-  const FieldShell = ({ label, htmlFor, children, className = "" }) => (
-    <div
-      className={
-        "group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 " +
-        "focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] " +
-        "backdrop-blur-sm transition-colors " + className
+  // FETCH BLOG FEED (JSON Feed 1.1)
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        setBlog((b) => ({ ...b, status: "loading" }));
+        const res = await fetch("/blog/feed.json", { headers: { Accept: "application/feed+json, application/json" } });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const feed = await res.json();
+        const items = (feed?.items || [])
+          .slice()
+          .sort((a, b) => new Date(b.date_published || b.date_modified || 0) - new Date(a.date_published || a.date_modified || 0))
+          .slice(0, 3);
+        if (alive) setBlog({ items, status: "ready" });
+      } catch {
+        // fallback samples so layout looks fine
+        if (alive) setBlog({
+          status: "ready",
+          items: [
+            {
+              id: "sample-1",
+              url: "/blog",
+              title: "Volumetric logic dev diary",
+              summary: "Translating Akari-style constraints into a readable 3D grid with light paths.",
+              date_published: "2025-07-22T10:00:00Z",
+              tags: ["Unreal", "Design"],
+            },
+            {
+              id: "sample-2",
+              url: "/blog",
+              title: "Hard-surface toolkit notes",
+              summary: "Bevel strategies, trim sheets, and boolean hygiene for clean silhouettes.",
+              date_published: "2025-08-05T10:00:00Z",
+              tags: ["Blender", "Workflow"],
+            },
+            {
+              id: "sample-3",
+              url: "/blog",
+              title: "Clo3D → Unreal lookdev",
+              summary: "Quick pipeline tests moving garments into a real-time lighting setup.",
+              date_published: "2025-07-01T10:00:00Z",
+              tags: ["Clo3D", "Unreal"],
+            },
+          ]
+        });
       }
-    >
-      <label
-        htmlFor={htmlFor}
-        className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400 px-4 pt-3"
-      >
-        {label}
-      </label>
-      <div className="px-4 pb-4 pt-1">{children}</div>
-    </div>
-  );
+    })();
+    return () => { alive = false; };
+  }, []);
 
   return (
     <div className={`min-h-screen ${colors.background} ${colors.text}`}>
@@ -338,6 +492,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
           <a href="#top" className="font-semibold tracking-tight text-lg md:text-xl">Daniel Inverno</a>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="#work" className="hover:opacity-80">Work</a>
+            <a href="#blog" className="hover:opacity-80">Blog</a>
             <a href="#about" className="hover:opacity-80">About</a>
             <a href="#contact" className="hover:opacity-80">Contact</a>
           </nav>
@@ -347,7 +502,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
         </div>
       </header>
 
-      {/* Hero (centered text over video) */}
+      {/* Hero */}
       <section id="top" className="relative pt-24 md:pt-28">
         <div className="relative h-[78vh] min-h-[560px] w-full overflow-hidden">
           <div className="absolute inset-0">
@@ -362,7 +517,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-transparent" />
           </div>
 
-          {/* overlay content (left aligned as before) */}
+          {/* overlay content */}
           <div className="relative z-10 h-full">
             <div className={`${container} h-full flex items-center`}>
               <div className="max-w-3xl text-white">
@@ -424,7 +579,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
                     onClick={() => setLightbox({ open: true, project: p, index: 0 })}
                   >
                     <CardContent className="p-0 relative">
-                      {/* Natural aspect ratio: let media define height */}
+                      {/* Natural aspect ratio */}
                       <div className="relative w-full">
                         {isMP4 && (
                           <video
@@ -499,6 +654,62 @@ export default function PortfolioSlideshowBlackGreyFull() {
         </div>
       </section>
 
+      {/* Blog teasers */}
+      <section id="blog" className="py-24 md:py-32 border-t border-gray-700">
+        <div className={container}>
+          <h2 className="text-center text-3xl sm:text-5xl font-semibold tracking-tight">
+            Latest from the Dev Blog
+          </h2>
+
+          {blog.status === "loading" && (
+            <p className="mt-8 text-center text-gray-400">Loading…</p>
+          )}
+
+          {blog.status === "ready" && (
+            <div className="mt-14 md:mt-16 lg:mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {blog.items.map((post) => (
+                <Card key={post.id} className="rounded-3xl border-gray-700 bg-gray-900 overflow-hidden">
+                  <CardContent className="p-0">
+                    {post.image ? (
+                      <img src={post.image} alt="" className="w-full h-48 object-cover" />
+                    ) : (
+                      <div className="w-full h-48 bg-gradient-to-br from-gray-800 to-gray-900" />
+                    )}
+                    <div className="p-6 flex flex-col gap-3">
+                      <div className="text-xs text-gray-400">{fmtDate(post.date_published || post.date_modified)}</div>
+                      <h3 className="text-xl font-semibold leading-tight">{post.title}</h3>
+                      {post.summary && <p className="text-sm text-gray-300 line-clamp-3">{post.summary}</p>}
+                      {Array.isArray(post.tags) && post.tags.length > 0 && (
+                        <div className="mt-1 flex flex-wrap gap-2">
+                          {post.tags.slice(0, 4).map((t) => (
+                            <span key={t} className="px-2 py-0.5 rounded-full text-[11px] border border-white/20 text-gray-300">
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <div className="mt-3">
+                        <Button asChild variant="ghost" className="px-0 h-auto text-gray-200 hover:text-white">
+                          <a href={post.url} target="_blank" rel="noreferrer noopener" className="inline-flex items-center gap-1">
+                            Read article
+                          </a>
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          <div className="mt-10 text-center">
+            <Button asChild className="rounded-full bg-white text-black hover:bg-gray-100 px-6 py-2 h-11">
+              <a href="/blog">View all posts</a>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* About */}
       <section id="about" className="py-24 md:py-32 border-t border-gray-700">
         <div className={container}>
@@ -506,7 +717,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
             About
           </h2>
 
-        <div className="mt-14 md:mt-16 lg:mt-20 grid">
+          <div className="mt-14 md:mt-16 lg:mt-20 grid">
             <div className="mx-auto max-w-3xl text-gray-300 leading-relaxed space-y-6 text-center">
               <p>I’m Daniel, a 3D artist focused on hard-surface and real-time assets. I’ve shipped content for games, ads, fashion, and interactive media. My approach is simple: clean topology, strong silhouettes, and materials that read instantly.</p>
               <p>Recent explorations include translating Akari-style logic into volumetric 3D puzzles, and building modular kits that scale from prototypes to production.</p>
@@ -529,95 +740,10 @@ export default function PortfolioSlideshowBlackGreyFull() {
             <a href="#" className="hover:opacity-80">X/Twitter</a>
           </div>
 
-          {/* Centered form with polished “boxed fields” */}
+          {/* Form (isolated component prevents DOM re-creation on keystroke) */}
           <div className="mt-10 md:mt-12 lg:mt-14 grid">
             <div className="mx-auto w-full max-w-3xl">
-              <Card className="rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[0_10px_40px_-15px_rgba(0,0,0,0.7)]">
-                <CardContent className="p-6 sm:p-8 lg:p-10">
-                  <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6" noValidate>
-                    {/* Honeypot (hidden) */}
-                    <input
-                      ref={honeypotRef}
-                      name="_gotcha"
-                      className="hidden"
-                      tabIndex="-1"
-                      autoComplete="off"
-                      aria-hidden="true"
-                    />
-
-                    {/* Row: Name + Email */}
-                    <div className="grid sm:grid-cols-2 gap-6">
-                      <FieldShell label="Your name" htmlFor="cf-name">
-                        <Input
-                          id="cf-name"
-                          name="name"
-                          placeholder=""
-                          required
-                          value={formData.name}
-                          onChange={handleInputChange}
-                          className="h-11 w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0"
-                        />
-                      </FieldShell>
-
-                      <FieldShell label="Email" htmlFor="cf-email">
-                        <Input
-                          id="cf-email"
-                          name="email"
-                          type="email"
-                          placeholder=""
-                          required
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          className="h-11 w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0"
-                        />
-                      </FieldShell>
-                    </div>
-
-                    {/* Company – full width */}
-                    <FieldShell label="Company (optional)" htmlFor="cf-company">
-                      <Input
-                        id="cf-company"
-                        name="company"
-                        placeholder=""
-                        value={formData.company}
-                        onChange={handleInputChange}
-                        className="h-11 w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0"
-                      />
-                    </FieldShell>
-
-                    {/* Project brief – full width, tall */}
-                    <FieldShell label="Project brief" htmlFor="cf-message">
-                      <Textarea
-                        id="cf-message"
-                        name="message"
-                        placeholder=""
-                        rows={8}
-                        required
-                        value={formData.message}
-                        onChange={handleInputChange}
-                        className="w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0"
-                      />
-                    </FieldShell>
-
-                    {/* Footer row: helper + button */}
-                    <div className="mt-2 flex items-center justify-between">
-                      <p className="text-xs text-gray-500" aria-live="polite">
-                        {formStatus === "success" && "Thanks! I’ll get back to you soon."}
-                        {formStatus === "error" && "Something went wrong. Please try again."}
-                        {formStatus === "idle" && "By sending, you agree to be contacted back."}
-                        {formStatus === "sending" && "Sending…"}
-                      </p>
-                      <Button
-                        type="submit"
-                        disabled={formStatus === "sending"}
-                        className="rounded-full bg-white text-black hover:bg-gray-100 px-6 py-2 h-11 shadow-[0_6px_20px_-6px_rgba(255,255,255,0.35)]"
-                      >
-                        {formStatus === "sending" ? "Sending…" : "Send"}
-                      </Button>
-                    </div>
-                  </form>
-                </CardContent>
-              </Card>
+              <ContactFormCard />
             </div>
           </div>
         </div>
@@ -629,6 +755,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
           <p>© {new Date().getFullYear()} Daniel Inverno. All rights reserved.</p>
           <nav className="flex items-center gap-6">
             <a href="#work" className="hover:opacity-80">Work</a>
+            <a href="#blog" className="hover:opacity-80">Blog</a>
             <a href="#about" className="hover:opacity-80">About</a>
             <a href="#contact" className="hover:opacity-80">Contact</a>
           </nav>
@@ -645,3 +772,4 @@ export default function PortfolioSlideshowBlackGreyFull() {
     </div>
   );
 }
+
