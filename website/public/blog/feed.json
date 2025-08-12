@@ -1,0 +1,40 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Daniel Inverno — Dev Blog",
+  "home_page_url": "https://daninverno.com/",
+  "feed_url": "https://daninverno.com/blog/feed.json",
+  "description": "Latest dev notes, experiments, and breakdowns.",
+  "language": "en",
+  "authors": [
+    { "name": "Daniel Inverno", "url": "https://daninverno.com/" }
+  ],
+  "items": [
+    {
+      "id": "https://daninverno.com/blog/hard-surface-toolkit/",
+      "url": "https://daninverno.com/blog/hard-surface-toolkit.html",
+      "title": "Building a fast hard-surface toolkit in Blender",
+      "summary": "Notes on bevel strategies, booleans that don’t bite, and a trim-sheet setup for clean silhouettes.",
+      "image": "https://daninverno.com/blog/hard-surface-toolkit/cover.jpg",
+      "date_published": "2025-08-05T10:00:00Z",
+      "tags": ["Blender", "Workflow"]
+    },
+    {
+      "id": "https://daninverno.com/blog/volumetric-logic-dev-diary/",
+      "url": "https://daninverno.com/blog/volumetric-logic-dev-diary/",
+      "title": "From puzzle grid to volumetric logic: a dev diary",
+      "summary": "Translating Akari-style constraints into 3D while keeping the puzzle readable and fun.",
+      "image": "https://daninverno.com/blog/volumetric-logic-dev-diary/cover.jpg",
+      "date_published": "2025-07-22T10:00:00Z",
+      "tags": ["GameDev", "Design", "Unreal Engine"]
+    },
+    {
+      "id": "https://daninverno.com/blog/clo3d-unreal-lookdev/",
+      "url": "https://daninverno.com/blog/clo3d-unreal-lookdev/",
+      "title": "Clo3D → Unreal: realtime cloth lookdev",
+      "summary": "Export tips, material tweaks, and a quick lighting rig for convincing cloth in-engine.",
+      "image": "https://daninverno.com/blog/clo3d-unreal-lookdev/cover.jpg",
+      "date_published": "2025-07-01T10:00:00Z",
+      "tags": ["Clo3D", "Unreal Engine"]
+    }
+  ]
+}

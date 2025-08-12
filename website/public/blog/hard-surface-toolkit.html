@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Building a fast hard-surface toolkit in Blender — Daniel Inverno</title>
+  <meta name="description" content="Notes on bevel strategies, booleans that don’t bite, and a trim-sheet setup for clean silhouettes in Blender." />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://daninverno.com/blog/hard-surface-toolkit.html" />
+
+  <!-- Feed discovery -->
+  <link rel="alternate" type="application/feed+json" href="/blog/feed.json" />
+
+  <!-- Open Graph (social share) -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Building a fast hard-surface toolkit in Blender" />
+  <meta property="og:description" content="Notes on bevel strategies, booleans that don’t bite, and trim-sheet setup for clean silhouettes." />
+  <meta property="og:url" content="https://daninverno.com/blog/hard-surface-toolkit.html" />
+  <meta property="og:image" content="https://daninverno.com/blog/assets/hard-surface-toolkit/cover.jpg" />
+  <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
+
+  <!-- Twitter Card (falls back to OG if some tags missing) -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <!-- <meta name="twitter:site" content="@your_handle" /> Optional -->
+  <meta name="twitter:title" content="Building a fast hard-surface toolkit in Blender" />
+  <meta name="twitter:description" content="Notes on bevel strategies, booleans that don’t bite, and trim-sheet setup for clean silhouettes." />
+  <meta name="twitter:image" content="https://daninverno.com/blog/assets/hard-surface-toolkit/cover.jpg" />
+
+  <!-- JSON-LD Article schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Building a fast hard-surface toolkit in Blender",
+    "description": "Notes on bevel strategies, booleans that don’t bite, and a trim-sheet setup for clean silhouettes.",
+    "author": { "@type": "Person", "name": "Daniel Inverno", "url": "https://daninverno.com/" },
+    "datePublished": "2025-08-05T10:00:00Z",
+    "dateModified": "2025-08-05T10:00:00Z",
+    "image": ["https://daninverno.com/blog/assets/hard-surface-toolkit/cover.jpg"],
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://daninverno.com/blog/hard-surface-toolkit.html"
+    },
+    "publisher": { "@type": "Person", "name": "Daniel Inverno" }
+  }
+  </script>
+
+  <style>
+    /* ---- minimal, self-contained styling (dark, matches your site) ---- */
+    :root {
+      --bg1:#000; --bg2:#111827; --bg3:#1f2937;
+      --text:#e5e7eb; --muted:#9ca3af; --card:#0c111b; --border:rgba(255,255,255,.16);
+      --accent:#fff; --maxw:72rem;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;color:var(--text);background:linear-gradient(to bottom,var(--bg1),var(--bg2),var(--bg3));
+         font:16px/1.7 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+    header{position:sticky;top:0;z-index:50;background:rgba(0,0,0,.55);
+           backdrop-filter:saturate(120%) blur(6px);border-bottom:1px solid rgba(255,255,255,.18)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .links{display:none;gap:1rem;color:#cbd5e1}
+    @media(min-width:768px){.links{display:flex}}
+
+    main{padding:2.25rem 0 3.25rem}
+    h1{font-size:clamp(1.9rem,4vw,2.6rem);line-height:1.1;margin:1.25rem 0 .5rem}
+    .meta{color:var(--muted);font-size:.92rem;margin-bottom:1rem}
+    .hero{width:100%;height:340px;object-fit:cover;border-radius:16px;border:1px solid var(--border)}
+    .tags{display:flex;flex-wrap:wrap;gap:.45rem;margin: .75rem 0 1.25rem}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.15rem .6rem;font-size:.75rem;color:#d1d5db}
+
+    article{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:1.25rem}
+    @media(min-width:768px){article{padding:2rem}}
+    article h2{margin:1.25rem 0 .5rem;font-size:1.25rem}
+    article p{margin:.6rem 0}
+    pre{background:#0b0f16;border:1px solid var(--border);border-radius:14px;overflow:auto;padding: .85rem 1rem}
+    code, pre{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size:.92rem}
+    .btn{display:inline-block;margin-top:1.25rem;padding:.55rem .9rem;border-radius:999px;background:#fff;color:#000;font-weight:700}
+    footer{border-top:1px solid rgba(255,255,255,.18);padding:2rem 0;color:#9ca3af}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a href="/" aria-label="Home">Daniel Inverno</a>
+      <nav class="links" aria-label="Primary">
+        <a href="/#work">Work</a>
+        <a href="/#blog">Home Blog</a>
+        <a href="/#about">About</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Building a fast hard-surface toolkit in Blender</h1>
+    <div class="meta">Aug 5, 2025 • 6–8 min read</div>
+
+    <!-- Cover image (swap to your actual asset path) -->
+    <img class="hero" src="https://daninverno.com/blog/assets/hard-surface-toolkit/cover.jpg" alt="Hard-surface toolkit cover image" />
+
+    <!-- Tags (optional) -->
+    <div class="tags">
+      <span class="tag">Blender</span>
+      <span class="tag">Workflow</span>
+      <span class="tag">Hard-surface</span>
+    </div>
+
+    <article>
+      <p>
+        This is a concise breakdown of how I block out, boolean, bevel, and trim-sheet hard-surface assets so they’re fast to iterate and clean to ship.
+        The goal is predictable shading, tidy silhouettes, and materials that read instantly in real-time.
+      </p>
+
+      <h2>1) Boolean without the bite</h2>
+      <p>
+        I treat cutters as first-class objects with clear naming and keep their normals consistent. When possible, I avoid co-planar overlaps and add
+        tiny offsets to stop z-fighting. Non-destructive stacks let me revert quickly.
+      </p>
+
+      <h2>2) Bevel strategy</h2>
+      <p>
+        Use <em>one</em> bevel modifier for hero edges and another for micro-chamfers. I prefer weight/vertex-group control so I don’t chase topology if the
+        target texel density changes later.
+      </p>
+
+      <pre><code># Example: keep a tiny bevel for micro-reads
+Width: 0.002 m
+Segments: 2
+Limit method: Weight
+</code></pre>
+
+      <h2>3) Trim-sheet first</h2>
+      <p>
+        When I know an asset family will share materials, I set up a trim-sheet up front. It keeps UVs predictable and speeds up lookdev.
+      </p>
+
+      <h2>4) Readability checks</h2>
+      <p>
+        I constantly flip between studio and in-engine test lighting. If it doesn’t read at thumbnail size, I simplify.
+      </p>
+
+      <p class="muted">Want the .blend notes or the trim-sheet template? Ping me via the contact form.</p>
+
+      <a class="btn" href="/blog/">← All posts</a>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="y"></span> Daniel Inverno. All rights reserved.
+    </div>
+  </footer>
+
+  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+</body>
+</html>
