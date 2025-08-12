@@ -5,24 +5,22 @@ import { Card, CardContent } from "@/components/ui/Card.jsx";
 import { Input } from "@/components/ui/Input.jsx";
 import { Textarea } from "@/components/ui/Textarea.jsx";
 import {
-  ArrowRight, Mail, Sparkles, Linkedin, Instagram, Twitter, ChevronRight,
+  Mail, Sparkles,
   Play as PlayIcon, X as XIcon, ChevronLeft, ChevronRight as CaretRight
 } from "lucide-react";
 
-/* ---------- helpers ---------- */
+/* ---------- helpers (CSP-safe) ---------- */
 const safeURL = (s) => { try { return new URL(s); } catch { return null; } };
 const extractYouTubeId = (u) => {
   const x = safeURL(u); if (!x) return null;
   if (x.hostname === "youtu.be") return x.pathname.slice(1);
-  const v = x.searchParams.get("v");
-  if (v) return v;
+  const v = x.searchParams.get("v"); if (v) return v;
   const parts = x.pathname.split("/").filter(Boolean);
   const idx = parts.findIndex((p) => p === "embed" || p === "shorts");
   return idx !== -1 ? parts[idx + 1] : parts.pop();
 };
 const ytThumb = (u, { prefer = "hq" } = {}) => {
-  const id = extractYouTubeId(u);
-  if (!id) return null;
+  const id = extractYouTubeId(u); if (!id) return null;
   return `https://i.ytimg.com/vi/${id}/${prefer === "maxres" ? "maxresdefault" : "hqdefault"}.jpg`;
 };
 const ytEmbedMuted = (u, origin) => {
@@ -41,7 +39,7 @@ const colors = {
   text: "text-gray-100",
 };
 
-/* ---------- YOUR PROJECTS (edit me) ---------- */
+/* ---------- sample projects ---------- */
 const projectsData = [
   {
     title: "Hard-Surface Breakdown",
@@ -51,7 +49,6 @@ const projectsData = [
     media: [
       { type: "youtube", src: "https://youtu.be/ZfSN77J8tL4", ratio: "16 / 9" },
       { type: "image", src: "https://i.ytimg.com/vi/ZfSN77J8tL4/maxresdefault.jpg" },
-      { type: "image", src: "https://picsum.photos/seed/hs-1/1600/900" },
     ],
   },
   {
@@ -66,8 +63,6 @@ const projectsData = [
         poster: "https://picsum.photos/seed/manualvideo/2000/1200",
         loop: true,
       },
-      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
-      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/584/large/dan-inverno-unknown.jpg?1754904217" },
     ],
   },
   {
@@ -77,12 +72,11 @@ const projectsData = [
     link: "#",
     media: [
       { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/090/780/581/large/dan-inverno-render00-final.jpg?1754901377" },
-      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/780/444/large/dan-inverno-screenshot-2025-08-11-102910.jpg?1754901019" },
     ],
   },
 ];
 
-/* ---------- Lightbox (gallery) ---------- */
+/* ---------- Lightbox ---------- */
 function Lightbox({ open, onClose, project, startIndex = 0 }) {
   const [index, setIndex] = useState(startIndex);
   const origin = typeof window !== "undefined" ? window.location.origin : "";
@@ -137,7 +131,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
               src={src}
               title={project.title}
               className="w-full h-full"
-              allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
               referrerPolicy="strict-origin-when-cross-origin"
             />
           </div>
@@ -249,24 +243,18 @@ export default function PortfolioSlideshowBlackGreyFull() {
   const [projects] = useState(projectsData);
   const [lightbox, setLightbox] = useState({ open: false, project: null, index: 0 });
   const marquee = useMemo(() => ["3ds Max","Maya","Blender","Substance","Unreal Engine","Unity","ZBrush","Clo3D"], []);
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
 
-  // HOVER PLAY LOGIC
+  // Hover preview
   const [hovered, setHovered] = useState(null);
   const [hasInteracted, setHasInteracted] = useState(false);
   const videoRefs = useRef({});
-
   const isPlaying = (i) => (hovered === i) || (!hasInteracted && i === 0);
 
   useEffect(() => {
     Object.entries(videoRefs.current).forEach(([idx, el]) => {
       if (!el) return;
       const i = Number(idx);
-      if (isPlaying(i)) {
-        el.play?.().catch(() => {});
-      } else {
-        el.pause?.();
-      }
+      if (isPlaying(i)) { el.play?.().catch(() => {}); } else { el.pause?.(); }
     });
   }, [hovered, hasInteracted]);
 
@@ -275,39 +263,52 @@ export default function PortfolioSlideshowBlackGreyFull() {
     i % 4 === 1 ? "lg:col-span-5" :
     i % 4 === 2 ? "lg:col-span-5" : "lg:col-span-7";
 
-  // --- NEW --- Contact Form Logic
-  const [formData, setFormData] = useState({ name: '', email: '', company: '', message: '' });
-  const [formStatus, setFormStatus] = useState('idle'); // 'idle', 'sending', 'success', 'error'
-  
-  // --- IMPORTANT --- Replace this with your own Formspree endpoint
-  const FORMSPREE_ENDPOINT = "https://formspree.io/f/movlrwyk";
+  /* ---------- CONTACT FORM (Formspree) ---------- */
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/movlrwyk"; // replace with your form ID
+  const [formData, setFormData] = useState({ name: "", email: "", company: "", message: "" });
+  const [formStatus, setFormStatus] = useState("idle"); // idle | sending | success | error
+  const honeypotRef = useRef(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormStatus('sending');
+    if (honeypotRef.current && honeypotRef.current.value) { setFormStatus("success"); return; }
+    setFormStatus("sending");
     try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+      const fd = new FormData();
+      fd.append("name", formData.name);
+      fd.append("email", formData.email);
+      if (formData.company) fd.append("company", formData.company);
+      fd.append("message", formData.message);
+      fd.append("_subject", `Portfolio inquiry from ${formData.name}`);
+
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        body: fd,
+        headers: { Accept: "application/json" }, // Formspree recommends this for JSON response
       });
-      if (response.ok) {
-        setFormStatus('success');
-        setFormData({ name: '', email: '', company: '', message: '' }); // Clear form
+
+      if (res.ok) {
+        setFormStatus("success");
+        setFormData({ name: "", email: "", company: "", message: "" });
       } else {
-        setFormStatus('error');
+        try {
+          const data = await res.json();
+          if (data?.errors?.length) console.error("Formspree errors:", data.errors.map((e) => e.message).join(", "));
+        } catch {}
+        setFormStatus("error");
       }
-    } catch (error) {
-      console.error("Form submission error:", error);
-      setFormStatus('error');
+    } catch (err) {
+      console.error("Submission failed:", err);
+      setFormStatus("error");
     }
   };
 
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
 
   return (
     <div className={`min-h-screen ${colors.background} ${colors.text}`}>
@@ -378,24 +379,18 @@ export default function PortfolioSlideshowBlackGreyFull() {
               const playing = isPlaying(i);
 
               return (
-                <motion.div
+                <div
                   key={k}
-                  initial={{ opacity: 0, y: 24 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.6, delay: i * 0.05 }}
-                  className={spanFor(i)}
+                  className={`${spanFor(i)}`}
+                  onMouseEnter={() => { setHovered(i); setHasInteracted(true); }}
+                  onMouseLeave={() => setHovered(null)}
+                  onTouchStart={() => { setHovered(i); setHasInteracted(true); }}
                 >
                   <Card
                     className="overflow-hidden rounded-3xl border-gray-700 group bg-gray-900 relative cursor-pointer"
-                    onMouseEnter={() => { setHovered(i); setHasInteracted(true); }}
-                    onMouseLeave={() => setHovered(null)}
-                    onTouchStart={() => { setHovered(i); setHasInteracted(true); }}
                     onClick={() => setLightbox({ open: true, project: p, index: 0 })}
                   >
                     <CardContent className="p-0 relative">
-
-                      {/* Media (image/video/iframe) */}
                       <div className="relative w-full" style={isYT ? { aspectRatio: first.ratio || "16 / 9" } : undefined}>
                         {isMP4 && (
                           <video
@@ -415,7 +410,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
                               src={ytEmbedMuted(first.src, origin)}
                               title={p.title}
                               className="absolute inset-0 w-full h-full"
-                              allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                               loading="lazy"
                               referrerPolicy="strict-origin-when-cross-origin"
                             />
@@ -436,10 +431,10 @@ export default function PortfolioSlideshowBlackGreyFull() {
                           />
                         )}
 
-                        {/* Dark veil when not playing */}
+                        {/* veil when not playing */}
                         <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-70"} bg-black`} />
 
-                        {/* Overlay Text – visible by default, hides on hover */}
+                        {/* overlay text visible by default, hides on hover */}
                         <div className="absolute inset-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black via-transparent pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-300">
                           <div className="flex gap-2 mb-3 flex-wrap">
                             {p.tags?.map((t) => (
@@ -459,7 +454,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
                           )}
                         </div>
 
-                        {/* Play icon – shows only when not playing */}
+                        {/* center play cue (only when not playing) */}
                         {!playing && (
                           <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
                             <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm grid place-items-center text-white">
@@ -470,7 +465,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
                       </div>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -499,30 +494,94 @@ export default function PortfolioSlideshowBlackGreyFull() {
             <div className="md:col-span-5">
               <h2 className="text-3xl md:text-5xl font-semibold tracking-tight">Contact</h2>
               <div className="mt-6 flex gap-4 text-sm text-gray-400">
-                <a href="#" className="inline-flex items-center gap-2 hover:opacity-75"><Linkedin className="h-4 w-4" />LinkedIn</a>
-                <a href="#" className="inline-flex items-center gap-2 hover:opacity-75"><Instagram className="h-4 w-4" />Instagram</a>
-                <a href="#" className="inline-flex items-center gap-2 hover:opacity-75"><Twitter className="h-4 w-4" />X/Twitter</a>
+                <a href="#" className="inline-flex items-center gap-2 hover:opacity-75">LinkedIn</a>
+                <a href="#" className="inline-flex items-center gap-2 hover:opacity-75">Instagram</a>
+                <a href="#" className="inline-flex items-center gap-2 hover:opacity-75">X/Twitter</a>
               </div>
             </div>
             <div className="md:col-span-7">
               <Card className="rounded-3xl border-gray-700 bg-gray-900">
                 <CardContent className="p-6 md:p-8">
-                  {/* --- NEW --- Form now uses state and handleSubmit */}
-                  <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+                  {/* Accessible, CSP-safe, Formspree-powered form */}
+                  <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4" noValidate>
+                    {/* Honeypot (hidden) */}
+                    <input
+                      ref={honeypotRef}
+                      name="_gotcha"
+                      className="hidden"
+                      tabIndex="-1"
+                      autoComplete="off"
+                      aria-hidden="true"
+                    />
+
                     <div className="grid sm:grid-cols-2 gap-4">
-                      <Input name="name" placeholder="Your name" required value={formData.name} onChange={handleInputChange} className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
-                      <Input name="email" type="email" placeholder="Email" required value={formData.email} onChange={handleInputChange} className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
+                      <div>
+                        <label htmlFor="cf-name" className="block mb-1 text-xs text-gray-400">Your name</label>
+                        <Input
+                          id="cf-name"
+                          name="name"
+                          placeholder="Your name"
+                          required
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="cf-email" className="block mb-1 text-xs text-gray-400">Email</label>
+                        <Input
+                          id="cf-email"
+                          name="email"
+                          type="email"
+                          placeholder="Email"
+                          required
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200"
+                        />
+                      </div>
                     </div>
-                    <Input name="company" placeholder="Company (optional)" value={formData.company} onChange={handleInputChange} className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
-                    <Textarea name="message" placeholder="Project brief" rows={6} value={formData.message} onChange={handleInputChange} className="rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
+
+                    <div>
+                      <label htmlFor="cf-company" className="block mb-1 text-xs text-gray-400">Company (optional)</label>
+                      <Input
+                        id="cf-company"
+                        name="company"
+                        placeholder="Company (optional)"
+                        value={formData.company}
+                        onChange={handleInputChange}
+                        className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="cf-message" className="block mb-1 text-xs text-gray-400">Project brief</label>
+                      <Textarea
+                        id="cf-message"
+                        name="message"
+                        placeholder="Project brief"
+                        rows={6}
+                        required
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        className="rounded-xl bg-gray-800 border-gray-600 text-gray-200"
+                      />
+                    </div>
+
                     <div className="flex items-center justify-between pt-2">
-                      <p className="text-xs text-gray-500">
-                        {formStatus === 'success' && 'Message sent successfully!'}
-                        {formStatus === 'error' && 'Something went wrong. Please try again.'}
-                        {formStatus === 'idle' && 'By sending, you agree to be contacted back.'}
-                        {formStatus === 'sending' && 'Sending...'}
+                      <p className="text-xs text-gray-500" aria-live="polite">
+                        {formStatus === "success" && "Thanks! I’ll get back to you soon."}
+                        {formStatus === "error" && "Something went wrong. Please try again."}
+                        {formStatus === "idle" && "By sending, you agree to be contacted back."}
+                        {formStatus === "sending" && "Sending…"}
                       </p>
-                      <Button type="submit" disabled={formStatus === 'sending'} className="rounded-full bg-gray-200 text-black hover:bg-white px-4 py-2">Send</Button>
+                      <Button
+                        type="submit"
+                        disabled={formStatus === "sending"}
+                        className="rounded-full bg-gray-200 text-black hover:bg-white px-4 py-2"
+                      >
+                        {formStatus === "sending" ? "Sending…" : "Send"}
+                      </Button>
                     </div>
                   </form>
                 </CardContent>
@@ -554,3 +613,4 @@ export default function PortfolioSlideshowBlackGreyFull() {
     </div>
   );
 }
+
