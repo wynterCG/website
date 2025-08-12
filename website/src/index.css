@@ -1,22 +1,46 @@
-/*
-  The default Vite styles have been removed to prevent layout conflicts.
-  The styles for your portfolio are now handled entirely by Tailwind CSS
-  and the classes in your components.
-*/
-
+/* Tailwind base */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/*
-  These styles ensure the app's root elements
-  fill the entire browser window.
-*/
-html, body, #root {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden; /* Prevents unwanted horizontal scrolling */
-  background-color: #000; /* Ensures a black background while loading */
+/* ---------- Section theme tokens & helpers ---------- */
+@layer base {
+  :root {
+    /* You can tweak these; they’re OKLCH so small changes feel natural */
+    --work-bg:  oklch(19.49% 0.016 261.57);  /* deep indigo */
+    --work-title: oklch(0.96 0.05 210); /* warm sand */
+
+    --blog-bg:  oklch(64.42% 0.143 32.3); /* deep teal */
+    --blog-title: oklch(0.96 0.05 210);/* ice blue */
+
+    --about-bg: oklch(0.32 0.02 250);  /* slate (similar vibe to your sample) */
+    --about-title: oklch(0.92 0.07 85);/* warm sand */
+
+    --contact-bg: oklch(36.54% 0.05 283.67);/* deep violet */
+    --contact-title: oklch(0.97 0.05 25);/* soft cream */
+  }
+
+  /* Map tokens to per-section CSS vars */
+  .theme-work    { --section-bg: var(--work-bg);    --section-title: var(--work-title); }
+  .theme-blog    { --section-bg: var(--blog-bg);    --section-title: var(--blog-title); }
+  .theme-about   { --section-bg: var(--about-bg);   --section-title: var(--about-title); }
+  .theme-contact { --section-bg: var(--contact-bg); --section-title: var(--contact-title); }
+}
+
+@layer components {
+  /* Solid surface color per section */
+  .section-surface { background-color: var(--section-bg); }
+
+  /* High-contrast title: gradient from title color → lighter mix of same hue */
+  .section-title {
+    background-image: linear-gradient(
+      to right,
+      var(--section-title),
+      color-mix(in oklch, var(--section-title), white 18%)
+    );
+    -webkit-background-clip: text;
+            background-clip: text;
+    color: transparent;
+    letter-spacing: 0.02em;
+  }
 }

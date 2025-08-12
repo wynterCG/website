@@ -7,7 +7,7 @@ import {
   Play as PlayIcon, X as XIcon, ChevronLeft, ChevronRight as CaretRight
 } from "lucide-react";
 
-/* ---------- helpers (CSP-safe) ---------- */
+/* ---------- helpers ---------- */
 const safeURL = (s) => { try { return new URL(s); } catch { return null; } };
 const extractYouTubeId = (u) => {
   const x = safeURL(u); if (!x) return null;
@@ -30,7 +30,6 @@ const ytEmbedModal = (u, origin) => {
   return `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=1&rel=0${origin ? `&origin=${encodeURIComponent(origin)}` : ""}`;
 };
 
-/* ---------- theme ---------- */
 const colors = {
   primary: "from-gray-200 to-gray-400",
   background: "bg-gradient-to-b from-black via-gray-900 to-gray-800",
@@ -237,7 +236,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
   );
 }
 
-/* ---------- Contact Form (isolated + memo to keep DOM stable) ---------- */
+/* ---------- Contact Form (isolated to prevent re-mounts; focus-safe) ---------- */
 const ContactFormCard = memo(function ContactFormCard() {
   const FORMSPREE_ENDPOINT = "https://formspree.io/f/movlrwyk";
   const [formData, setFormData] = useState({ name: "", email: "", company: "", message: "" });
@@ -283,10 +282,7 @@ const ContactFormCard = memo(function ContactFormCard() {
     }
   }, [formData]);
 
-  // Capture handlers: prevent ancestor listeners from interfering
-  const stopAll = useCallback((e) => {
-    e.stopPropagation();
-  }, []);
+  const stopAll = useCallback((e) => e.stopPropagation(), []);
 
   return (
     <Card
@@ -400,17 +396,17 @@ const ContactFormCard = memo(function ContactFormCard() {
   );
 });
 
-/* ---------- Blog helpers ---------- */
+/* ---------- helpers ---------- */
 const fmtDate = (iso) =>
   iso ? new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "2-digit" }) : "";
 
 /* ---------- Page ---------- */
-export default function PortfolioSlideshowBlackGreyFull() {
+export default function App() {
   const [projects] = useState(projectsData);
   const [lightbox, setLightbox] = useState({ open: false, project: null, index: 0 });
   const marquee = useMemo(() => ["3ds Max","Maya","Blender","Substance","Unreal Engine","Unity","ZBrush","Clo3D"], []);
 
-  // Blog state (latest 3)
+  // Blog (latest 3)
   const [blog, setBlog] = useState({ items: [], status: "idle" });
 
   // Hover preview
@@ -434,7 +430,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
 
-  // FETCH BLOG FEED (JSON Feed 1.1)
+  // Fetch blog feed
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -449,13 +445,12 @@ export default function PortfolioSlideshowBlackGreyFull() {
           .slice(0, 3);
         if (alive) setBlog({ items, status: "ready" });
       } catch {
-        // fallback samples so layout looks fine
         if (alive) setBlog({
           status: "ready",
           items: [
             {
               id: "sample-1",
-              url: "/blog",
+              url: "/blog/",
               title: "Volumetric logic dev diary",
               summary: "Translating Akari-style constraints into a readable 3D grid with light paths.",
               date_published: "2025-07-22T10:00:00Z",
@@ -463,7 +458,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
             },
             {
               id: "sample-2",
-              url: "/blog",
+              url: "/blog/",
               title: "Hard-surface toolkit notes",
               summary: "Bevel strategies, trim sheets, and boolean hygiene for clean silhouettes.",
               date_published: "2025-08-05T10:00:00Z",
@@ -471,7 +466,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
             },
             {
               id: "sample-3",
-              url: "/blog",
+              url: "/blog/",
               title: "Clo3D → Unreal lookdev",
               summary: "Quick pipeline tests moving garments into a real-time lighting setup.",
               date_published: "2025-07-01T10:00:00Z",
@@ -517,7 +512,6 @@ export default function PortfolioSlideshowBlackGreyFull() {
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-transparent" />
           </div>
 
-          {/* overlay content */}
           <div className="relative z-10 h-full">
             <div className={`${container} h-full flex items-center`}>
               <div className="max-w-3xl text-white">
@@ -550,10 +544,10 @@ export default function PortfolioSlideshowBlackGreyFull() {
         </div>
       </section>
 
-      {/* Work */}
-      <section id="work" className="py-24 md:py-32">
+      {/* Work (SECTION THEME) */}
+      <section id="work" className="theme-work section-surface py-24 md:py-32 text-gray-100">
         <div className={container}>
-          <h2 className="text-center text-3xl sm:text-5xl font-semibold tracking-tight">
+          <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
             Selected Work
           </h2>
 
@@ -575,11 +569,10 @@ export default function PortfolioSlideshowBlackGreyFull() {
                   onTouchStart={() => { setHovered(i); setHasInteracted(true); }}
                 >
                   <Card
-                    className="overflow-hidden rounded-3xl border-gray-700 group bg-gray-900 relative cursor-pointer"
+                    className="overflow-hidden rounded-3xl border-white/10 group bg-black/20 relative cursor-pointer"
                     onClick={() => setLightbox({ open: true, project: p, index: 0 })}
                   >
                     <CardContent className="p-0 relative">
-                      {/* Natural aspect ratio */}
                       <div className="relative w-full">
                         {isMP4 && (
                           <video
@@ -622,10 +615,8 @@ export default function PortfolioSlideshowBlackGreyFull() {
                           />
                         )}
 
-                        {/* veil when not playing */}
                         <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-70"} bg-black`} />
 
-                        {/* overlay text (visible by default, hides on hover) */}
                         <div className="absolute inset-x-0 bottom-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-300">
                           <div className="flex gap-2 mb-3 flex-wrap">
                             {p.tags?.map((t) => (
@@ -636,7 +627,6 @@ export default function PortfolioSlideshowBlackGreyFull() {
                           <p className="mt-2 text-sm md:text-base text-gray-300 max-w-xl">{p.blurb}</p>
                         </div>
 
-                        {/* center play cue (only when not playing) */}
                         {!playing && (
                           <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
                             <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm grid place-items-center text-white">
@@ -654,42 +644,42 @@ export default function PortfolioSlideshowBlackGreyFull() {
         </div>
       </section>
 
-      {/* Blog teasers */}
-      <section id="blog" className="py-24 md:py-32 border-t border-gray-700">
+      {/* Blog (SECTION THEME) */}
+      <section id="blog" className="theme-blog section-surface py-24 md:py-32 border-t border-white/10 text-gray-100">
         <div className={container}>
-          <h2 className="text-center text-3xl sm:text-5xl font-semibold tracking-tight">
+          <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
             Latest from the Dev Blog
           </h2>
 
           {blog.status === "loading" && (
-            <p className="mt-8 text-center text-gray-400">Loading…</p>
+            <p className="mt-8 text-center text-gray-200/80">Loading…</p>
           )}
 
           {blog.status === "ready" && (
             <div className="mt-14 md:mt-16 lg:mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {blog.items.map((post) => (
-                <Card key={post.id} className="rounded-3xl border-gray-700 bg-gray-900 overflow-hidden">
+                <Card key={post.id} className="rounded-3xl border-white/15 bg-black/20 overflow-hidden">
                   <CardContent className="p-0">
                     {post.image ? (
                       <img src={post.image} alt="" className="w-full h-48 object-cover" />
                     ) : (
-                      <div className="w-full h-48 bg-gradient-to-br from-gray-800 to-gray-900" />
+                      <div className="w-full h-48 bg-gradient-to-br from-black/30 to-black/10" />
                     )}
                     <div className="p-6 flex flex-col gap-3">
-                      <div className="text-xs text-gray-400">{fmtDate(post.date_published || post.date_modified)}</div>
+                      <div className="text-xs text-gray-200/80">{fmtDate(post.date_published || post.date_modified)}</div>
                       <h3 className="text-xl font-semibold leading-tight">{post.title}</h3>
-                      {post.summary && <p className="text-sm text-gray-300 line-clamp-3">{post.summary}</p>}
+                      {post.summary && <p className="text-sm text-gray-100/90 line-clamp-3">{post.summary}</p>}
                       {Array.isArray(post.tags) && post.tags.length > 0 && (
                         <div className="mt-1 flex flex-wrap gap-2">
                           {post.tags.slice(0, 4).map((t) => (
-                            <span key={t} className="px-2 py-0.5 rounded-full text-[11px] border border-white/20 text-gray-300">
+                            <span key={t} className="px-2 py-0.5 rounded-full text-[11px] border border-white/20 text-gray-100/90">
                               {t}
                             </span>
                           ))}
                         </div>
                       )}
                       <div className="mt-3">
-                        <Button asChild variant="ghost" className="px-0 h-auto text-gray-200 hover:text-white">
+                        <Button asChild variant="ghost" className="px-0 h-auto text-gray-100 hover:text-white">
                           <a href={post.url} target="_blank" rel="noreferrer noopener" className="inline-flex items-center gap-1">
                             Read article
                           </a>
@@ -704,21 +694,21 @@ export default function PortfolioSlideshowBlackGreyFull() {
 
           <div className="mt-10 text-center">
             <Button asChild className="rounded-full bg-white text-black hover:bg-gray-100 px-6 py-2 h-11">
-              <a href="/blog">View all posts</a>
+              <a href="/blog/">View all posts</a>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* About */}
-      <section id="about" className="py-24 md:py-32 border-t border-gray-700">
+      {/* About (SECTION THEME) */}
+      <section id="about" className="theme-about section-surface py-24 md:py-32 border-t border-white/10 text-gray-100">
         <div className={container}>
-          <h2 className="text-center text-3xl sm:text-5xl font-semibold tracking-tight">
+          <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
             About
           </h2>
 
           <div className="mt-14 md:mt-16 lg:mt-20 grid">
-            <div className="mx-auto max-w-3xl text-gray-300 leading-relaxed space-y-6 text-center">
+            <div className="mx-auto max-w-3xl text-gray-100/90 leading-relaxed space-y-6 text-center">
               <p>I’m Daniel, a 3D artist focused on hard-surface and real-time assets. I’ve shipped content for games, ads, fashion, and interactive media. My approach is simple: clean topology, strong silhouettes, and materials that read instantly.</p>
               <p>Recent explorations include translating Akari-style logic into volumetric 3D puzzles, and building modular kits that scale from prototypes to production.</p>
             </div>
@@ -726,21 +716,21 @@ export default function PortfolioSlideshowBlackGreyFull() {
         </div>
       </section>
 
-      {/* Contact */}
-      <section id="contact" className="py-24 md:py-32">
+      {/* Contact (SECTION THEME) */}
+      <section id="contact" className="theme-contact section-surface py-24 md:py-32 text-gray-100">
         <div className={container}>
-          <h2 className="text-center text-3xl sm:text-5xl font-semibold tracking-tight">
+          <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
             Contact
           </h2>
 
           {/* Centered socials under title */}
-          <div className="mt-6 flex items-center justify-center gap-6 text-sm text-gray-400">
+          <div className="mt-6 flex items-center justify-center gap-6 text-sm text-gray-100/90">
             <a href="#" className="hover:opacity-80">LinkedIn</a>
             <a href="#" className="hover:opacity-80">Instagram</a>
             <a href="#" className="hover:opacity-80">X/Twitter</a>
           </div>
 
-          {/* Form (isolated component prevents DOM re-creation on keystroke) */}
+          {/* Form */}
           <div className="mt-10 md:mt-12 lg:mt-14 grid">
             <div className="mx-auto w-full max-w-3xl">
               <ContactFormCard />
