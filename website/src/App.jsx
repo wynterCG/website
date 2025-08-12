@@ -82,13 +82,12 @@ const projectsData = [
   },
 ];
 
-/* ---------- Lightbox (gallery: never full-screen; bottom bar visible) ---------- */
+/* ---------- Lightbox (gallery) ---------- */
 function Lightbox({ open, onClose, project, startIndex = 0 }) {
   const [index, setIndex] = useState(startIndex);
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const closeBtnRef = useRef(null);
   const lastFocusedRef = useRef(null);
-  const touchRef = useRef({ x: 0, y: 0, t: 0 });
 
   const media = project?.media || [];
   const current = media[index] || null;
@@ -125,7 +124,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
     if (m.type === "video") {
       return (
         <div className="h-full w-full grid place-items-center">
-          <video src={m.src} poster={m.poster || undefined} className="max-h-full max-w-full object-contain" controls autoPlay playsInline />
+          <video src={m.src} poster={m.poster || undefined} className="max-h-full max-w-full object-contain" controls autoPlay playsInline muted />
         </div>
       );
     }
@@ -153,13 +152,11 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
     const base = "relative shrink-0 rounded-lg overflow-hidden border";
     const active = isActive ? "border-white" : "border-white/20 hover:border-white/40";
     const size = "h-16 w-24";
-    if (m.type === "image") {
-      return (
-        <button onClick={() => setIndex(idx)} className={`${base} ${active} ${size}`} aria-label={`Go to image ${idx + 1}`}>
-          <img src={m.src} alt="" className="h-full w-full object-cover" />
-        </button>
-      );
-    }
+    if (m.type === "image") return (
+      <button onClick={() => setIndex(idx)} className={`${base} ${active} ${size}`} aria-label={`Go to image ${idx + 1}`}>
+        <img src={m.src} alt="" className="h-full w-full object-cover" />
+      </button>
+    );
     if (m.type === "video") {
       const thumb = m.poster || project.media.find(x => x.type === "image")?.src;
       return (
@@ -255,14 +252,12 @@ export default function PortfolioSlideshowBlackGreyFull() {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
 
   // HOVER PLAY LOGIC
-  // Only first plays on load; after first user hover, nothing autoplays unless hovered.
-  const [hovered, setHovered] = useState(null);        // number | null
+  const [hovered, setHovered] = useState(null);
   const [hasInteracted, setHasInteracted] = useState(false);
-  const videoRefs = useRef({});                         // { [index:number]: HTMLVideoElement | null }
+  const videoRefs = useRef({});
 
   const isPlaying = (i) => (hovered === i) || (!hasInteracted && i === 0);
 
-  // Drive native video play/pause whenever state changes
   useEffect(() => {
     Object.entries(videoRefs.current).forEach(([idx, el]) => {
       if (!el) return;
@@ -358,14 +353,16 @@ export default function PortfolioSlideshowBlackGreyFull() {
                   className={spanFor(i)}
                 >
                   <Card
-                    className="overflow-hidden rounded-3xl border-gray-700 group bg-gray-900 relative"
+                    className="overflow-hidden rounded-3xl border-gray-700 group bg-gray-900 relative cursor-pointer"
                     onMouseEnter={() => { setHovered(i); setHasInteracted(true); }}
                     onMouseLeave={() => setHovered(null)}
                     onTouchStart={() => { setHovered(i); setHasInteracted(true); }}
+                    onClick={() => setLightbox({ open: true, project: p, index: 0 })}
                   >
                     <CardContent className="p-0 relative">
+
+                      {/* Media (image/video/iframe) */}
                       <div className="relative w-full" style={isYT ? { aspectRatio: first.ratio || "16 / 9" } : undefined}>
-                        {/* MP4 */}
                         {isMP4 && (
                           <video
                             ref={(el) => (videoRefs.current[i] = el)}
@@ -376,11 +373,8 @@ export default function PortfolioSlideshowBlackGreyFull() {
                             muted
                             playsInline
                             loop={first.loop !== false}
-                            onClick={() => setLightbox({ open: true, project: p, index: 0 })}
                           />
                         )}
-
-                        {/* YouTube: mount iframe only when playing; else show thumbnail */}
                         {isYT && (
                           playing ? (
                             <iframe
@@ -397,38 +391,22 @@ export default function PortfolioSlideshowBlackGreyFull() {
                               alt={p.title}
                               className="block w-full h-auto object-cover"
                               draggable={false}
-                              onClick={() => setLightbox({ open: true, project: p, index: 0 })}
                             />
                           )
                         )}
-
-                        {/* Image */}
                         {isIMG && (
                           <img
                             src={first.src}
                             alt={p.title}
                             className="block w-full h-auto object-cover"
-                            onClick={() => setLightbox({ open: true, project: p, index: 0 })}
                           />
                         )}
 
-                        {/* GREY VEIL: visible when not playing */}
-                        <div
-                          className={`absolute inset-0 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-70"} bg-black`}
-                          aria-hidden="true"
-                        />
+                        {/* Dark veil when not playing */}
+                        <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-70"} bg-black`} />
 
-                        {/* Hover cue when inactive */}
-                        {!playing && (
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm grid place-items-center text-white">
-                              <PlayIcon className="w-8 h-8" />
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Text overlay */}
-                        <div className="pointer-events-none absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                        {/* Overlay Text – visible by default, hides on hover */}
+                        <div className="absolute inset-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black via-transparent pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-300">
                           <div className="flex gap-2 mb-3 flex-wrap">
                             {p.tags?.map((t) => (
                               <span key={t} className="px-2 py-1 rounded-full text-xs border border-white/30 bg-black/40 backdrop-blur">{t}</span>
@@ -447,14 +425,14 @@ export default function PortfolioSlideshowBlackGreyFull() {
                           )}
                         </div>
 
-                        {/* Click anywhere opens lightbox */}
-                        <button
-                          type="button"
-                          onClick={() => setLightbox({ open: true, project: p, index: 0 })}
-                          className="absolute inset-0 z-10"
-                          aria-label={`Open ${p.title} gallery`}
-                          style={{ cursor: "zoom-in", background: "transparent" }}
-                        />
+                        {/* Play icon – shows only when not playing */}
+                        {!playing && (
+                          <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
+                            <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm grid place-items-center text-white">
+                              <PlayIcon className="w-8 h-8" />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -526,7 +504,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
         </div>
       </footer>
 
-      {/* LIGHTBOX */}
+      {/* Lightbox */}
       <Lightbox
         open={lightbox.open}
         project={lightbox.project}
