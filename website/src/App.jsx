@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button.jsx";
 import { Card, CardContent } from "@/components/ui/Card.jsx";
@@ -275,6 +275,40 @@ export default function PortfolioSlideshowBlackGreyFull() {
     i % 4 === 1 ? "lg:col-span-5" :
     i % 4 === 2 ? "lg:col-span-5" : "lg:col-span-7";
 
+  // --- NEW --- Contact Form Logic
+  const [formData, setFormData] = useState({ name: '', email: '', company: '', message: '' });
+  const [formStatus, setFormStatus] = useState('idle'); // 'idle', 'sending', 'success', 'error'
+  
+  // --- IMPORTANT --- Replace this with your own Formspree endpoint
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/movlrwyk";
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormStatus('sending');
+    try {
+      const response = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        setFormStatus('success');
+        setFormData({ name: '', email: '', company: '', message: '' }); // Clear form
+      } else {
+        setFormStatus('error');
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setFormStatus('error');
+    }
+  };
+
+
   return (
     <div className={`min-h-screen ${colors.background} ${colors.text}`}>
       {/* Header */}
@@ -473,16 +507,22 @@ export default function PortfolioSlideshowBlackGreyFull() {
             <div className="md:col-span-7">
               <Card className="rounded-3xl border-gray-700 bg-gray-900">
                 <CardContent className="p-6 md:p-8">
-                  <form onSubmit={(e) => e.preventDefault()} className="grid grid-cols-1 gap-4">
+                  {/* --- NEW --- Form now uses state and handleSubmit */}
+                  <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
                     <div className="grid sm:grid-cols-2 gap-4">
-                      <Input placeholder="Your name" required className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
-                      <Input type="email" placeholder="Email" required className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
+                      <Input name="name" placeholder="Your name" required value={formData.name} onChange={handleInputChange} className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
+                      <Input name="email" type="email" placeholder="Email" required value={formData.email} onChange={handleInputChange} className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
                     </div>
-                    <Input placeholder="Company (optional)" className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
-                    <Textarea placeholder="Project brief" rows={6} className="rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
+                    <Input name="company" placeholder="Company (optional)" value={formData.company} onChange={handleInputChange} className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
+                    <Textarea name="message" placeholder="Project brief" rows={6} value={formData.message} onChange={handleInputChange} className="rounded-xl bg-gray-800 border-gray-600 text-gray-200" />
                     <div className="flex items-center justify-between pt-2">
-                      <p className="text-xs text-gray-500">By sending, you agree to be contacted back.</p>
-                      <Button type="submit" className="rounded-full bg-gray-200 text-black hover:bg-white px-4 py-2">Send</Button>
+                      <p className="text-xs text-gray-500">
+                        {formStatus === 'success' && 'Message sent successfully!'}
+                        {formStatus === 'error' && 'Something went wrong. Please try again.'}
+                        {formStatus === 'idle' && 'By sending, you agree to be contacted back.'}
+                        {formStatus === 'sending' && 'Sending...'}
+                      </p>
+                      <Button type="submit" disabled={formStatus === 'sending'} className="rounded-full bg-gray-200 text-black hover:bg-white px-4 py-2">Send</Button>
                     </div>
                   </form>
                 </CardContent>
