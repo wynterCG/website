@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dev Blog — Daniel Inverno</title>
+  <meta name="description" content="Latest posts from the Daniel Inverno dev blog." />
+  <!-- Feed discovery for readers -->
+  <link rel="alternate" type="application/feed+json" href="/blog/feed.json" />
+  <style>
+    /* ---- minimal, self-contained styling ---- */
+    :root {
+      --bg1: #000;
+      --bg2: #111827; /* gray-900 */
+      --bg3: #1f2937; /* gray-800 */
+      --text: #e5e7eb; /* gray-200 */
+      --muted: #9ca3af; /* gray-400 */
+      --card: #0b0f16;
+      --border: rgba(255,255,255,.12);
+      --accent: #fff;
+      --maxw: 72rem;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      color: var(--text);
+      background: linear-gradient(to bottom, var(--bg1), var(--bg2), var(--bg3));
+      font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: var(--maxw); padding: 0 1rem; margin: 0 auto; }
+    header {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: saturate(120%) blur(6px);
+      background: rgba(0,0,0,.55);
+      border-bottom: 1px solid rgba(255,255,255,.18);
+    }
+    .nav { height: 64px; display: flex; align-items: center; justify-content: space-between; }
+    .nav a { font-weight: 600; }
+    .links { display: none; gap: 1.25rem; font-size: .9rem; color: #cbd5e1; } /* md+ only */
+    @media (min-width: 768px) { .links { display: flex; } }
+
+    main { padding: 3rem 0 4rem; }
+    h1 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1; text-align: center; margin: 0; }
+    .subtle { color: var(--muted); text-align: center; margin-top: .75rem; }
+
+    .grid {
+      display: grid; gap: 1rem; margin-top: 2rem;
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 768px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1024px) { .grid { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; } }
+
+    .card {
+      overflow: hidden; border-radius: 22px;
+      background: #0c111b; border: 1px solid var(--border);
+      box-shadow: 0 10px 40px -15px rgba(0,0,0,.7);
+      display: flex; flex-direction: column;
+      min-height: 100%;
+      transition: transform .2s ease, border-color .2s ease;
+    }
+    .card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.28); }
+    .thumb { width: 100%; height: 12rem; object-fit: cover; display: block; }
+    .thumb.fallback { background: linear-gradient(135deg, #111827, #0b0f16); }
+    .card-body { padding: 1.25rem; display: flex; flex-direction: column; gap: .5rem; flex: 1; }
+    .date { color: var(--muted); font-size: .8rem; }
+    .title { font-weight: 700; font-size: 1.15rem; line-height: 1.3; }
+    .summary { color: #cbd5e1; font-size: .95rem; margin-top: .25rem; }
+    .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .25rem; }
+    .tag { border: 1px solid rgba(255,255,255,.2); border-radius: 999px; padding: .15rem .5rem; font-size: .7rem; color: #d1d5db; }
+    .actions { margin-top: .5rem; }
+    .btn {
+      display: inline-block; padding: .5rem .75rem; border-radius: 999px;
+      background: #fff; color: #000; font-weight: 600; font-size: .9rem;
+    }
+    .btn.ghost { background: transparent; color: #e5e7eb; }
+    .center { text-align: center; margin-top: 2rem; }
+    footer { border-top: 1px solid rgba(255,255,255,.18); padding: 2rem 0; color: #9ca3af; }
+    .sr-only { position: absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a href="/" aria-label="Go home">Daniel Inverno</a>
+      <nav class="links" aria-label="Primary">
+        <a href="/#work">Work</a>
+        <a href="/#blog">Home Blog</a>
+        <a href="/#about">About</a>
+        <a href="/#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1>Dev Blog</h1>
+    <p class="subtle">Latest posts, pulled from <code>/blog/feed.json</code>.</p>
+
+    <div id="status" class="center" role="status" aria-live="polite"></div>
+    <div id="grid" class="grid" aria-live="polite"></div>
+
+    <div class="center">
+      <a class="btn ghost" href="/">← Back to home</a>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="year"></span> Daniel Inverno. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const statusEl = document.getElementById("status");
+      const gridEl = document.getElementById("grid");
+      document.getElementById("year").textContent = new Date().getFullYear();
+
+      const fmtDate = (iso) => {
+        if (!iso) return "";
+        const d = new Date(iso);
+        if (isNaN(d)) return "";
+        return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "2-digit" });
+      };
+
+      const createCard = (item) => {
+        const a = document.createElement("a");
+        a.className = "card";
+        a.href = item.url || item.external_url || "#";
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+
+        if (item.image || item.banner_image) {
+          const img = document.createElement("img");
+          img.className = "thumb";
+          img.alt = "";
+          img.loading = "lazy";
+          img.src = item.image || item.banner_image;
+          a.appendChild(img);
+        } else {
+          const ph = document.createElement("div");
+          ph.className = "thumb fallback";
+          a.appendChild(ph);
+        }
+
+        const body = document.createElement("div");
+        body.className = "card-body";
+
+        const date = document.createElement("div");
+        date.className = "date";
+        date.textContent = fmtDate(item.date_published || item.date_modified || "");
+        body.appendChild(date);
+
+        const title = document.createElement("div");
+        title.className = "title";
+        title.textContent = item.title || "Untitled";
+        body.appendChild(title);
+
+        const summaryText =
+          item.summary || item.content_text || (item.content_html ? item.content_html.replace(/<[^>]+>/g, " ") : "");
+        if (summaryText) {
+          const summary = document.createElement("div");
+          summary.className = "summary";
+          summary.textContent = summaryText.trim().slice(0, 300);
+          body.appendChild(summary);
+        }
+
+        if (Array.isArray(item.tags) && item.tags.length) {
+          const tags = document.createElement("div");
+          tags.className = "tags";
+          item.tags.slice(0, 6).forEach((t) => {
+            const chip = document.createElement("span");
+            chip.className = "tag";
+            chip.textContent = t;
+            tags.appendChild(chip);
+          });
+          body.appendChild(tags);
+        }
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+        const btn = document.createElement("span");
+        btn.className = "btn";
+        btn.textContent = "Read article";
+        actions.appendChild(btn);
+        body.appendChild(actions);
+
+        a.appendChild(body);
+        return a;
+      };
+
+      async function loadFeed() {
+        try {
+          statusEl.textContent = "Loading…";
+          const res = await fetch("/blog/feed.json", {
+            headers: { "Accept": "application/feed+json, application/json" },
+            cache: "no-cache"
+          });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const feed = await res.json();
+
+          const items = (feed.items || [])
+            .slice()
+            .sort((a, b) => {
+              const da = new Date(a.date_published || a.date_modified || 0).getTime();
+              const db = new Date(b.date_published || b.date_modified || 0).getTime();
+              return db - da;
+            });
+
+          gridEl.innerHTML = "";
+          if (!items.length) {
+            statusEl.textContent = "No posts yet.";
+            return;
+          }
+          statusEl.textContent = "";
+          items.forEach((it) => gridEl.appendChild(createCard(it)));
+        } catch (err) {
+          console.error(err);
+          statusEl.innerHTML =
+            'Couldn’t load the feed. Ensure <code>/blog/feed.json</code> exists and is valid JSON Feed.';
+        }
+      }
+
+      loadFeed();
+    })();
+  </script>
+</body>
+</html>
