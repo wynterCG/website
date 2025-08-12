@@ -38,6 +38,7 @@ const colors = {
   background: "bg-gradient-to-b from-black via-gray-900 to-gray-800",
   text: "text-gray-100",
 };
+const container = "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8";
 
 /* ---------- sample projects ---------- */
 const projectsData = [
@@ -84,7 +85,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
   const lastFocusedRef = useRef(null);
 
   const media = project?.media || [];
-  const current = media[index] || null;
+  const current = media[index] || null; // <- removed stray `0`
 
   useEffect(() => { if (open) setIndex(startIndex); }, [open, startIndex]);
 
@@ -289,7 +290,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
       const res = await fetch(FORMSPREE_ENDPOINT, {
         method: "POST",
         body: fd,
-        headers: { Accept: "application/json" }, // Formspree recommends this for JSON response
+        headers: { Accept: "application/json" },
       });
 
       if (res.ok) {
@@ -314,7 +315,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
     <div className={`min-h-screen ${colors.background} ${colors.text}`}>
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-gray-700/60 backdrop-blur supports-[backdrop-filter]:bg-black/60">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div className={`${container} h-16 flex items-center justify-between`}>
           <a href="#top" className="font-semibold tracking-tight text-lg md:text-xl">Daniel Inverno</a>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="#work" className="hover:opacity-80">Work</a>
@@ -327,21 +328,33 @@ export default function PortfolioSlideshowBlackGreyFull() {
         </div>
       </header>
 
-      {/* Hero */}
+      {/* Hero (centered text over video) */}
       <section id="top" className="relative pt-24 md:pt-28">
         <div className="relative h-[78vh] min-h-[560px] w-full overflow-hidden">
           <div className="absolute inset-0">
-            <video autoPlay loop muted playsInline className="absolute inset-0 h-full w-full object-cover" src="/your-video-filename.mp4" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent" />
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover"
+              src="/your-video-filename.mp4"
+            />
+            {/* top-to-bottom gradient for readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-transparent" />
           </div>
-          <div className="relative z-10 mx-auto max-w-7xl h-full px-4 sm:px-6 lg:px-8 flex items-center">
-            <div className="max-w-3xl text-white">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs backdrop-blur">
-                <Sparkles className="h-3.5 w-3.5" /> Available for freelance in 2025
+
+          {/* Centered overlay content */}
+          <div className="relative z-10 h-full">
+            <div className="relative z-10 mx-auto max-w-7xl h-full px-4 sm:px-6 lg:px-8 flex items-center">
+              <div className="max-w-3xl text-white">
+                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs backdrop-blur">
+                  <Sparkles className="h-3.5 w-3.5" /> Available for freelance in 2025
+                </div>
+                <h1 className="mt-4 text-4xl sm:text-6xl md:text-7xl font-semibold leading-[0.98] tracking-tight">
+                  3D Artist & Hard-Surface <span className={`bg-gradient-to-r ${colors.primary} bg-clip-text text-transparent`}>Designer</span>
+                </h1>
               </div>
-              <h1 className="mt-4 text-4xl sm:text-6xl md:text-7xl font-semibold leading-[0.98] tracking-tight">
-                3D Artist & Hard-Surface <span className={`bg-gradient-to-r ${colors.primary} bg-clip-text text-transparent`}>Designer</span>
-              </h1>
             </div>
           </div>
         </div>
@@ -356,7 +369,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
             transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
           >
             {Array.from({ length: 2 }).flatMap((_, j) =>
-              marquee.map((m, i) => (
+              ["3ds Max","Maya","Blender","Substance","Unreal Engine","Unity","ZBrush","Clo3D"].map((m, i) => (
                 <span key={`${j}-${i}`} className="tracking-wide">{m}</span>
               ))
             )}
@@ -364,19 +377,21 @@ export default function PortfolioSlideshowBlackGreyFull() {
         </div>
       </section>
 
-      {/* Work Grid */}
-      <section id="work" className="py-20 md:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl sm:text-5xl font-semibold tracking-tight mb-10">Selected Work</h2>
+      {/* Work */}
+      <section id="work" className="py-24 md:py-32">
+        <div className={container}>
+          <h2 className="text-center text-3xl sm:text-5xl font-semibold tracking-tight">
+            Selected Work
+          </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
+          <div className="mt-14 md:mt-16 lg:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
             {projects.map((p, i) => {
               const k = `${p.title}-${i}`;
               const first = p.media[0];
               const isYT  = first?.type === "youtube";
               const isMP4 = first?.type === "video";
               const isIMG = first?.type === "image";
-              const playing = isPlaying(i);
+              const playing = (hovered === i) || (!hasInteracted && i === 0);
 
               return (
                 <div
@@ -391,7 +406,8 @@ export default function PortfolioSlideshowBlackGreyFull() {
                     onClick={() => setLightbox({ open: true, project: p, index: 0 })}
                   >
                     <CardContent className="p-0 relative">
-                      <div className="relative w-full" style={isYT ? { aspectRatio: first.ratio || "16 / 9" } : undefined}>
+                      {/* Natural aspect ratio: media controls height */}
+                      <div className="relative w-full">
                         {isMP4 && (
                           <video
                             ref={(el) => (videoRefs.current[i] = el)}
@@ -406,14 +422,16 @@ export default function PortfolioSlideshowBlackGreyFull() {
                         )}
                         {isYT && (
                           playing ? (
-                            <iframe
-                              src={ytEmbedMuted(first.src, origin)}
-                              title={p.title}
-                              className="absolute inset-0 w-full h-full"
-                              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-                              loading="lazy"
-                              referrerPolicy="strict-origin-when-cross-origin"
-                            />
+                            <div className="relative w-full" style={{ aspectRatio: first.ratio || "16 / 9" }}>
+                              <iframe
+                                src={ytEmbedMuted(first.src, origin)}
+                                title={p.title}
+                                className="absolute inset-0 w-full h-full"
+                                allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                                loading="lazy"
+                                referrerPolicy="strict-origin-when-cross-origin"
+                              />
+                            </div>
                           ) : (
                             <img
                               src={ytThumb(first.src) || ""}
@@ -435,30 +453,21 @@ export default function PortfolioSlideshowBlackGreyFull() {
                         <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-70"} bg-black`} />
 
                         {/* overlay text visible by default, hides on hover */}
-                        <div className="absolute inset-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black via-transparent pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+                        <div className="absolute inset-x-0 bottom-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-300">
                           <div className="flex gap-2 mb-3 flex-wrap">
                             {p.tags?.map((t) => (
                               <span key={t} className="px-2 py-1 rounded-full text-xs border border-white/30 bg-black/40 backdrop-blur">{t}</span>
                             ))}
                           </div>
-                          <h3 className="text-xl md:text-2xl font-semibold">{p.title}</h3>
+                          <h3 className="text-2xl md:text-3xl font-semibold">{p.title}</h3>
                           <p className="mt-2 text-sm md:text-base text-gray-300 max-w-xl">{p.blurb}</p>
-                          {p.link && (
-                            <a
-                              href={p.link} target="_blank" rel="noopener noreferrer"
-                              className="inline-block mt-3 text-sm underline decoration-gray-500 hover:decoration-gray-300"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              Open project ↗
-                            </a>
-                          )}
                         </div>
 
                         {/* center play cue (only when not playing) */}
                         {!playing && (
                           <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
-                            <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm grid place-items-center text-white">
-                              <PlayIcon className="w-8 h-8" />
+                            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm grid place-items-center text-white">
+                              <PlayIcon className="w-9 h-9" />
                             </div>
                           </div>
                         )}
@@ -473,13 +482,14 @@ export default function PortfolioSlideshowBlackGreyFull() {
       </section>
 
       {/* About */}
-      <section id="about" className="py-20 md:py-28 border-t border-gray-700">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-12 gap-10 items-start">
-            <div className="md:col-span-5">
-              <h2 className="text-3xl md:text-5xl font-semibold tracking-tight">About</h2>
-            </div>
-            <div className="md:col-span-7 text-gray-300 leading-relaxed space-y-6">
+      <section id="about" className="py-24 md:py-32 border-t border-gray-700">
+        <div className={container}>
+          <h2 className="text-center text-3xl sm:text-5xl font-semibold tracking-tight">
+            About
+          </h2>
+
+          <div className="mt-14 md:mt-16 lg:mt-20 grid">
+            <div className="mx-auto max-w-3xl text-gray-300 leading-relaxed space-y-6 text-center">
               <p>I’m Daniel, a 3D artist focused on hard-surface and real-time assets. I’ve shipped content for games, ads, fashion, and interactive media. My approach is simple: clean topology, strong silhouettes, and materials that read instantly.</p>
               <p>Recent explorations include translating Akari-style logic into volumetric 3D puzzles, and building modular kits that scale from prototypes to production.</p>
             </div>
@@ -488,21 +498,24 @@ export default function PortfolioSlideshowBlackGreyFull() {
       </section>
 
       {/* Contact */}
-      <section id="contact" className="py-20 md:py-28">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-12 gap-10 items-start">
-            <div className="md:col-span-5">
-              <h2 className="text-3xl md:text-5xl font-semibold tracking-tight">Contact</h2>
-              <div className="mt-6 flex gap-4 text-sm text-gray-400">
-                <a href="#" className="inline-flex items-center gap-2 hover:opacity-75">LinkedIn</a>
-                <a href="#" className="inline-flex items-center gap-2 hover:opacity-75">Instagram</a>
-                <a href="#" className="inline-flex items-center gap-2 hover:opacity-75">X/Twitter</a>
-              </div>
-            </div>
-            <div className="md:col-span-7">
+      <section id="contact" className="py-24 md:py-32">
+        <div className={container}>
+          <h2 className="text-center text-3xl sm:text-5xl font-semibold tracking-tight">
+            Contact
+          </h2>
+
+          {/* Centered socials under title */}
+          <div className="mt-6 flex items-center justify-center gap-6 text-sm text-gray-400">
+            <a href="#" className="hover:opacity-80">LinkedIn</a>
+            <a href="#" className="hover:opacity-80">Instagram</a>
+            <a href="#" className="hover:opacity-80">X/Twitter</a>
+          </div>
+
+          {/* Centered form */}
+          <div className="mt-10 md:mt-12 lg:mt-14 grid">
+            <div className="mx-auto w-full max-w-xl">
               <Card className="rounded-3xl border-gray-700 bg-gray-900">
                 <CardContent className="p-6 md:p-8">
-                  {/* Accessible, CSP-safe, Formspree-powered form */}
                   <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4" noValidate>
                     {/* Honeypot (hidden) */}
                     <input
@@ -593,7 +606,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
 
       {/* Footer */}
       <footer className="py-10 border-t border-gray-700">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400">
+        <div className={`${container} flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400`}>
           <p>© {new Date().getFullYear()} Daniel Inverno. All rights reserved.</p>
           <nav className="flex items-center gap-6">
             <a href="#work" className="hover:opacity-80">Work</a>
@@ -613,4 +626,3 @@ export default function PortfolioSlideshowBlackGreyFull() {
     </div>
   );
 }
-
