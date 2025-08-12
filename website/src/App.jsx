@@ -85,7 +85,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
   const lastFocusedRef = useRef(null);
 
   const media = project?.media || [];
-  const current = media[index] || null; // <- removed stray `0`
+  const current = media[index] || null;
 
   useEffect(() => { if (open) setIndex(startIndex); }, [open, startIndex]);
 
@@ -190,7 +190,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* header */}
-        <div className="p-3 sm:p-4 flex items-center justify-between gap-3 text-gray-200">
+        <div className="p-3 sm:p-4 flex items-center justify-between gap-3 text-gray-2 00">
           <div className="text-sm sm:text-base truncate">{project.title}</div>
           <button
             ref={closeBtnRef} type="button" onClick={onClose}
@@ -265,7 +265,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
     i % 4 === 2 ? "lg:col-span-5" : "lg:col-span-7";
 
   /* ---------- CONTACT FORM (Formspree) ---------- */
-  const FORMSPREE_ENDPOINT = "https://formspree.io/f/movlrwyk"; // replace with your form ID
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/movlrwyk";
   const [formData, setFormData] = useState({ name: "", email: "", company: "", message: "" });
   const [formStatus, setFormStatus] = useState("idle"); // idle | sending | success | error
   const honeypotRef = useRef(null);
@@ -299,7 +299,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
       } else {
         try {
           const data = await res.json();
-          if (data?.errors?.length) console.error("Formspree errors:", data.errors.map((e) => e.message).join(", "));
+          if (data?.errors?.length) console.error("Formspree errors:", data.errors.map((er) => er.message).join(", "));
         } catch {}
         setFormStatus("error");
       }
@@ -310,6 +310,25 @@ export default function PortfolioSlideshowBlackGreyFull() {
   };
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
+
+  /* small helper to render a big outlined field wrapper */
+  const FieldShell = ({ label, htmlFor, children, className = "" }) => (
+    <div
+      className={
+        "group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 " +
+        "focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] " +
+        "backdrop-blur-sm transition-colors " + className
+      }
+    >
+      <label
+        htmlFor={htmlFor}
+        className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400 px-4 pt-3"
+      >
+        {label}
+      </label>
+      <div className="px-4 pb-4 pt-1">{children}</div>
+    </div>
+  );
 
   return (
     <div className={`min-h-screen ${colors.background} ${colors.text}`}>
@@ -340,13 +359,12 @@ export default function PortfolioSlideshowBlackGreyFull() {
               className="absolute inset-0 h-full w-full object-cover"
               src="/your-video-filename.mp4"
             />
-            {/* top-to-bottom gradient for readability */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-transparent" />
           </div>
 
-          {/* Centered overlay content */}
+          {/* overlay content (left aligned as before) */}
           <div className="relative z-10 h-full">
-            <div className="relative z-10 mx-auto max-w-7xl h-full px-4 sm:px-6 lg:px-8 flex items-center">
+            <div className={`${container} h-full flex items-center`}>
               <div className="max-w-3xl text-white">
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs backdrop-blur">
                   <Sparkles className="h-3.5 w-3.5" /> Available for freelance in 2025
@@ -406,7 +424,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
                     onClick={() => setLightbox({ open: true, project: p, index: 0 })}
                   >
                     <CardContent className="p-0 relative">
-                      {/* Natural aspect ratio: media controls height */}
+                      {/* Natural aspect ratio: let media define height */}
                       <div className="relative w-full">
                         {isMP4 && (
                           <video
@@ -452,7 +470,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
                         {/* veil when not playing */}
                         <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-70"} bg-black`} />
 
-                        {/* overlay text visible by default, hides on hover */}
+                        {/* overlay text (visible by default, hides on hover) */}
                         <div className="absolute inset-x-0 bottom-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-300">
                           <div className="flex gap-2 mb-3 flex-wrap">
                             {p.tags?.map((t) => (
@@ -488,7 +506,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
             About
           </h2>
 
-          <div className="mt-14 md:mt-16 lg:mt-20 grid">
+        <div className="mt-14 md:mt-16 lg:mt-20 grid">
             <div className="mx-auto max-w-3xl text-gray-300 leading-relaxed space-y-6 text-center">
               <p>I’m Daniel, a 3D artist focused on hard-surface and real-time assets. I’ve shipped content for games, ads, fashion, and interactive media. My approach is simple: clean topology, strong silhouettes, and materials that read instantly.</p>
               <p>Recent explorations include translating Akari-style logic into volumetric 3D puzzles, and building modular kits that scale from prototypes to production.</p>
@@ -511,12 +529,12 @@ export default function PortfolioSlideshowBlackGreyFull() {
             <a href="#" className="hover:opacity-80">X/Twitter</a>
           </div>
 
-          {/* Centered form */}
+          {/* Centered form with polished “boxed fields” */}
           <div className="mt-10 md:mt-12 lg:mt-14 grid">
-            <div className="mx-auto w-full max-w-xl">
-              <Card className="rounded-3xl border-gray-700 bg-gray-900">
-                <CardContent className="p-6 md:p-8">
-                  <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4" noValidate>
+            <div className="mx-auto w-full max-w-3xl">
+              <Card className="rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[0_10px_40px_-15px_rgba(0,0,0,0.7)]">
+                <CardContent className="p-6 sm:p-8 lg:p-10">
+                  <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6" noValidate>
                     {/* Honeypot (hidden) */}
                     <input
                       ref={honeypotRef}
@@ -527,61 +545,62 @@ export default function PortfolioSlideshowBlackGreyFull() {
                       aria-hidden="true"
                     />
 
-                    <div className="grid sm:grid-cols-2 gap-4">
-                      <div>
-                        <label htmlFor="cf-name" className="block mb-1 text-xs text-gray-400">Your name</label>
+                    {/* Row: Name + Email */}
+                    <div className="grid sm:grid-cols-2 gap-6">
+                      <FieldShell label="Your name" htmlFor="cf-name">
                         <Input
                           id="cf-name"
                           name="name"
-                          placeholder="Your name"
+                          placeholder=""
                           required
                           value={formData.name}
                           onChange={handleInputChange}
-                          className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200"
+                          className="h-11 w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0"
                         />
-                      </div>
-                      <div>
-                        <label htmlFor="cf-email" className="block mb-1 text-xs text-gray-400">Email</label>
+                      </FieldShell>
+
+                      <FieldShell label="Email" htmlFor="cf-email">
                         <Input
                           id="cf-email"
                           name="email"
                           type="email"
-                          placeholder="Email"
+                          placeholder=""
                           required
                           value={formData.email}
                           onChange={handleInputChange}
-                          className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200"
+                          className="h-11 w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0"
                         />
-                      </div>
+                      </FieldShell>
                     </div>
 
-                    <div>
-                      <label htmlFor="cf-company" className="block mb-1 text-xs text-gray-400">Company (optional)</label>
+                    {/* Company – full width */}
+                    <FieldShell label="Company (optional)" htmlFor="cf-company">
                       <Input
                         id="cf-company"
                         name="company"
-                        placeholder="Company (optional)"
+                        placeholder=""
                         value={formData.company}
                         onChange={handleInputChange}
-                        className="h-11 rounded-xl bg-gray-800 border-gray-600 text-gray-200"
+                        className="h-11 w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0"
                       />
-                    </div>
+                    </FieldShell>
 
-                    <div>
-                      <label htmlFor="cf-message" className="block mb-1 text-xs text-gray-400">Project brief</label>
+                    {/* Project brief – full width, tall */}
+                    <FieldShell label="Project brief" htmlFor="cf-message">
                       <Textarea
                         id="cf-message"
                         name="message"
-                        placeholder="Project brief"
-                        rows={6}
+                        placeholder=""
+                        rows={8}
                         required
                         value={formData.message}
                         onChange={handleInputChange}
-                        className="rounded-xl bg-gray-800 border-gray-600 text-gray-200"
+                        className="w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0"
                       />
-                    </div>
+                    </FieldShell>
 
-                    <div className="flex items-center justify-between pt-2">
+                    {/* Footer row: helper + button */}
+                    <div className="mt-2 flex items-center justify-between">
                       <p className="text-xs text-gray-500" aria-live="polite">
                         {formStatus === "success" && "Thanks! I’ll get back to you soon."}
                         {formStatus === "error" && "Something went wrong. Please try again."}
@@ -591,7 +610,7 @@ export default function PortfolioSlideshowBlackGreyFull() {
                       <Button
                         type="submit"
                         disabled={formStatus === "sending"}
-                        className="rounded-full bg-gray-200 text-black hover:bg-white px-4 py-2"
+                        className="rounded-full bg-white text-black hover:bg-gray-100 px-6 py-2 h-11 shadow-[0_6px_20px_-6px_rgba(255,255,255,0.35)]"
                       >
                         {formStatus === "sending" ? "Sending…" : "Send"}
                       </Button>
