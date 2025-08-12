@@ -7,17 +7,17 @@
 @layer base {
   :root {
     /* You can tweak these; they’re OKLCH so small changes feel natural */
-    --work-bg:  oklch(19.49% 0.016 261.57);  /* deep indigo */
-    --work-title: oklch(0.96 0.05 210); /* warm sand */
+    --work-bg:  oklch(48.11% 0.099 234.04);  /* deep indigo */
+    --work-title: oklch(85.452% 0.0001 271.152); /* warm sand */
 
-    --blog-bg:  oklch(64.42% 0.143 32.3); /* deep teal */
-    --blog-title: oklch(0.96 0.05 210);/* ice blue */
+    --blog-bg:  oklch(58.428% 0.13362 35.278); /* deep teal */
+    --blog-title: oklch(85.452% 0.0001 271.152);/* ice blue */
 
-    --about-bg: oklch(0.32 0.02 250);  /* slate (similar vibe to your sample) */
-    --about-title: oklch(0.92 0.07 85);/* warm sand */
+    --about-bg: oklch(48.87% 0.08 242.84);  /* slate (similar vibe to your sample) */
+    --about-title: oklch(85.452% 0.0001 271.152);/* warm sand */
 
-    --contact-bg: oklch(36.54% 0.05 283.67);/* deep violet */
-    --contact-title: oklch(0.97 0.05 25);/* soft cream */
+    --contact-bg: oklch(29.48% 0.081 256.36);/* deep violet */
+    --contact-title: oklch(85.452% 0.0001 271.152);/* soft cream */
   }
 
   /* Map tokens to per-section CSS vars */
