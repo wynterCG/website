@@ -307,7 +307,7 @@ const ContactFormCard = memo(function ContactFormCard() {
           {/* Row: Name + Email */}
           <div className="grid sm:grid-cols-2 gap-6">
             <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
-              <label htmlFor="cf-name" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400 px-4 pt-3">
+              <label htmlFor="cf-name" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-white px-4 pt-3">
                 Your name
               </label>
               <div className="px-4 pb-4 pt-1">
@@ -317,13 +317,13 @@ const ContactFormCard = memo(function ContactFormCard() {
                   required
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="h-11 w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3"
+                  className="h-11 w-full rounded-xl bg-gray-200 border border-gray-700/60 text-gray-600 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3"
                 />
               </div>
             </div>
 
             <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
-              <label htmlFor="cf-email" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400 px-4 pt-3">
+              <label htmlFor="cf-email" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-white px-4 pt-3">
                 Email
               </label>
               <div className="px-4 pb-4 pt-1">
@@ -334,7 +334,7 @@ const ContactFormCard = memo(function ContactFormCard() {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="h-11 w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3"
+                  className="h-11 w-full rounded-xl bg-gray-200 border border-gray-700/60 text-gray-600 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3"
                 />
               </div>
             </div>
@@ -342,7 +342,7 @@ const ContactFormCard = memo(function ContactFormCard() {
 
           {/* Company */}
           <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
-            <label htmlFor="cf-company" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400 px-4 pt-3">
+            <label htmlFor="cf-company" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-white px-4 pt-3">
               Company (optional)
             </label>
             <div className="px-4 pb-4 pt-1">
@@ -351,14 +351,14 @@ const ContactFormCard = memo(function ContactFormCard() {
                 name="company"
                 value={formData.company}
                 onChange={handleInputChange}
-                className="h-11 w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3"
+                className="h-11 w-full rounded-xl bg-gray-200 border border-gray-700/60 text-gray-600 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3"
               />
             </div>
           </div>
 
           {/* Project brief */}
           <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
-            <label htmlFor="cf-message" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-gray-400 px-4 pt-3">
+            <label htmlFor="cf-message" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-white px-4 pt-3">
               Project brief
             </label>
             <div className="px-4 pb-4 pt-1">
@@ -369,14 +369,14 @@ const ContactFormCard = memo(function ContactFormCard() {
                 required
                 value={formData.message}
                 onChange={handleInputChange}
-                className="w-full rounded-xl bg-gray-800/50 border border-gray-700/60 text-gray-200 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3 py-2"
+                className="w-full rounded-xl bg-gray-200 border border-gray-700/60 text-gray-600 placeholder:text-white focus:border-gray-500 focus:ring-0 px-3 py-2"
               />
             </div>
           </div>
 
           {/* Footer */}
           <div className="mt-2 flex items-center justify-between">
-            <p className="text-xs text-gray-500" aria-live="polite">
+            <p className="text-xs text-white" aria-live="polite">
               {formStatus === "success" && "Thanks! I’ll get back to you soon."}
               {formStatus === "error" && "Something went wrong. Please try again."}
               {formStatus === "idle" && "By sending, you agree to be contacted back."}
@@ -516,10 +516,10 @@ export default function App() {
             <div className={`${container} h-full flex items-center`}>
               <div className="max-w-3xl text-white">
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs backdrop-blur">
-                  <Sparkles className="h-3.5 w-3.5" /> Available for freelance in 2025
+                  <Sparkles className="h-3.5 w-3.5" /> Looking for New Projects
                 </div>
                 <h1 className="mt-4 text-4xl sm:text-6xl md:text-7xl font-semibold leading-[0.98] tracking-tight">
-                  3D Artist & Hard-Surface <span className={`bg-gradient-to-r ${colors.primary} bg-clip-text text-transparent`}>Designer</span>
+                  3D Artist & Indie Game Dev
                 </h1>
               </div>
             </div>
@@ -547,8 +547,8 @@ export default function App() {
       {/* Work (SECTION THEME) */}
       <section id="work" className="theme-work section-surface py-24 md:py-32 text-gray-100">
         <div className={container}>
-          <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
-            Selected Work
+          <h2 className="section-title text-center text-3x1 sm:text-5x1 font-semibold tracking-tight">
+            Projets
           </h2>
 
           <div className="mt-14 md:mt-16 lg:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
