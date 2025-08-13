@@ -40,9 +40,9 @@ const container = "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8";
 /* ---------- sample projects ---------- */
 const projectsData = [
   {
-    title: "Hard-Surface Breakdown",
-    tags: ["ArtStation", "YouTube"],
-    blurb: "Process, blockout → polish.",
+    title: "Can Game - Prototype",
+    tags: ["Indie Dev", "UE5", "Game Art"],
+    blurb: "Process, blockout",
     link: "https://www.artstation.com/artwork/XXXXX",
     media: [
       { type: "youtube", src: "https://youtu.be/ZfSN77J8tL4", ratio: "16 / 9" },
@@ -50,6 +50,66 @@ const projectsData = [
     ],
   },
   {
+    title: "Mochis",
+    tags: ["Product Visualization", "Blender", "Materials"],
+    blurb: "Lighting & rendering.",
+    link: "#",
+    media: [
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
+    ],
+  },
+   {
+    title: "Mochis",
+    tags: ["Product Visualization", "Blender", "Materials"],
+    blurb: "Lighting & rendering.",
+    link: "#",
+    media: [
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
+    ],
+  },
+   {
+    title: "Mochis",
+    tags: ["Product Visualization", "Blender", "Materials"],
+    blurb: "Lighting & rendering.",
+    link: "#",
+    media: [
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
+    ],
+  },
+   {
+    title: "Mochis",
+    tags: ["Product Visualization", "Blender", "Materials"],
+    blurb: "Lighting & rendering.",
+    link: "#",
+    media: [
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
+    ],
+  },
+   {
+    title: "Mochis",
+    tags: ["Product Visualization", "Blender", "Materials"],
+    blurb: "Lighting & rendering.",
+    link: "#",
+    media: [
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
+    ],
+  },
+   {
+    title: "Mochis",
+    tags: ["Product Visualization", "Blender", "Materials"],
+    blurb: "Lighting & rendering.",
+    link: "#",
+    media: [
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
+    ],
+  },
+  /*{
     title: "Realtime Turntable",
     tags: ["MP4", "Realtime"],
     blurb: "Direct .mp4 capture.",
@@ -62,7 +122,7 @@ const projectsData = [
         loop: true,
       },
     ],
-  },
+  },*/
   {
     title: "Image Study",
     tags: ["Still"],
@@ -547,8 +607,8 @@ export default function App() {
       {/* Work (SECTION THEME) */}
       <section id="work" className="theme-work section-surface py-24 md:py-32 text-gray-100">
         <div className={container}>
-          <h2 className="section-title text-center text-3x1 sm:text-5x1 font-semibold tracking-tight">
-            Projets
+          <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
+            Portfolio Projects
           </h2>
 
           <div className="mt-14 md:mt-16 lg:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
