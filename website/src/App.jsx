@@ -54,75 +54,64 @@ const projectsData = [
     tags: ["Product Visualization", "Blender", "Materials"],
     blurb: "Lighting & rendering.",
     link: "#",
+    // Put your poster in /public and reference it from root:
+    poster: "/Mochis.png",
     media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9" },
       { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/658/ghfjgfj.mp4", ratio: "16 / 9" },
     ],
   },
-   {
+  {
     title: "Mochis",
     tags: ["Product Visualization", "Blender", "Materials"],
     blurb: "Lighting & rendering.",
     link: "#",
     media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9" },
       { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
     ],
   },
-   {
+  {
     title: "Mochis",
     tags: ["Product Visualization", "Blender", "Materials"],
     blurb: "Lighting & rendering.",
     link: "#",
     media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9" },
       { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
     ],
   },
-   {
+  {
     title: "Mochis",
     tags: ["Product Visualization", "Blender", "Materials"],
     blurb: "Lighting & rendering.",
     link: "#",
     media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9" },
       { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
     ],
   },
-   {
+  {
     title: "Mochis",
     tags: ["Product Visualization", "Blender", "Materials"],
     blurb: "Lighting & rendering.",
     link: "#",
     media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9" },
       { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
     ],
   },
-   {
+  {
     title: "Mochis",
     tags: ["Product Visualization", "Blender", "Materials"],
     blurb: "Lighting & rendering.",
     link: "#",
     media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9" },
       { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
     ],
   },
-  /*{
-    title: "Realtime Turntable",
-    tags: ["MP4", "Realtime"],
-    blurb: "Direct .mp4 capture.",
-    link: "#",
-    media: [
-      {
-        type: "video",
-        src: "https://cdn.artstation.com/p/video_sources/002/776/666/0000-0119-2.mp4",
-        poster: "https://picsum.photos/seed/manualvideo/2000/1200",
-        loop: true,
-      },
-    ],
-  },*/
   {
     title: "Image Study",
     tags: ["Still"],
@@ -134,9 +123,40 @@ const projectsData = [
   },
 ];
 
-/* ---------- Lightbox ---------- */
+/* ---------- ratio utils ---------- */
+const normRatio = (r) => {
+  if (!r) return null;
+  if (typeof r === "number") return r;
+  const parts = String(r).split("/").map(s => Number(s.trim()));
+  if (parts.length === 2 && parts.every(n => Number.isFinite(n) && n > 0)) {
+    return parts[0] / parts[1];
+  }
+  return null;
+};
+const ratioString = (r) => {
+  if (!r || !Number.isFinite(r)) return "16 / 9";
+  const w = Math.round(r * 1000);
+  const h = 1000;
+  return `${w} / ${h}`;
+};
+const loadImageRatio = (src) =>
+  new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      if (img.naturalWidth && img.naturalHeight) {
+        resolve(img.naturalWidth / img.naturalHeight);
+      } else {
+        resolve(16 / 9);
+      }
+    };
+    img.onerror = () => resolve(16 / 9);
+    img.src = src;
+  });
+
+/* ---------- Lightbox (poster-aware) ---------- */
 function Lightbox({ open, onClose, project, startIndex = 0 }) {
   const [index, setIndex] = useState(startIndex);
+  const [vidError, setVidError] = useState({});
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const closeBtnRef = useRef(null);
   const lastFocusedRef = useRef(null);
@@ -166,36 +186,81 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
 
   const renderMedia = (m) => {
     if (!m) return null;
+
+    const Wrap = ({ aspect = "16 / 9", children }) => (
+      <div className="h-full w-full grid place-items-center">
+        <div className="relative h-full w-full max-h-full max-w-full" style={{ aspectRatio: aspect }}>
+          {children}
+        </div>
+      </div>
+    );
+
     if (m.type === "image") {
       return (
-        <div className="h-full w-full grid place-items-center">
-          <img src={m.src} alt={project.title} className="max-h-full max-w-full object-contain" draggable={false} />
-        </div>
+        <Wrap aspect={m.ratio || "16 / 9"}>
+          <img
+            src={m.src}
+            alt={project.title}
+            className="absolute inset-0 w-full h-full object-contain"
+            draggable={false}
+          />
+        </Wrap>
       );
     }
+
     if (m.type === "video") {
+      if (vidError[index]) {
+        return (
+          <div className="h-full w-full grid place-items-center p-6 text-center text-gray-200">
+            <p>Can’t play this video in your browser.</p>
+            <p className="mt-2">
+              <a href={m.src} target="_blank" rel="noopener noreferrer" className="underline">
+                Open in a new tab
+              </a>
+            </p>
+          </div>
+        );
+      }
+
+      // poster preference: per-video > project-level > first still
+      const poster =
+        m.poster || project.poster || project.media.find((x) => x.type === "image")?.src || undefined;
+
       return (
-        <div className="h-full w-full grid place-items-center">
-          <video src={m.src} poster={m.poster || undefined} className="max-h-full max-w-full object-contain" controls autoPlay playsInline muted />
-        </div>
+        <Wrap aspect={m.ratio || "16 / 9"}>
+          <video
+            className="absolute inset-0 w-full h-full object-contain bg-black"
+            controls
+            autoPlay
+            muted
+            playsInline
+            preload="metadata"
+            poster={poster}
+            onError={() => setVidError((e) => ({ ...e, [index]: true }))}
+          >
+            <source src={m.src} type="video/mp4" />
+          </video>
+        </Wrap>
       );
     }
+
     if (m.type === "youtube") {
       const src = ytEmbedModal(m.src, origin);
       return (
-        <div className="h-full w-full grid place-items-center">
-          <div className="max-h-full max-w-full" style={{ aspectRatio: m.ratio || "16 / 9", height: "100%" }}>
-            <iframe
-              src={src}
-              title={project.title}
-              className="w-full h-full"
-              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-              referrerPolicy="strict-origin-when-cross-origin"
-            />
-          </div>
-        </div>
+        <Wrap aspect={m.ratio || "16 / 9"}>
+          <iframe
+            src={src}
+            title={project.title}
+            className="absolute inset-0 w-full h-full"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
+            loading="eager"
+          />
+        </Wrap>
       );
     }
+
     return null;
   };
 
@@ -204,13 +269,16 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
     const base = "relative shrink-0 rounded-lg overflow-hidden border";
     const active = isActive ? "border-white" : "border-white/20 hover:border-white/40";
     const size = "h-16 w-24";
-    if (m.type === "image") return (
-      <button onClick={() => setIndex(idx)} className={`${base} ${active} ${size}`} aria-label={`Go to image ${idx + 1}`}>
-        <img src={m.src} alt="" className="h-full w-full object-cover" />
-      </button>
-    );
+
+    if (m.type === "image") {
+      return (
+        <button onClick={() => setIndex(idx)} className={`${base} ${active} ${size}`} aria-label={`Go to image ${idx + 1}`}>
+          <img src={m.src} alt="" className="h-full w-full object-cover" />
+        </button>
+      );
+    }
     if (m.type === "video") {
-      const thumb = m.poster || project.media.find(x => x.type === "image")?.src;
+      const thumb = m.poster || project.poster || project.media.find((x) => x.type === "image")?.src;
       return (
         <button onClick={() => setIndex(idx)} className={`${base} ${active} ${size}`} aria-label={`Go to video ${idx + 1}`}>
           {thumb ? <img src={thumb} alt="" className="h-full w-full object-cover" /> : <div className="h-full w-full bg-gray-800" />}
@@ -219,7 +287,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
       );
     }
     if (m.type === "youtube") {
-      const thumb = ytThumb(m.src, { prefer: "hq" }) || ytThumb(m.src, { prefer: "maxres" });
+      const thumb = ytThumb(m.src, { prefer: "maxres" }) || ytThumb(m.src, { prefer: "hq" });
       return (
         <button onClick={() => setIndex(idx)} className={`${base} ${active} ${size}`} aria-label={`Go to YouTube ${idx + 1}`}>
           {thumb ? <img src={thumb} alt="" className="h-full w-full object-cover" /> : <div className="h-full w-full bg-gray-800 grid place-items-center text-white text-xs">YT</div>}
@@ -247,7 +315,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* header */}
-        <div className="p-3 sm:p-4 flex items-center justify-between gap-3 text-gray-2 00">
+        <div className="p-3 sm:p-4 flex items-center justify-between gap-3 text-gray-200">
           <div className="text-sm sm:text-base truncate">{project.title}</div>
           <button
             ref={closeBtnRef} type="button" onClick={onClose}
@@ -300,7 +368,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
 const ContactFormCard = memo(function ContactFormCard() {
   const FORMSPREE_ENDPOINT = "https://formspree.io/f/movlrwyk";
   const [formData, setFormData] = useState({ name: "", email: "", company: "", message: "" });
-  const [formStatus, setFormStatus] = useState("idle"); // idle | sending | success | error
+  const [formStatus, setFormStatus] = useState("idle");
   const honeypotRef = useRef(null);
 
   const handleInputChange = useCallback((e) => {
@@ -490,6 +558,31 @@ export default function App() {
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
 
+  // ---------- Compute aspect ratios for all cards ----------
+  const [ratios, setRatios] = useState([]);
+  const [gridReady, setGridReady] = useState(false);
+
+  useEffect(() => {
+    let live = true;
+    (async () => {
+      const tasks = projects.map(async (p) => {
+        const m = p.media?.[0];
+        if (!m) return 16/9;
+        const direct = normRatio(m.ratio);
+        if (direct) return direct;
+        if (m.type === "youtube") return 16/9;
+        if (m.type === "video")   return 16/9;
+        if (m.type === "image" && m.src) return await loadImageRatio(m.src);
+        return 16/9;
+      });
+      const arr = await Promise.all(tasks);
+      if (!live) return;
+      setRatios(arr);
+      setGridReady(true);
+    })();
+    return () => { live = false; };
+  }, [projects]);
+
   // Fetch blog feed
   useEffect(() => {
     let alive = true;
@@ -604,51 +697,61 @@ export default function App() {
         </div>
       </section>
 
-      {/* Work (SECTION THEME) */}
+      {/* Work */}
       <section id="work" className="theme-work section-surface py-24 md:py-32 text-gray-100">
         <div className={container}>
           <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
             Portfolio Projects
           </h2>
 
-          <div className="mt-14 md:mt-16 lg:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
-            {projects.map((p, i) => {
-              const k = `${p.title}-${i}`;
-              const first = p.media[0];
-              const isYT  = first?.type === "youtube";
-              const isMP4 = first?.type === "video";
-              const isIMG = first?.type === "image";
-              const playing = (hovered === i) || (!hasInteracted && i === 0);
+          {!gridReady ? (
+            <p className="mt-14 text-center text-gray-200/80">Loading projects…</p>
+          ) : (
+            <div className="mt-14 md:mt-16 lg:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
+              {projects.map((p, i) => {
+                const k = `${p.title}-${i}`;
+                const first = p.media[0];
+                const isYT  = first?.type === "youtube";
+                const isMP4 = first?.type === "video";
+                const isIMG = first?.type === "image";
+                const playing = (hovered === i) || (!hasInteracted && i === 0);
 
-              return (
-                <div
-                  key={k}
-                  className={`${spanFor(i)}`}
-                  onMouseEnter={() => { setHovered(i); setHasInteracted(true); }}
-                  onMouseLeave={() => setHovered(null)}
-                  onTouchStart={() => { setHovered(i); setHasInteracted(true); }}
-                >
-                  <Card
-                    className="overflow-hidden rounded-3xl border-white/10 group bg-black/20 relative cursor-pointer"
-                    onClick={() => setLightbox({ open: true, project: p, index: 0 })}
+                const ratioNum = ratios[i] ?? (16/9);
+                const ratioStr = ratioString(ratioNum);
+                const ytPrefer = Math.abs(ratioNum - 16/9) < 0.05 ? "maxres" : "hq";
+
+                return (
+                  <div
+                    key={k}
+                    className={`${spanFor(i)}`}
+                    onMouseEnter={() => { setHovered(i); setHasInteracted(true); }}
+                    onMouseLeave={() => setHovered(null)}
+                    onTouchStart={() => { setHovered(i); setHasInteracted(true); }}
                   >
-                    <CardContent className="p-0 relative">
-                      <div className="relative w-full">
-                        {isMP4 && (
-                          <video
-                            ref={(el) => (videoRefs.current[i] = el)}
-                            src={first.src}
-                            poster={first.poster || undefined}
-                            className="block w-full h-auto object-cover"
-                            preload="none"
-                            muted
-                            playsInline
-                            loop={first.loop !== false}
-                          />
-                        )}
-                        {isYT && (
-                          playing ? (
-                            <div className="relative w-full" style={{ aspectRatio: first.ratio || "16 / 9" }}>
+                    <Card
+                      className="overflow-hidden rounded-3xl border-white/10 group bg-black/20 relative cursor-pointer"
+                      onClick={() => setLightbox({ open: true, project: p, index: 0 })}
+                    >
+                      <CardContent className="p-0 relative">
+                        <div className="relative w-full" style={{ aspectRatio: ratioStr }}>
+                          {/* MP4 */}
+                          {isMP4 && (
+                            <video
+                              ref={(el) => (videoRefs.current[i] = el)}
+                              src={first.src}
+                              // poster: per-video OR project-level OR first still
+                              poster={first.poster || p.poster || (p.media.find(x => x.type === "image")?.src) || undefined}
+                              className="absolute inset-0 w-full h-full object-cover"
+                              preload="none"
+                              muted
+                              playsInline
+                              loop={first.loop !== false}
+                            />
+                          )}
+
+                          {/* YouTube */}
+                          {isYT && (
+                            playing ? (
                               <iframe
                                 src={ytEmbedMuted(first.src, origin)}
                                 title={p.title}
@@ -657,54 +760,59 @@ export default function App() {
                                 loading="lazy"
                                 referrerPolicy="strict-origin-when-cross-origin"
                               />
-                            </div>
-                          ) : (
+                            ) : (
+                              <img
+                                src={ytThumb(first.src, { prefer: ytPrefer }) || ""}
+                                alt={p.title}
+                                className="absolute inset-0 w-full h-full object-cover"
+                                draggable={false}
+                              />
+                            )
+                          )}
+
+                          {/* Still image */}
+                          {isIMG && (
                             <img
-                              src={ytThumb(first.src) || ""}
+                              src={first.src}
                               alt={p.title}
-                              className="block w-full h-auto object-cover"
-                              draggable={false}
+                              className="absolute inset-0 w-full h-full object-cover"
                             />
-                          )
-                        )}
-                        {isIMG && (
-                          <img
-                            src={first.src}
-                            alt={p.title}
-                            className="block w-full h-auto object-cover"
-                          />
-                        )}
+                          )}
 
-                        <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-70"} bg-black`} />
+                          {/* veil when not playing */}
+                          <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-70"} bg-black`} />
 
-                        <div className="absolute inset-x-0 bottom-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-300">
-                          <div className="flex gap-2 mb-3 flex-wrap">
-                            {p.tags?.map((t) => (
-                              <span key={t} className="px-2 py-1 rounded-full text-xs border border-white/30 bg-black/40 backdrop-blur">{t}</span>
-                            ))}
-                          </div>
-                          <h3 className="text-2xl md:text-3xl font-semibold">{p.title}</h3>
-                          <p className="mt-2 text-sm md:text-base text-gray-300 max-w-xl">{p.blurb}</p>
-                        </div>
-
-                        {!playing && (
-                          <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
-                            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm grid place-items-center text-white">
-                              <PlayIcon className="w-9 h-9" />
+                          {/* overlay text */}
+                          <div className="absolute inset-x-0 bottom-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+                            <div className="flex gap-2 mb-3 flex-wrap">
+                              {p.tags?.map((t) => (
+                                <span key={t} className="px-2 py-1 rounded-full text-xs border border-white/30 bg-black/40 backdrop-blur">{t}</span>
+                              ))}
                             </div>
+                            <h3 className="text-2xl md:text-3xl font-semibold">{p.title}</h3>
+                            <p className="mt-2 text-sm md:text-base text-gray-300 max-w-xl">{p.blurb}</p>
                           </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              );
-            })}
-          </div>
+
+                          {/* center play cue */}
+                          {!playing && (
+                            <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
+                              <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm grid place-items-center text-white">
+                                <PlayIcon className="w-9 h-9" />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Blog (SECTION THEME) */}
+      {/* Blog */}
       <section id="blog" className="theme-blog section-surface py-24 md:py-32 border-t border-white/10 text-gray-100">
         <div className={container}>
           <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
@@ -760,7 +868,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* About (SECTION THEME) */}
+      {/* About */}
       <section id="about" className="theme-about section-surface py-24 md:py-32 border-t border-white/10 text-gray-100">
         <div className={container}>
           <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
@@ -776,21 +884,19 @@ export default function App() {
         </div>
       </section>
 
-      {/* Contact (SECTION THEME) */}
+      {/* Contact */}
       <section id="contact" className="theme-contact section-surface py-24 md:py-32 text-gray-100">
         <div className={container}>
           <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
             Contact
           </h2>
 
-          {/* Centered socials under title */}
           <div className="mt-6 flex items-center justify-center gap-6 text-sm text-gray-100/90">
             <a href="#" className="hover:opacity-80">LinkedIn</a>
             <a href="#" className="hover:opacity-80">Instagram</a>
             <a href="#" className="hover:opacity-80">X/Twitter</a>
           </div>
 
-          {/* Form */}
           <div className="mt-10 md:mt-12 lg:mt-14 grid">
             <div className="mx-auto w-full max-w-3xl">
               <ContactFormCard />
