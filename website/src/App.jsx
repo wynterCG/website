@@ -55,7 +55,7 @@ const projectsData = [
     tags: ["Product Visualization", "Blender", "Materials"],
     blurb: "Lighting & rendering.",
     link: "#",
-    poster: "/Mochis.png", // make sure this exists in /public
+    poster: "/Mochis.png",
     media: [
       { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
       { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
@@ -126,11 +126,11 @@ function MediaBadge({ media }) {
   );
 }
 
-/* ---------- Lightbox (chips show on hover; mobile toggle) ---------- */
+/* ---------- Lightbox (centered, no-crop; chips on hover desktop / toggle mobile) ---------- */
 function Lightbox({ open, onClose, project, startIndex = 0 }) {
   const [index, setIndex] = useState(startIndex);
   const [vidError, setVidError] = useState({});
-  const [showChips, setShowChips] = useState(false);         // mobile toggle
+  const [showChips, setShowChips] = useState(false); // mobile toggle
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const closeBtnRef = useRef(null);
   const lastFocusedRef = useRef(null);
@@ -158,13 +158,10 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
     };
   }, [open, media.length, onClose]);
 
-  // Media wrapper: ensures media fits without getting cropped on mobile
-  const Wrap = ({ aspect = "16 / 9", children }) => (
-    <div className="h-full w-full grid place-items-center">
-      <div
-        className="relative h-full w-full max-h-full max-w-full"
-        style={{ aspectRatio: aspect }}
-      >
+  // Wrapper: fills the available area; children are absolutely centered via object-contain.
+  const Wrap = ({ children }) => (
+    <div className="h-full w-full">
+      <div className="relative h-full w-full overflow-hidden">
         {children}
       </div>
     </div>
@@ -175,11 +172,11 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
 
     if (m.type === "image") {
       return (
-        <Wrap aspect={m.ratio || "16 / 9"}>
+        <Wrap>
           <img
             src={m.src}
             alt={project.title}
-            className="absolute inset-0 w-full h-full object-contain" // contain avoids side-cropping
+            className="absolute inset-0 w-full h-full object-contain"
             draggable={false}
           />
         </Wrap>
@@ -201,10 +198,11 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
       }
       const poster =
         m.poster || project.media.find((x) => x.type === "image")?.src || project.poster || undefined;
+
       return (
-        <Wrap aspect={m.ratio || "16 / 9"}>
+        <Wrap>
           <video
-            className="absolute inset-0 w-full h-full object-contain bg-black" // contain avoids cropping sides
+            className="absolute inset-0 w-full h-full object-contain bg-black"
             controls
             autoPlay
             muted
@@ -222,7 +220,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
     if (m.type === "youtube") {
       const src = ytEmbedModal(m.src, origin);
       return (
-        <Wrap aspect={m.ratio || "16 / 9"}>
+        <Wrap>
           <iframe
             src={src}
             title={project.title}
@@ -251,6 +249,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
           relative w-full max-w-6xl
           grid grid-rows-[auto,1fr,auto]
           max-h-[90dvh] rounded-2xl overflow-hidden shadow-2xl bg-black
+          group
         "
         onClick={(e) => e.stopPropagation()}
       >
@@ -266,12 +265,12 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
           </button>
         </div>
 
-        {/* media + hover group so chips only show on hover/focus */}
+        {/* media area */}
         <div className="relative min-h-0">
-          <div className="group h-[70dvh] sm:h-[70dvh] md:h-[72dvh] lg:h-[72dvh]">
+          <div className="h-[70dvh] sm:h-[70dvh] md:h-[72dvh] lg:h-[72dvh]">
             {renderMedia(current)}
 
-            {/* desktop chips: hidden until hover/focus (WCAG 1.4.13) */}
+            {/* desktop chips: show on hover/focus */}
             {media.length > 1 && (
               <div
                 role="tablist"
@@ -305,7 +304,9 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
                           : "bg-black/50 text-white border-white/30 hover:bg-black/70"
                       ].join(" ")}
                     >
-                      {iconForType(m.type)}
+                      {m.type === "video" && <VideoIcon className="w-3.5 h-3.5" />}
+                      {m.type === "youtube" && <YoutubeIcon className="w-3.5 h-3.5" />}
+                      {m.type === "image" && <ImageIcon className="w-3.5 h-3.5" />}
                       <span className="text-xs opacity-90">{label}</span>
                     </button>
                   );
@@ -313,16 +314,12 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
               </div>
             )}
 
-            {/* mobile: FAB that toggles a small chip bar; chips hidden by default */}
+            {/* mobile: FAB toggle for chips */}
             {media.length > 1 && (
               <>
                 <button
                   type="button"
-                  className="
-                    md:hidden absolute bottom-4 right-4 z-40
-                    rounded-full px-4 py-2 text-xs font-medium
-                    bg-white text-black shadow
-                  "
+                  className="md:hidden absolute bottom-4 right-4 z-40 rounded-full px-4 py-2 text-xs font-medium bg-white text-black shadow"
                   aria-expanded={showChips}
                   aria-controls="lb-chipbar"
                   onClick={() => setShowChips((s) => !s)}
@@ -332,12 +329,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
 
                 <div
                   id="lb-chipbar"
-                  className={`
-                    md:hidden absolute inset-x-0 bottom-0 z-30
-                    bg-gradient-to-t from-black/85 to-black/30
-                    px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]
-                    transition-transform ${showChips ? "translate-y-0" : "translate-y-full"}
-                  `}
+                  className={`md:hidden absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-black/85 to-black/30 px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-transform ${showChips ? "translate-y-0" : "translate-y-full"}`}
                 >
                   <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
                     {media.map((m, idx) => {
@@ -357,7 +349,9 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
                               : "bg-black/50 text-white border-white/30"
                           ].join(" ")}
                         >
-                          {iconForType(m.type)}
+                          {m.type === "video" && <VideoIcon className="w-3.5 h-3.5" />}
+                          {m.type === "youtube" && <YoutubeIcon className="w-3.5 h-3.5" />}
+                          {m.type === "image" && <ImageIcon className="w-3.5 h-3.5" />}
                           <span>{label}</span>
                         </button>
                       );
@@ -366,10 +360,30 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
                 </div>
               </>
             )}
+
+            {/* nav arrows (desktop) */}
+            {media.length > 1 && (
+              <>
+                <button
+                  type="button" aria-label="Previous"
+                  onClick={() => setIndex((i) => (i - 1 + media.length) % media.length)}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 hidden sm:flex items-center justify-center"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  type="button" aria-label="Next"
+                  onClick={() => setIndex((i) => (i + 1) % media.length)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 hidden sm:flex items-center justify-center"
+                >
+                  <CaretRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
           </div>
         </div>
 
-        {/* footer spacer for layout symmetry */}
+        {/* footer spacer */}
         <div className="h-3 sm:h-4" />
       </div>
     </div>
@@ -731,6 +745,7 @@ export default function App() {
                       onClick={() => setLightbox({ open: true, project: p, index: 0 })}
                     >
                       <CardContent className="p-0 relative">
+                        {/* Fixed-size media box */}
                         <div className="relative w-full" style={{ aspectRatio: ratioStr }}>
                           {/* MP4 */}
                           {isMP4 && (
@@ -776,7 +791,7 @@ export default function App() {
                             />
                           )}
 
-                          {/* badge + subtle dots if multiple items */}
+                          {/* Multiple-items marker */}
                           {p.media?.length > 1 && <MediaBadge media={p.media} />}
                           {p.media?.length > 1 && !playing && (
                             <div className="absolute bottom-3 right-3 z-30 flex gap-1.5">
