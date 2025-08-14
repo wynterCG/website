@@ -53,25 +53,96 @@ const projectsData = [
   {
     title: "Mochis",
     tags: ["Product Visualization", "Blender", "Materials"],
-    blurb: "Lighting & rendering.",
+    blurb: "Materials, lighting & rendering.",
     link: "#",
-    poster: "/Mochis.png",
+    poster: "/posters/Mochis.png",
     media: [
       { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
-      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/679/0811-1.mp4", ratio: "16 / 9"},
       { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/658/ghfjgfj.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/661/water.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/671/ergershf.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/669/0000-0119-1.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/659/0000-0119-3.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/667/gummy-2.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/670/0000-0119.mp4", ratio: "16 / 9"},
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
     ],
   },
   {
-    title: "Image Study",
-    tags: ["Still"],
-    blurb: "Lighting & materials study.",
+    title: "Lapis Lazuli - Substance Designer Material",
+    tags: ["Materials","Product Visualization","Rendering"],
+    blurb: "Materials, lighting & rendering.",
     link: "#",
     media: [
       { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/090/780/581/large/dan-inverno-render00-final.jpg?1754901377" },
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/780/444/large/dan-inverno-screenshot-2025-08-11-102910.jpg?1754901019" },
+    ],
+  },
+  {
+    title: "Phyllotaxis and Archimedean Spiral Generator - Substance Designer",
+    tags: ["Procedural", "Substance Designer", "Technical Art"],
+    blurb: "Spiral generator in Substance Designer with fxmaps",
+    link: "#",
+    poster: "posters/Phyllotaxis.png",
+    media: [
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/506/0811.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/475/0530.mp4" },
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/777/768/large/dan-inverno-screenshot-2025-04-30-120915.jpg?1754893504" },
+      { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/090/777/771/large/dan-inverno-screenshot-2025-04-30-120358.jpg?1754893531" },
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/777/774/large/dan-inverno-screenshot-2025-04-30-120559.jpg?1754893533" },
+      { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/090/777/775/large/dan-inverno-screenshot-2025-04-30-130149.jpg?1754893536" },
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/777/770/large/dan-inverno-screenshot-2025-04-29-230623.jpg?1754893529" },
+    ],
+  },
+    {
+    title: "Mix of overwatch/world of warcraft environment unreal engine",
+    tags: ["Game Art","Hand painted","UE5","Environment"],
+    blurb: "Game art environment with ue5.",
+    link: "#",
+    media: [
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/030/977/060/large/dan-wynter-highresscreenshot00002.jpg?1602204167" },
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/030/977/130/large/dan-wynter-highresscreenshot00003.jpg?1602204731" },
+      { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/030/977/373/large/dan-wynter-highresscreenshot00005.jpg?1602205532" },
+      { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/030/977/233/large/dan-wynter-highresscreenshot00004.jpg?1602205044" },
+    ],
+  },
+   {
+    title: "Yves Saint Laurent MYSLF Le Parfum",
+    tags: ["Materials","Product Visualization","Rendering"],
+    blurb: "Materials, lighting & rendering.",
+    link: "#",
+    media: [
+      { type: "image", src: "/ysl/render03_final.png" },
+      { type: "image", src: "/ysl/render00.png" },
+      { type: "image", src: "/ysl/00.png" },
+      { type: "image", src: "/ysl/01.png" },
+      { type: "image", src: "/ysl/02.png" },
+      { type: "image", src: "/ysl/03.png" },
+      { type: "image", src: "/ysl/04.png" },
+    ],
+  },
+  {
+    title: "Modern House 4k - Archviz ue5",
+    tags: ["Archviz", "UE5", "Environment"],
+    blurb: "3D Modern house based on archdaily project",
+    link: "#",
+    poster: "posters/Archviz.png",
+    media: [
+      { type: "youtube", src: "https://www.youtube.com/watch?v=B7W1erPk05c", ratio: "16 / 9" },
+    ],
+  },
+  {
+    title: "Mix of overwatch/world of warcraft environment unreal engine",
+    tags: ["Game Art","Hand painted","UE5","Environment"],
+    blurb: "Game art environment with ue5.",
+    link: "#",
+    media: [
+      { type: "image", src: "posters/Snake.png" },
     ],
   },
 ];
+
 
 /* ---------- ratio utils ---------- */
 const normRatio = (r) => {
@@ -802,7 +873,7 @@ export default function App() {
                           )}
 
                           {/* veil */}
-                          <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-70"} bg-black`} />
+                          <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-30"} bg-black`} />
 
                           {/* overlay text */}
                           <div className="absolute inset-x-0 bottom-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-300">
