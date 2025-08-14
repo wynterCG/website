@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/Button.jsx";
 import { Card, CardContent } from "@/components/ui/Card.jsx";
 import {
   Mail, Sparkles,
-  Play as PlayIcon, X as XIcon, ChevronLeft, ChevronRight as CaretRight
+  Play as PlayIcon, X as XIcon, ChevronLeft, ChevronRight as CaretRight,
+  Image as ImageIcon, Video as VideoIcon, Youtube as YoutubeIcon
 } from "lucide-react";
 
 /* ---------- helpers ---------- */
@@ -54,62 +55,11 @@ const projectsData = [
     tags: ["Product Visualization", "Blender", "Materials"],
     blurb: "Lighting & rendering.",
     link: "#",
-    // Put your poster in /public and reference it from root:
-    poster: "/Mochis.png",
+    poster: "/Mochis.png", // make sure this exists in /public
     media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
       { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/658/ghfjgfj.mp4", ratio: "16 / 9" },
-    ],
-  },
-  {
-    title: "Mochis",
-    tags: ["Product Visualization", "Blender", "Materials"],
-    blurb: "Lighting & rendering.",
-    link: "#",
-    media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9" },
-      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
-    ],
-  },
-  {
-    title: "Mochis",
-    tags: ["Product Visualization", "Blender", "Materials"],
-    blurb: "Lighting & rendering.",
-    link: "#",
-    media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9" },
-      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
-    ],
-  },
-  {
-    title: "Mochis",
-    tags: ["Product Visualization", "Blender", "Materials"],
-    blurb: "Lighting & rendering.",
-    link: "#",
-    media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9" },
-      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
-    ],
-  },
-  {
-    title: "Mochis",
-    tags: ["Product Visualization", "Blender", "Materials"],
-    blurb: "Lighting & rendering.",
-    link: "#",
-    media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9" },
-      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
-    ],
-  },
-  {
-    title: "Mochis",
-    tags: ["Product Visualization", "Blender", "Materials"],
-    blurb: "Lighting & rendering.",
-    link: "#",
-    media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9" },
-      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/658/ghfjgfj.mp4", ratio: "16 / 9"},
     ],
   },
   {
@@ -142,21 +92,45 @@ const ratioString = (r) => {
 const loadImageRatio = (src) =>
   new Promise((resolve) => {
     const img = new Image();
-    img.onload = () => {
-      if (img.naturalWidth && img.naturalHeight) {
-        resolve(img.naturalWidth / img.naturalHeight);
-      } else {
-        resolve(16 / 9);
-      }
-    };
-    img.onerror = () => resolve(16 / 9);
+    img.onload = () => resolve(img.naturalWidth && img.naturalHeight ? img.naturalWidth / img.naturalHeight : 16/9);
+    img.onerror = () => resolve(16/9);
     img.src = src;
   });
 
-/* ---------- Lightbox (poster-aware) ---------- */
+/* ---------- media badges & helpers ---------- */
+const mediaCounts = (media = []) =>
+  media.reduce((a, m) => {
+    const t = m?.type || "other";
+    a[t] = (a[t] || 0) + 1;
+    a.total = (a.total || 0) + 1;
+    return a;
+  }, { total: 0 });
+
+const iconForType = (t) => (
+  t === "video"   ? <VideoIcon className="w-3.5 h-3.5" /> :
+  t === "youtube" ? <YoutubeIcon className="w-3.5 h-3.5" /> :
+  t === "image"   ? <ImageIcon className="w-3.5 h-3.5" /> : null
+);
+
+function MediaBadge({ media }) {
+  const c = mediaCounts(media);
+  return (
+    <div className="absolute top-3 right-3 z-30 rounded-full border border-white/20 bg-black/60 backdrop-blur px-3 py-1 text-[11px] text-white/95 flex items-center gap-2">
+      <span className="font-semibold">{c.total}</span>
+      <span className="opacity-80">items</span>
+      <span className="h-3.5 w-px bg-white/25 mx-1" />
+      {c.video ?   <span className="flex items-center gap-1 opacity-95">{iconForType("video")}{c.video}</span> : null}
+      {c.youtube ? <span className="flex items-center gap-1 opacity-95">{iconForType("youtube")}{c.youtube}</span> : null}
+      {c.image ?   <span className="flex items-center gap-1 opacity-95">{iconForType("image")}{c.image}</span> : null}
+    </div>
+  );
+}
+
+/* ---------- Lightbox (chips show on hover; mobile toggle) ---------- */
 function Lightbox({ open, onClose, project, startIndex = 0 }) {
   const [index, setIndex] = useState(startIndex);
   const [vidError, setVidError] = useState({});
+  const [showChips, setShowChips] = useState(false);         // mobile toggle
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const closeBtnRef = useRef(null);
   const lastFocusedRef = useRef(null);
@@ -184,16 +158,20 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
     };
   }, [open, media.length, onClose]);
 
+  // Media wrapper: ensures media fits without getting cropped on mobile
+  const Wrap = ({ aspect = "16 / 9", children }) => (
+    <div className="h-full w-full grid place-items-center">
+      <div
+        className="relative h-full w-full max-h-full max-w-full"
+        style={{ aspectRatio: aspect }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+
   const renderMedia = (m) => {
     if (!m) return null;
-
-    const Wrap = ({ aspect = "16 / 9", children }) => (
-      <div className="h-full w-full grid place-items-center">
-        <div className="relative h-full w-full max-h-full max-w-full" style={{ aspectRatio: aspect }}>
-          {children}
-        </div>
-      </div>
-    );
 
     if (m.type === "image") {
       return (
@@ -201,7 +179,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
           <img
             src={m.src}
             alt={project.title}
-            className="absolute inset-0 w-full h-full object-contain"
+            className="absolute inset-0 w-full h-full object-contain" // contain avoids side-cropping
             draggable={false}
           />
         </Wrap>
@@ -221,15 +199,12 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
           </div>
         );
       }
-
-      // poster preference: per-video > project-level > first still
       const poster =
-        m.poster || project.poster || project.media.find((x) => x.type === "image")?.src || undefined;
-
+        m.poster || project.media.find((x) => x.type === "image")?.src || project.poster || undefined;
       return (
         <Wrap aspect={m.ratio || "16 / 9"}>
           <video
-            className="absolute inset-0 w-full h-full object-contain bg-black"
+            className="absolute inset-0 w-full h-full object-contain bg-black" // contain avoids cropping sides
             controls
             autoPlay
             muted
@@ -258,41 +233,6 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
             loading="eager"
           />
         </Wrap>
-      );
-    }
-
-    return null;
-  };
-
-  const Thumb = ({ m, idx }) => {
-    const isActive = idx === index;
-    const base = "relative shrink-0 rounded-lg overflow-hidden border";
-    const active = isActive ? "border-white" : "border-white/20 hover:border-white/40";
-    const size = "h-16 w-24";
-
-    if (m.type === "image") {
-      return (
-        <button onClick={() => setIndex(idx)} className={`${base} ${active} ${size}`} aria-label={`Go to image ${idx + 1}`}>
-          <img src={m.src} alt="" className="h-full w-full object-cover" />
-        </button>
-      );
-    }
-    if (m.type === "video") {
-      const thumb = m.poster || project.poster || project.media.find((x) => x.type === "image")?.src;
-      return (
-        <button onClick={() => setIndex(idx)} className={`${base} ${active} ${size}`} aria-label={`Go to video ${idx + 1}`}>
-          {thumb ? <img src={thumb} alt="" className="h-full w-full object-cover" /> : <div className="h-full w-full bg-gray-800" />}
-          <span className="absolute inset-0 grid place-items-center bg-black/30 text-white text-xs">▶︎</span>
-        </button>
-      );
-    }
-    if (m.type === "youtube") {
-      const thumb = ytThumb(m.src, { prefer: "maxres" }) || ytThumb(m.src, { prefer: "hq" });
-      return (
-        <button onClick={() => setIndex(idx)} className={`${base} ${active} ${size}`} aria-label={`Go to YouTube ${idx + 1}`}>
-          {thumb ? <img src={thumb} alt="" className="h-full w-full object-cover" /> : <div className="h-full w-full bg-gray-800 grid place-items-center text-white text-xs">YT</div>}
-          <span className="absolute inset-0 grid place-items-center bg-black/30 text-white text-xs">▶︎</span>
-        </button>
       );
     }
     return null;
@@ -326,45 +266,117 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
           </button>
         </div>
 
-        {/* media */}
+        {/* media + hover group so chips only show on hover/focus */}
         <div className="relative min-h-0">
-          <div className="h-[60dvh] sm:h-[64dvh] md:h-[66dvh] lg:h-[68dvh] xl:h-[70dvh]">
+          <div className="group h-[70dvh] sm:h-[70dvh] md:h-[72dvh] lg:h-[72dvh]">
             {renderMedia(current)}
+
+            {/* desktop chips: hidden until hover/focus (WCAG 1.4.13) */}
+            {media.length > 1 && (
+              <div
+                role="tablist"
+                aria-label="Media items"
+                className="
+                  pointer-events-auto
+                  absolute inset-x-0 bottom-0 hidden md:flex
+                  items-center justify-center gap-6 px-4 py-3
+                  bg-gradient-to-t from-black/70 to-transparent
+                  opacity-0 focus-within:opacity-100 group-hover:opacity-100 transition-opacity
+                "
+              >
+                {media.map((m, idx) => {
+                  const active = idx === index;
+                  const label =
+                    m.type === "video"   ? `Video ${idx+1}` :
+                    m.type === "youtube" ? `YouTube ${idx+1}` :
+                    m.type === "image"   ? `Image ${idx+1}` : `Item ${idx+1}`;
+                  return (
+                    <button
+                      key={idx}
+                      role="tab"
+                      aria-selected={active}
+                      aria-current={active ? "true" : undefined}
+                      aria-label={label}
+                      onClick={() => setIndex(idx)}
+                      className={[
+                        "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm",
+                        active
+                          ? "bg-white text-black border-white"
+                          : "bg-black/50 text-white border-white/30 hover:bg-black/70"
+                      ].join(" ")}
+                    >
+                      {iconForType(m.type)}
+                      <span className="text-xs opacity-90">{label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* mobile: FAB that toggles a small chip bar; chips hidden by default */}
             {media.length > 1 && (
               <>
                 <button
-                  type="button" aria-label="Previous"
-                  onClick={() => setIndex((i) => (i - 1 + media.length) % media.length)}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-10 h-10 flex items-center justify-center"
+                  type="button"
+                  className="
+                    md:hidden absolute bottom-4 right-4 z-40
+                    rounded-full px-4 py-2 text-xs font-medium
+                    bg-white text-black shadow
+                  "
+                  aria-expanded={showChips}
+                  aria-controls="lb-chipbar"
+                  onClick={() => setShowChips((s) => !s)}
                 >
-                  <ChevronLeft className="w-6 h-6" />
+                  Media ({media.length})
                 </button>
-                <button
-                  type="button" aria-label="Next"
-                  onClick={() => setIndex((i) => (i + 1) % media.length)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full w-10 h-10 flex items-center justify-center"
+
+                <div
+                  id="lb-chipbar"
+                  className={`
+                    md:hidden absolute inset-x-0 bottom-0 z-30
+                    bg-gradient-to-t from-black/85 to-black/30
+                    px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]
+                    transition-transform ${showChips ? "translate-y-0" : "translate-y-full"}
+                  `}
                 >
-                  <CaretRight className="w-6 h-6" />
-                </button>
+                  <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
+                    {media.map((m, idx) => {
+                      const active = idx === index;
+                      const label =
+                        m.type === "video"   ? `Video ${idx+1}` :
+                        m.type === "youtube" ? `YouTube ${idx+1}` :
+                        m.type === "image"   ? `Image ${idx+1}` : `Item ${idx+1}`;
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => { setIndex(idx); setShowChips(false); }}
+                          className={[
+                            "whitespace-nowrap inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs",
+                            active
+                              ? "bg-white text-black border-white"
+                              : "bg-black/50 text-white border-white/30"
+                          ].join(" ")}
+                        >
+                          {iconForType(m.type)}
+                          <span>{label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
               </>
             )}
           </div>
         </div>
 
-        {/* thumbnails */}
-        {media.length > 1 && (
-          <div className="px-3 sm:px-4 pb-4">
-            <div className="flex gap-2 overflow-x-auto no-scrollbar">
-              {media.map((m, idx) => <Thumb key={idx} m={m} idx={idx} />)}
-            </div>
-          </div>
-        )}
+        {/* footer spacer for layout symmetry */}
+        <div className="h-3 sm:h-4" />
       </div>
     </div>
   );
 }
 
-/* ---------- Contact Form (isolated to prevent re-mounts; focus-safe) ---------- */
+/* ---------- Contact Form (isolated; focus-safe) ---------- */
 const ContactFormCard = memo(function ContactFormCard() {
   const FORMSPREE_ENDPOINT = "https://formspree.io/f/movlrwyk";
   const [formData, setFormData] = useState({ name: "", email: "", company: "", message: "" });
@@ -422,17 +434,8 @@ const ContactFormCard = memo(function ContactFormCard() {
     >
       <CardContent className="p-6 sm:p-8 lg:p-10">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6" noValidate>
-          {/* Honeypot (hidden) */}
-          <input
-            ref={honeypotRef}
-            name="_gotcha"
-            className="hidden"
-            tabIndex={-1}
-            autoComplete="off"
-            aria-hidden="true"
-          />
+          <input ref={honeypotRef} name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
-          {/* Row: Name + Email */}
           <div className="grid sm:grid-cols-2 gap-6">
             <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
               <label htmlFor="cf-name" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-white px-4 pt-3">
@@ -468,7 +471,6 @@ const ContactFormCard = memo(function ContactFormCard() {
             </div>
           </div>
 
-          {/* Company */}
           <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
             <label htmlFor="cf-company" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-white px-4 pt-3">
               Company (optional)
@@ -484,7 +486,6 @@ const ContactFormCard = memo(function ContactFormCard() {
             </div>
           </div>
 
-          {/* Project brief */}
           <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
             <label htmlFor="cf-message" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-white px-4 pt-3">
               Project brief
@@ -502,7 +503,6 @@ const ContactFormCard = memo(function ContactFormCard() {
             </div>
           </div>
 
-          {/* Footer */}
           <div className="mt-2 flex items-center justify-between">
             <p className="text-xs text-white" aria-live="polite">
               {formStatus === "success" && "Thanks! I’ll get back to you soon."}
@@ -534,10 +534,8 @@ export default function App() {
   const [lightbox, setLightbox] = useState({ open: false, project: null, index: 0 });
   const marquee = useMemo(() => ["3ds Max","Maya","Blender","Substance","Unreal Engine","Unity","ZBrush","Clo3D"], []);
 
-  // Blog (latest 3)
   const [blog, setBlog] = useState({ items: [], status: "idle" });
 
-  // Hover preview
   const [hovered, setHovered] = useState(null);
   const [hasInteracted, setHasInteracted] = useState(false);
   const videoRefs = useRef({});
@@ -558,7 +556,7 @@ export default function App() {
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
 
-  // ---------- Compute aspect ratios for all cards ----------
+  // aspect ratios so cards are stable
   const [ratios, setRatios] = useState([]);
   const [gridReady, setGridReady] = useState(false);
 
@@ -583,7 +581,7 @@ export default function App() {
     return () => { live = false; };
   }, [projects]);
 
-  // Fetch blog feed
+  // blog feed
   useEffect(() => {
     let alive = true;
     (async () => {
@@ -739,7 +737,6 @@ export default function App() {
                             <video
                               ref={(el) => (videoRefs.current[i] = el)}
                               src={first.src}
-                              // poster: per-video OR project-level OR first still
                               poster={first.poster || p.poster || (p.media.find(x => x.type === "image")?.src) || undefined}
                               className="absolute inset-0 w-full h-full object-cover"
                               preload="none"
@@ -779,7 +776,17 @@ export default function App() {
                             />
                           )}
 
-                          {/* veil when not playing */}
+                          {/* badge + subtle dots if multiple items */}
+                          {p.media?.length > 1 && <MediaBadge media={p.media} />}
+                          {p.media?.length > 1 && !playing && (
+                            <div className="absolute bottom-3 right-3 z-30 flex gap-1.5">
+                              {p.media.slice(0,3).map((_,idx)=>(
+                                <span key={idx} className="h-1.5 w-1.5 rounded-full bg-white/70"></span>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* veil */}
                           <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-70"} bg-black`} />
 
                           {/* overlay text */}
