@@ -10,11 +10,11 @@
   ],
   "items": [
     {
-      "id": "https://daninverno.com/blog/hard-surface-toolkit/",
-      "url": "https://daninverno.com/blog/hard-surface-toolkit.html",
-      "title": "Building a fast hard-surface toolkit in Blender",
-      "summary": "Notes on bevel strategies, booleans that don’t bite, and a trim-sheet setup for clean silhouettes.",
-      "image": "https://daninverno.com/blog/hard-surface-toolkit/cover.jpg",
+      "id": "https://daninverno.com/blog/catIddleGamePrototype.html",
+      "url": "/blog/catIddleGamePrototype.html",
+      "title": "Iddle Cat Dev Game",
+      "summary": "Implementing Battle system",
+      "image": "cat_game/thumbnail.png",
       "date_published": "2025-08-05T10:00:00Z",
       "tags": ["Blender", "Workflow"]
     },
