@@ -938,7 +938,7 @@ export default function App() {
       </section>
 
       {/* Blog */}
-      <section id="blog" className="theme-blog section-surface py-24 md:py-32 border-t border-white/10 text-gray-100">
+      <section id="blog" className="theme-blog section-surface py-24 md:py-32 border-t border-white/100 text-gray-100">
         <div className={container}>
           <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
             Latest from the Dev Blog
@@ -994,7 +994,7 @@ export default function App() {
       </section>
 
       {/* About */}
-      <section id="about" className="theme-about section-surface py-24 md:py-32 border-t border-white/10 text-gray-100">
+      <section id="about" className="theme-about section-surface py-24 md:py-32 border-t border-white/100 text-gray-100">
         <div className={container}>
           <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
             About
@@ -1010,13 +1010,13 @@ export default function App() {
       </section>
 
       {/* Contact */}
-      <section id="contact" className="theme-contact section-surface py-24 md:py-32 text-gray-100">
+      <section id="contact" className="theme-contact section-surface py-24 md:py-32 border-t border-white/100 text-gray-100">
         <div className={container}>
           <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
             Contact
           </h2>
 
-          <div className="mt-6 flex items-center justify-center gap-6 text-sm text-gray-100/90">
+          <div className="mt-6 flex items-center justify-center gap-6 text-sm text-gray-100">
             <a href="#" className="hover:opacity-80">LinkedIn</a>
             <a href="#" className="hover:opacity-80">Instagram</a>
             <a href="#" className="hover:opacity-80">X/Twitter</a>
@@ -1031,7 +1031,7 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="py-10 border-t border-gray-700">
+      <footer className="py-10 border-t border-white/100 border-gray-700">
         <div className={`${container} flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400`}>
           <p>© {new Date().getFullYear()} Daniel Inverno. All rights reserved.</p>
           <nav className="flex items-center gap-6">

@@ -96,54 +96,70 @@
   </header>
 
   <main class="container">
-    <h1>Building a fast hard-surface toolkit in Blender</h1>
+    <h1>Implementing Battle system</h1>
     <div class="meta">Aug 5, 2025 • 6–8 min read</div>
 
     <!-- Cover image (swap to your actual asset path) -->
-    <img class="hero" src="https://daninverno.com/blog/assets/hard-surface-toolkit/cover.jpg" alt="Hard-surface toolkit cover image" />
+    <img class="hero" src="cat_game/thumbnail.png" alt="Hard-surface toolkit cover image" />
 
     <!-- Tags (optional) -->
     <div class="tags">
-      <span class="tag">Blender</span>
+      <span class="tag">UE5</span>
       <span class="tag">Workflow</span>
-      <span class="tag">Hard-surface</span>
+      <span class="tag">Game Dev</span>
     </div>
 
     <article>
-      <p>
-        This is a concise breakdown of how I block out, boolean, bevel, and trim-sheet hard-surface assets so they’re fast to iterate and clean to ship.
-        The goal is predictable shading, tidy silhouettes, and materials that read instantly in real-time.
-      </p>
+  <p>
+    This is a concise snapshot of the current battle prototype: what already works, what’s still pending,
+    and the next small wins to land. It’s written for my dev blog in a quick-read format.
+  </p>
 
-      <h2>1) Boolean without the bite</h2>
-      <p>
-        I treat cutters as first-class objects with clear naming and keep their normals consistent. When possible, I avoid co-planar overlaps and add
-        tiny offsets to stop z-fighting. Non-destructive stacks let me revert quickly.
-      </p>
+  <h2>1) What’s already working</h2>
+  <p>
+    The combat slice boots from the main UI and runs a simple turn loop for testing. A lightweight battle log
+    shows the sequence so I can trace each step without extra UI.
+  </p>
+  <ul>
+    <li><strong>Fight entry from the main UI:</strong> pressing the button cleanly kicks off a battle sequence.</li>
+    <li><strong>Automatic opening action:</strong> the first player strike triggers on turn start to validate flow, then it hands off to the opponent and back.</li>
+    <li><strong>Battle log feedback:</strong> on-screen messages reflect key moments (entering, spawns-to-come, turns, hits) for fast debugging.</li>
+    <li><strong>Live scene preview:</strong> the arena’s scene-capture feed is already visible in the UI and updates reliably.</li>
+  </ul>
 
-      <h2>2) Bevel strategy</h2>
-      <p>
-        Use <em>one</em> bevel modifier for hero edges and another for micro-chamfers. I prefer weight/vertex-group control so I don’t chase topology if the
-        target texel density changes later.
-      </p>
+  <h2>2) Not implemented yet</h2>
+  <p>
+    These systems are planned but not in the prototype so far.
+  </p>
+  <ul>
+    <li><strong>Arena population & cleanup:</strong> spawning the cat and enemy into the studio on fight start, then despawning them at the end.</li>
+    <li><strong>3D health bars:</strong> overhead bars anchored to the models and facing the capture camera.</li>
+    <li><strong>Player inputs beyond “Fight”:</strong> attack/flee buttons in the main UI with proper enable/disable by turn.</li>
+    <li><strong>Combat rules:</strong> proper hit/miss, dodge, crits, mitigation, and damage values driven by character stats.</li>
+    <li><strong>Stat snapshot at battle start:</strong> freezing the cat’s values so mid-fight changes don’t affect the round.</li>
+    <li><strong>Luck (“Paw of Fate”):</strong> flee checks, limited rerolls, and a short pre-fight dice effect.</li>
+    <li><strong>Outcome flow:</strong> victory/defeat handling, rewards, return to idle, and automatic arena reset.</li>
+    <li><strong>Enemy variety:</strong> pulling different opponents from data and showing the right visuals.</li>
+    <li><strong>Feedback polish:</strong> basic animation/VFX/sound cues for hits, crits, spawns, and defeats.</li>
+    <li><strong>Inventory & equipment visuals:</strong> showing items and reflecting them on the 3D preview.</li>
+    <li><strong>Battle log polish:</strong> autoscroll, color accents, and trimming long histories.</li>
+    <li><strong>State hardening:</strong> centralized transitions and safe timers to avoid duplicate triggers.</li>
+  </ul>
 
-      <pre><code># Example: keep a tiny bevel for micro-reads
-Width: 0.002 m
-Segments: 2
-Limit method: Weight
-</code></pre>
+  <h2>3) Next small wins</h2>
+  <p>
+    The fastest improvements that will make the slice feel complete while keeping scope tight.
+  </p>
+  <ul>
+    <li><strong>Spawn & despawn pass:</strong> populate the arena on fight start, clear it on end, and force a capture update.</li>
+    <li><strong>Overhead health bars:</strong> simple world-space widgets that update on damage and always face the capture.</li>
+    <li><strong>Baseline combat checks:</strong> add simple hit/miss and damage reduction to replace placeholder damage.</li>
+  </ul>
 
-      <h2>3) Trim-sheet first</h2>
-      <p>
-        When I know an asset family will share materials, I set up a trim-sheet up front. It keeps UVs predictable and speeds up lookdev.
-      </p>
-
-      <h2>4) Readability checks</h2>
-      <p>
-        I constantly flip between studio and in-engine test lighting. If it doesn’t read at thumbnail size, I simplify.
-      </p>
-
-      <p class="muted">Want the .blend notes or the trim-sheet template? Ping me via the contact form.</p>
+  <p class="muted">
+    Notes: UI layout target is battle log in the top-right and inventory in the bottom-right; those panels will come online after
+    the arena population and health bars are in.
+  </p>
 
       <a class="btn" href="/blog/">← All posts</a>
     </article>
