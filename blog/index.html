@@ -5,81 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dev Blog — Daniel Inverno</title>
   <meta name="description" content="Latest posts from the Daniel Inverno dev blog." />
-  <!-- Feed discovery for readers -->
   <link rel="alternate" type="application/feed+json" href="/blog/feed.json" />
   <style>
-    /* ---- minimal, self-contained styling ---- */
-    :root {
-      --bg1: #000;
-      --bg2: #111827; /* gray-900 */
-      --bg3: #1f2937; /* gray-800 */
-      --text: #e5e7eb; /* gray-200 */
-      --muted: #9ca3af; /* gray-400 */
-      --card: #0b0f16;
-      --border: rgba(255,255,255,.12);
-      --accent: #fff;
-      --maxw: 72rem;
+    :root{
+      --bg1:#000;--bg2:#111827;--bg3:#1f2937;
+      --text:#e5e7eb;--muted:#9ca3af;--card:#0b0f16;--border:rgba(255,255,255,.12);--accent:#fff;--maxw:72rem
     }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0;
-      color: var(--text);
-      background: linear-gradient(to bottom, var(--bg1), var(--bg2), var(--bg3));
-      font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;color:var(--text);
+      background:linear-gradient(to bottom,var(--bg1),var(--bg2),var(--bg3));
+      font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale
     }
-    a { color: inherit; text-decoration: none; }
-    .container { max-width: var(--maxw); padding: 0 1rem; margin: 0 auto; }
-    header {
-      position: sticky; top: 0; z-index: 50;
-      backdrop-filter: saturate(120%) blur(6px);
-      background: rgba(0,0,0,.55);
-      border-bottom: 1px solid rgba(255,255,255,.18);
-    }
-    .nav { height: 64px; display: flex; align-items: center; justify-content: space-between; }
-    .nav a { font-weight: 600; }
-    .links { display: none; gap: 1.25rem; font-size: .9rem; color: #cbd5e1; } /* md+ only */
-    @media (min-width: 768px) { .links { display: flex; } }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);padding:0 1rem;margin:0 auto}
+    header{position:sticky;top:0;z-index:50;backdrop-filter:saturate(120%) blur(6px);background:rgba(0,0,0,.55);border-bottom:1px solid rgba(255,255,255,.18)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav a{font-weight:600}
+    .links{display:none;gap:1.25rem;font-size:.9rem;color:#cbd5e1}
+    @media (min-width:768px){.links{display:flex}}
 
-    main { padding: 3rem 0 4rem; }
-    h1 { font-size: clamp(2rem, 4vw, 3rem); line-height: 1.1; text-align: center; margin: 0; }
-    .subtle { color: var(--muted); text-align: center; margin-top: .75rem; }
+    main{padding:3rem 0 4rem}
+    h1{font-size:clamp(2rem,4vw,3rem);line-height:1.1;text-align:center;margin:0}
+    .subtle{color:var(--muted);text-align:center;margin-top:.75rem}
 
-    .grid {
-      display: grid; gap: 1rem; margin-top: 2rem;
-      grid-template-columns: 1fr;
-    }
-    @media (min-width: 768px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (min-width: 1024px) { .grid { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; } }
+    .grid{display:grid;gap:1rem;margin-top:2rem;grid-template-columns:1fr}
+    @media (min-width:768px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media (min-width:1024px){.grid{grid-template-columns:repeat(3,1fr);gap:1.25rem}}
 
-    .card {
-      overflow: hidden; border-radius: 22px;
-      background: #0c111b; border: 1px solid var(--border);
-      box-shadow: 0 10px 40px -15px rgba(0,0,0,.7);
-      display: flex; flex-direction: column;
-      min-height: 100%;
-      transition: transform .2s ease, border-color .2s ease;
-    }
-    .card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,.28); }
-    .thumb { width: 100%; height: 12rem; object-fit: cover; display: block; }
-    .thumb.fallback { background: linear-gradient(135deg, #111827, #0b0f16); }
-    .card-body { padding: 1.25rem; display: flex; flex-direction: column; gap: .5rem; flex: 1; }
-    .date { color: var(--muted); font-size: .8rem; }
-    .title { font-weight: 700; font-size: 1.15rem; line-height: 1.3; }
-    .summary { color: #cbd5e1; font-size: .95rem; margin-top: .25rem; }
-    .tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: .25rem; }
-    .tag { border: 1px solid rgba(255,255,255,.2); border-radius: 999px; padding: .15rem .5rem; font-size: .7rem; color: #d1d5db; }
-    .actions { margin-top: .5rem; }
-    .btn {
-      display: inline-block; padding: .5rem .75rem; border-radius: 999px;
-      background: #fff; color: #000; font-weight: 600; font-size: .9rem;
-    }
-    .btn.ghost { background: transparent; color: #e5e7eb; }
-    .center { text-align: center; margin-top: 2rem; }
-    footer { border-top: 1px solid rgba(255,255,255,.18); padding: 2rem 0; color: #9ca3af; }
-    .sr-only { position: absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .card{overflow:hidden;border-radius:22px;background:#0c111b;border:1px solid var(--border);box-shadow:0 10px 40px -15px rgba(0,0,0,.7);display:flex;flex-direction:column;min-height:100%;transition:transform .2s ease,border-color .2s ease}
+    .card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.28)}
+    .thumb{width:100%;height:12rem;object-fit:cover;display:block}
+    .thumb.fallback{background:linear-gradient(135deg,#111827,#0b0f16)}
+    .card-body{padding:1.25rem;display:flex;flex-direction:column;gap:.5rem;flex:1}
+    .date{color:var(--muted);font-size:.8rem}
+    .title{font-weight:700;font-size:1.15rem;line-height:1.3}
+    .summary{color:#cbd5e1;font-size:.95rem;margin-top:.25rem}
+    .tags{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.25rem}
+    .tag{border:1px solid rgba(255,255,255,.2);border-radius:999px;padding:.15rem .5rem;font-size:.7rem;color:#d1d5db}
+    .actions{margin-top:.5rem}
+    .btn{display:inline-block;padding:.5rem .75rem;border-radius:999px;background:#fff;color:#000;font-weight:600;font-size:.9rem}
+    .btn.ghost{background:transparent;color:#e5e7eb;border:1px solid rgba(255,255,255,.2)}
+    .center{text-align:center;margin-top:2rem}
+    footer{border-top:1px solid rgba(255,255,255,.18);padding:2rem 0;color:#9ca3af}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+    /* infinite scroll helpers */
+    #sentinel{height:1px}
+    #status{min-height:2rem;color:#cbd5e1}
+    .loading-dots:after{content:"…";animation:ellipses 1.4s infinite}
+    @keyframes ellipses{0%{content:""}33%{content:"."}66%{content:".."}100%{content:"..."}}
   </style>
 </head>
 <body>
@@ -99,10 +76,14 @@
     <h1>Dev Blog</h1>
     <p class="subtle">Latest posts, pulled from <code>/blog/feed.json</code>.</p>
 
-    <div id="status" class="center" role="status" aria-live="polite"></div>
     <div id="grid" class="grid" aria-live="polite"></div>
 
-    <div class="center">
+    <!-- status + sentinel for infinite scroll -->
+    <div id="status" class="center" role="status" aria-live="polite"></div>
+    <div id="sentinel" aria-hidden="true"></div>
+
+    <div class="center" style="display:flex; gap:.75rem; justify-content:center">
+      <button id="loadMore" class="btn" style="display:none">Load more</button>
       <a class="btn ghost" href="/">← Back to home</a>
     </div>
   </main>
@@ -115,15 +96,25 @@
 
   <script>
     (function () {
-      const statusEl = document.getElementById("status");
-      const gridEl = document.getElementById("grid");
-      document.getElementById("year").textContent = new Date().getFullYear();
+      const YEAR = document.getElementById("year");
+      YEAR.textContent = new Date().getFullYear();
+
+      const gridEl    = document.getElementById("grid");
+      const statusEl  = document.getElementById("status");
+      const sentinel  = document.getElementById("sentinel");
+      const loadMore  = document.getElementById("loadMore");
+
+      const PAGE_SIZE = 9; // how many cards per batch
+      let allItems = [];
+      let nextIndex = 0;
+      let isLoading = false;
+      let isDone = false;
+      let io = null;
 
       const fmtDate = (iso) => {
         if (!iso) return "";
         const d = new Date(iso);
-        if (isNaN(d)) return "";
-        return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "2-digit" });
+        return isNaN(d) ? "" : d.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"2-digit" });
       };
 
       const createCard = (item) => {
@@ -192,35 +183,71 @@
         return a;
       };
 
+      function appendNextBatch() {
+        if (isLoading || isDone) return;
+        isLoading = true;
+        statusEl.textContent = "Loading";
+        statusEl.classList.add("loading-dots");
+
+        const slice = allItems.slice(nextIndex, nextIndex + PAGE_SIZE);
+        slice.forEach((it) => gridEl.appendChild(createCard(it)));
+        nextIndex += slice.length;
+
+        isLoading = false;
+        statusEl.classList.remove("loading-dots");
+
+        if (nextIndex >= allItems.length) {
+          isDone = true;
+          statusEl.textContent = "You’ve reached the end.";
+          if (io) io.disconnect();
+        } else {
+          statusEl.textContent = "";
+        }
+      }
+
       async function loadFeed() {
         try {
-          statusEl.textContent = "Loading…";
-          const res = await fetch("/blog/feed.json", {
+          statusEl.textContent = "Loading";
+          statusEl.classList.add("loading-dots");
+
+          const res = await fetch("/blog/feed.json?t=" + Date.now(), {
             headers: { "Accept": "application/feed+json, application/json" },
-            cache: "no-cache"
+            cache: "no-store"
           });
           if (!res.ok) throw new Error("HTTP " + res.status);
           const feed = await res.json();
 
-          const items = (feed.items || [])
-            .slice()
-            .sort((a, b) => {
-              const da = new Date(a.date_published || a.date_modified || 0).getTime();
-              const db = new Date(b.date_published || b.date_modified || 0).getTime();
-              return db - da;
-            });
+          allItems = (feed.items || []).slice().sort((a, b) =>
+            new Date(b.date_published || b.date_modified || 0) - new Date(a.date_published || a.date_modified || 0)
+          );
 
           gridEl.innerHTML = "";
-          if (!items.length) {
-            statusEl.textContent = "No posts yet.";
-            return;
+          nextIndex = 0;
+          isDone = false;
+
+          appendNextBatch(); // first page
+
+          // IntersectionObserver for infinite scroll
+          if ("IntersectionObserver" in window) {
+            io = new IntersectionObserver(
+              (entries) => {
+                if (entries.some((e) => e.isIntersecting)) appendNextBatch();
+              },
+              { root: null, rootMargin: "1200px 0px 1200px 0px", threshold: 0 }
+            );
+            io.observe(sentinel);
+          } else {
+            // Fallback: show a manual Load more button
+            loadMore.style.display = "inline-block";
+            loadMore.addEventListener("click", appendNextBatch);
           }
-          statusEl.textContent = "";
-          items.forEach((it) => gridEl.appendChild(createCard(it)));
+
+          statusEl.classList.remove("loading-dots");
+          if (!allItems.length) statusEl.textContent = "No posts yet.";
         } catch (err) {
           console.error(err);
-          statusEl.innerHTML =
-            'Couldn’t load the feed. Ensure <code>/blog/feed.json</code> exists and is valid JSON Feed.';
+          statusEl.classList.remove("loading-dots");
+          statusEl.innerHTML = 'Couldn’t load the feed. Ensure <code>/blog/feed.json</code> exists and is valid.';
         }
       }
 
