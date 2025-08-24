@@ -17,24 +17,6 @@
       "image": "cat_game/thumbnail.png",
       "date_published": "2025-08-05T10:00:00Z",
       "tags": ["Blender", "Workflow"]
-    },
-    {
-      "id": "https://daninverno.com/blog/volumetric-logic-dev-diary/",
-      "url": "https://daninverno.com/blog/volumetric-logic-dev-diary/",
-      "title": "From puzzle grid to volumetric logic: a dev diary",
-      "summary": "Translating Akari-style constraints into 3D while keeping the puzzle readable and fun.",
-      "image": "https://daninverno.com/blog/volumetric-logic-dev-diary/cover.jpg",
-      "date_published": "2025-07-22T10:00:00Z",
-      "tags": ["GameDev", "Design", "Unreal Engine"]
-    },
-    {
-      "id": "https://daninverno.com/blog/clo3d-unreal-lookdev/",
-      "url": "https://daninverno.com/blog/clo3d-unreal-lookdev/",
-      "title": "Clo3D → Unreal: realtime cloth lookdev",
-      "summary": "Export tips, material tweaks, and a quick lighting rig for convincing cloth in-engine.",
-      "image": "https://daninverno.com/blog/clo3d-unreal-lookdev/cover.jpg",
-      "date_published": "2025-07-01T10:00:00Z",
-      "tags": ["Clo3D", "Unreal Engine"]
     }
   ]
 }
