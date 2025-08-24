@@ -43,7 +43,7 @@ const projectsData = [
   {
     title: "Can Game - Prototype",
     tags: ["Indie Dev", "UE5", "Game Art"],
-    blurb: "Process, blockout",
+    blurb: "Process, blockout.",
     link: "https://www.artstation.com/artwork/XXXXX",
     media: [
       { type: "youtube", src: "https://youtu.be/ZfSN77J8tL4", ratio: "16 / 9" },
@@ -82,9 +82,9 @@ const projectsData = [
   {
     title: "Phyllotaxis and Archimedean Spiral Generator - Substance Designer",
     tags: ["Procedural", "Substance Designer", "Technical Art"],
-    blurb: "Spiral generator in Substance Designer with fxmaps",
+    blurb: "Spiral generator in Substance Designer with fxmaps.",
     link: "#",
-    poster: "posters/Phyllotaxis.png",
+    poster: "/posters/Phyllotaxis.png",
     media: [
       { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/506/0811.mp4" },
       { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/475/0530.mp4" },
@@ -95,7 +95,7 @@ const projectsData = [
       { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/777/770/large/dan-inverno-screenshot-2025-04-29-230623.jpg?1754893529" },
     ],
   },
-    {
+  {
     title: "Mix of overwatch/world of warcraft environment unreal engine",
     tags: ["Game Art","Hand painted","UE5","Environment"],
     blurb: "Game art environment with ue5.",
@@ -107,7 +107,7 @@ const projectsData = [
       { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/030/977/233/large/dan-wynter-highresscreenshot00004.jpg?1602205044" },
     ],
   },
-   {
+  {
     title: "Yves Saint Laurent MYSLF Le Parfum",
     tags: ["Materials","Product Visualization","Rendering"],
     blurb: "Materials, lighting & rendering.",
@@ -125,24 +125,19 @@ const projectsData = [
   {
     title: "Modern House 4k - Archviz ue5",
     tags: ["Archviz", "UE5", "Environment"],
-    blurb: "3D Modern house based on archdaily project",
+    blurb: "3D Modern house based on archdaily project.",
     link: "#",
     poster: "posters/Archviz.png",
-    media: [
-      { type: "youtube", src: "https://www.youtube.com/watch?v=B7W1erPk05c", ratio: "16 / 9" },
-    ],
+    media: [{ type: "youtube", src: "https://www.youtube.com/watch?v=B7W1erPk05c", ratio: "16 / 9" }],
   },
   {
-    title: "Mix of overwatch/world of warcraft environment unreal engine",
-    tags: ["Game Art","Hand painted","UE5","Environment"],
-    blurb: "Game art environment with ue5.",
+    title: "Snake Fountain Stylized",
+    tags: ["Game Art","Hand painted","Stylized","Environment"],
+    blurb: "Hand painted Textures.",
     link: "#",
-    media: [
-      { type: "image", src: "posters/Snake.png" },
-    ],
+    media: [{ type: "image", src: "/posters/Snake.png" }],
   },
 ];
-
 
 /* ---------- ratio utils ---------- */
 const normRatio = (r) => {
@@ -229,7 +224,6 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
     };
   }, [open, media.length, onClose]);
 
-  // Wrapper: fills the available area; children are absolutely centered via object-contain.
   const Wrap = ({ children }) => (
     <div className="h-full w-full">
       <div className="relative h-full w-full overflow-hidden">
@@ -619,6 +613,7 @@ export default function App() {
   const [lightbox, setLightbox] = useState({ open: false, project: null, index: 0 });
   const marquee = useMemo(() => ["3ds Max","Maya","Blender","Substance","Unreal Engine","Unity","ZBrush","Clo3D"], []);
 
+  // Blog (latest 3)
   const [blog, setBlog] = useState({ items: [], status: "idle" });
 
   const [hovered, setHovered] = useState(null);
@@ -666,52 +661,89 @@ export default function App() {
     return () => { live = false; };
   }, [projects]);
 
-  // blog feed
+  // -------- BLOG FEED (robust path + URL fixing) --------
   useEffect(() => {
     let alive = true;
+
+    // join helper
+    const join = (a, b) => (a.endsWith("/") ? a : a + "/") + b.replace(/^\/+/, "");
+    const BASE = (import.meta.env?.BASE_URL ?? "/"); // works in Vite dev & build
+    const FEED_URL = join(BASE, "blog/feed.json");
+
+    const resolveFromBlog = (p) => {
+      if (!p) return "";
+      if (/^https?:\/\//i.test(p)) return p;              // absolute http(s)
+      if (p.startsWith("/")) return join(BASE, p.slice(1)); // absolute-from-root inside this site
+      return join(BASE, "blog/" + p);                     // relative to /blog/
+    };
+
     (async () => {
       try {
         setBlog((b) => ({ ...b, status: "loading" }));
-        const res = await fetch("/blog/feed.json", { headers: { Accept: "application/feed+json, application/json" } });
+        const res = await fetch(FEED_URL, {
+          headers: { Accept: "application/feed+json, application/json" },
+          cache: "no-cache",
+        });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const feed = await res.json();
-        const items = (feed?.items || [])
+
+        const itemsRaw = Array.isArray(feed?.items) ? feed.items : [];
+        const items = itemsRaw
           .slice()
           .sort((a, b) => new Date(b.date_published || b.date_modified || 0) - new Date(a.date_published || a.date_modified || 0))
+          .map((it, idx) => ({
+            id: it.id || it.url || `post-${idx}`,
+            title: it.title || "Untitled",
+            summary: it.summary || it.content_text || "",
+            date_published: it.date_published || it.date_modified || "",
+            tags: it.tags || [],
+            // resolve urls so they work from the landing page
+            url: resolveFromBlog(it.url || it.external_url || "#"),
+            image: resolveFromBlog(it.image || it.banner_image || ""),
+          }))
           .slice(0, 3);
+
         if (alive) setBlog({ items, status: "ready" });
-      } catch {
-        if (alive) setBlog({
-          status: "ready",
-          items: [
-            {
-              id: "sample-1",
-              url: "/blog/",
-              title: "Volumetric logic dev diary",
-              summary: "Translating Akari-style constraints into a readable 3D grid with light paths.",
-              date_published: "2025-07-22T10:00:00Z",
-              tags: ["Unreal", "Design"],
-            },
-            {
-              id: "sample-2",
-              url: "/blog/",
-              title: "Hard-surface toolkit notes",
-              summary: "Bevel strategies, trim sheets, and boolean hygiene for clean silhouettes.",
-              date_published: "2025-08-05T10:00:00Z",
-              tags: ["Blender", "Workflow"],
-            },
-            {
-              id: "sample-3",
-              url: "/blog/",
-              title: "Clo3D → Unreal lookdev",
-              summary: "Quick pipeline tests moving garments into a real-time lighting setup.",
-              date_published: "2025-07-01T10:00:00Z",
-              tags: ["Clo3D", "Unreal"],
-            },
-          ]
-        });
+      } catch (e) {
+        console.error("Blog feed load failed:", e);
+        if (alive) {
+          // graceful fallback (same shape as mapped items)
+          setBlog({
+            status: "ready",
+            items: [
+              {
+                id: "sample-1",
+                url: join(BASE, "blog/"),
+                title: "Volumetric logic dev diary",
+                summary: "Translating Akari-style constraints into a readable 3D grid with light paths.",
+                date_published: "2025-07-22T10:00:00Z",
+                tags: ["Unreal", "Design"],
+                image: "",
+              },
+              {
+                id: "sample-2",
+                url: join(BASE, "blog/"),
+                title: "Hard-surface toolkit notes",
+                summary: "Bevel strategies, trim sheets, and boolean hygiene for clean silhouettes.",
+                date_published: "2025-08-05T10:00:00Z",
+                tags: ["Blender", "Workflow"],
+                image: "",
+              },
+              {
+                id: "sample-3",
+                url: join(BASE, "blog/"),
+                title: "Clo3D → Unreal lookdev",
+                summary: "Quick pipeline tests moving garments into a real-time lighting setup.",
+                date_published: "2025-07-01T10:00:00Z",
+                tags: ["Clo3D", "Unreal"],
+                image: "",
+              },
+            ],
+          });
+        }
       }
     })();
+
     return () => { alive = false; };
   }, []);
 
@@ -788,7 +820,7 @@ export default function App() {
           </h2>
 
           {!gridReady ? (
-            <p className="mt-14 text-center text-gray-200/80">Loading projects…</p>
+            <p className="mt-14 text-center text-gray-2 00/80">Loading projects…</p>
           ) : (
             <div className="mt-14 md:mt-16 lg:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
               {projects.map((p, i) => {
@@ -872,7 +904,7 @@ export default function App() {
                             </div>
                           )}
 
-                          {/* veil */}
+                          {/* veil (slightly lighter) */}
                           <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-30"} bg-black`} />
 
                           {/* overlay text */}
