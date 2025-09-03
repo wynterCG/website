@@ -914,7 +914,7 @@ export default function App() {
                                 <span key={t} className="px-2 py-1 rounded-full text-xs border border-white/30 bg-black/40 backdrop-blur">{t}</span>
                               ))}
                             </div>
-                            <h3 className="text-2xl md:text-3xl font-semibold">{p.title}</h3>
+                            <h3 className="text-lg md:text-2xl font-semibold">{p.title}</h3>
                             <p className="mt-2 text-sm md:text-base text-gray-300 max-w-xl">{p.blurb}</p>
                           </div>
 
