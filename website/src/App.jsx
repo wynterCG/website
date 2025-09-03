@@ -28,7 +28,7 @@ const ytEmbedMuted = (u, origin) => {
 };
 const ytEmbedModal = (u, origin) => {
   const id = extractYouTubeId(u); if (!id) return null;
-  return `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=1&rel=0${origin ? `&origin=${encodeURIComponent(origin)}` : ""}`;
+  return `https://www.youtube.com/embed/${id}?autoplay=1&mute=0&controls=1&rel=0${origin ? `&origin=${encodeURIComponent(origin)}` : ""}`;
 };
 
 const colors = {
@@ -80,7 +80,7 @@ const projectsData = [
     ],
   },
   {
-    title: "Phyllotaxis and Archimedean Spiral Generator - Substance Designer",
+    title: "Phyllotaxis With Substance Designer ",
     tags: ["Procedural", "Substance Designer", "Technical Art"],
     blurb: "Spiral generator in Substance Designer with fxmaps.",
     link: "#",
@@ -96,7 +96,7 @@ const projectsData = [
     ],
   },
   {
-    title: "Mix of overwatch/world of warcraft environment unreal engine",
+    title: "Mix of overwatch/world of warcraft UE5",
     tags: ["Game Art","Hand painted","UE5","Environment"],
     blurb: "Game art environment with ue5.",
     link: "#",
@@ -192,14 +192,14 @@ function MediaBadge({ media }) {
   );
 }
 
-/* ---------- Lightbox (centered, no-crop; chips on hover desktop / toggle mobile) ---------- */
+/* ---------- Lightbox (centered, no-crop; swipe) ---------- */
 function Lightbox({ open, onClose, project, startIndex = 0 }) {
   const [index, setIndex] = useState(startIndex);
   const [vidError, setVidError] = useState({});
-  const [showChips, setShowChips] = useState(false); // mobile toggle
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const closeBtnRef = useRef(null);
   const lastFocusedRef = useRef(null);
+  const lbTouch = useRef(null);
 
   const media = project?.media || [];
   const current = media[index] || null;
@@ -223,6 +223,21 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
       lastFocusedRef.current?.focus?.();
     };
   }, [open, media.length, onClose]);
+
+  const onLBTouchStart = (e) => {
+    const t = e.changedTouches[0];
+    lbTouch.current = { x: t.clientX, y: t.clientY };
+  };
+  const onLBTouchEnd = (e) => {
+    const st = lbTouch.current; if (!st) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - st.x, dy = t.clientY - st.y;
+    lbTouch.current = null;
+    const TH = 40;
+    if (Math.abs(dx) > TH && Math.abs(dx) > Math.abs(dy)) {
+      setIndex((i) => (i + (dx < 0 ? +1 : -1) + media.length) % media.length);
+    }
+  };
 
   const Wrap = ({ children }) => (
     <div className="h-full w-full">
@@ -332,10 +347,35 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
 
         {/* media area */}
         <div className="relative min-h-0">
-          <div className="h-[70dvh] sm:h-[70dvh] md:h-[72dvh] lg:h-[72dvh]">
+          <div
+            className="h-[70dvh] sm:h-[70dvh] md:h-[72dvh] lg:h-[72dvh]"
+            style={{ touchAction: "pan-y" }}
+            onTouchStart={onLBTouchStart}
+            onTouchEnd={onLBTouchEnd}
+          >
             {renderMedia(current)}
 
-            {/* desktop chips: show on hover/focus */}
+            {/* nav arrows (desktop) */}
+            {media.length > 1 && (
+              <>
+                <button
+                  type="button" aria-label="Previous"
+                  onClick={() => setIndex((i) => (i - 1 + media.length) % media.length)}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 hidden sm:flex items-center justify-center"
+                >
+                  <ChevronLeft className="w-6 h-6" />
+                </button>
+                <button
+                  type="button" aria-label="Next"
+                  onClick={() => setIndex((i) => (i + 1) % media.length)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 hidden sm:flex items-center justify-center"
+                >
+                  <CaretRight className="w-6 h-6" />
+                </button>
+              </>
+            )}
+
+            {/* desktop chips on hover/focus */}
             {media.length > 1 && (
               <div
                 role="tablist"
@@ -377,73 +417,6 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
                   );
                 })}
               </div>
-            )}
-
-            {/* mobile: FAB toggle for chips */}
-            {media.length > 1 && (
-              <>
-                <button
-                  type="button"
-                  className="md:hidden absolute bottom-4 right-4 z-40 rounded-full px-4 py-2 text-xs font-medium bg-white text-black shadow"
-                  aria-expanded={showChips}
-                  aria-controls="lb-chipbar"
-                  onClick={() => setShowChips((s) => !s)}
-                >
-                  Media ({media.length})
-                </button>
-
-                <div
-                  id="lb-chipbar"
-                  className={`md:hidden absolute inset-x-0 bottom-0 z-30 bg-gradient-to-t from-black/85 to-black/30 px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] transition-transform ${showChips ? "translate-y-0" : "translate-y-full"}`}
-                >
-                  <div className="flex items-center gap-3 overflow-x-auto no-scrollbar pb-1">
-                    {media.map((m, idx) => {
-                      const active = idx === index;
-                      const label =
-                        m.type === "video"   ? `Video ${idx+1}` :
-                        m.type === "youtube" ? `YouTube ${idx+1}` :
-                        m.type === "image"   ? `Image ${idx+1}` : `Item ${idx+1}`;
-                      return (
-                        <button
-                          key={idx}
-                          onClick={() => { setIndex(idx); setShowChips(false); }}
-                          className={[
-                            "whitespace-nowrap inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs",
-                            active
-                              ? "bg-white text-black border-white"
-                              : "bg-black/50 text-white border-white/30"
-                          ].join(" ")}
-                        >
-                          {m.type === "video" && <VideoIcon className="w-3.5 h-3.5" />}
-                          {m.type === "youtube" && <YoutubeIcon className="w-3.5 h-3.5" />}
-                          {m.type === "image" && <ImageIcon className="w-3.5 h-3.5" />}
-                          <span>{label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* nav arrows (desktop) */}
-            {media.length > 1 && (
-              <>
-                <button
-                  type="button" aria-label="Previous"
-                  onClick={() => setIndex((i) => (i - 1 + media.length) % media.length)}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 hidden sm:flex items-center justify-center"
-                >
-                  <ChevronLeft className="w-6 h-6" />
-                </button>
-                <button
-                  type="button" aria-label="Next"
-                  onClick={() => setIndex((i) => (i + 1) % media.length)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full w-10 h-10 hidden sm:flex items-center justify-center"
-                >
-                  <CaretRight className="w-6 h-6" />
-                </button>
-              </>
             )}
           </div>
         </div>
@@ -621,6 +594,30 @@ export default function App() {
   const videoRefs = useRef({});
   const isPlaying = (i) => (hovered === i) || (!hasInteracted && i === 0);
 
+  // NEW: mobile/coarse-pointer detection
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mqWidth  = window.matchMedia("(max-width: 767px)");
+    const mqCoarse = window.matchMedia("(pointer: coarse)");
+    const apply = () => setIsMobile(mqWidth.matches || mqCoarse.matches);
+    apply();
+    mqWidth.addEventListener?.("change", apply);
+    mqCoarse.addEventListener?.("change", apply);
+    mqWidth.addListener?.(apply);
+    mqCoarse.addListener?.(apply);
+    return () => {
+      mqWidth.removeEventListener?.("change", apply);
+      mqCoarse.removeEventListener?.("change", apply);
+      mqWidth.removeListener?.(apply);
+      mqCoarse.removeListener?.(apply);
+    };
+  }, []);
+
+  // Spotlight state (mobile)
+  const [activeCard, setActiveCard] = useState(null);       // which card is spotlighted
+  const [cardMediaIdx, setCardMediaIdx] = useState({});     // per-card media index while spotlighted
+  const touchRef = useRef({});                               // per-card touch state
+
   useEffect(() => {
     Object.entries(videoRefs.current).forEach(([idx, el]) => {
       if (!el) return;
@@ -664,17 +661,15 @@ export default function App() {
   // -------- BLOG FEED (robust path + URL fixing) --------
   useEffect(() => {
     let alive = true;
-
-    // join helper
     const join = (a, b) => (a.endsWith("/") ? a : a + "/") + b.replace(/^\/+/, "");
-    const BASE = (import.meta.env?.BASE_URL ?? "/"); // works in Vite dev & build
+    const BASE = (import.meta.env?.BASE_URL ?? "/");
     const FEED_URL = join(BASE, "blog/feed.json");
 
     const resolveFromBlog = (p) => {
       if (!p) return "";
-      if (/^https?:\/\//i.test(p)) return p;              // absolute http(s)
-      if (p.startsWith("/")) return join(BASE, p.slice(1)); // absolute-from-root inside this site
-      return join(BASE, "blog/" + p);                     // relative to /blog/
+      if (/^https?:\/\//i.test(p)) return p;
+      if (p.startsWith("/")) return join(BASE, p.slice(1));
+      return join(BASE, "blog/" + p);
     };
 
     (async () => {
@@ -697,7 +692,6 @@ export default function App() {
             summary: it.summary || it.content_text || "",
             date_published: it.date_published || it.date_modified || "",
             tags: it.tags || [],
-            // resolve urls so they work from the landing page
             url: resolveFromBlog(it.url || it.external_url || "#"),
             image: resolveFromBlog(it.image || it.banner_image || ""),
           }))
@@ -707,7 +701,6 @@ export default function App() {
       } catch (e) {
         console.error("Blog feed load failed:", e);
         if (alive) {
-          // graceful fallback (same shape as mapped items)
           setBlog({
             status: "ready",
             items: [
@@ -746,6 +739,21 @@ export default function App() {
 
     return () => { alive = false; };
   }, []);
+
+  // ----- swipe helpers (grid) -----
+  const nextProject = (current, dir, len) => {
+    const ni = (current + dir + len) % len;
+    setActiveCard(ni);
+    setHovered(ni);
+    setHasInteracted(true);
+  };
+  const nextMedia = (cardIdx, dir, mediaLen) => {
+    setCardMediaIdx((prev) => {
+      const cur = prev[cardIdx] ?? 0;
+      const ni = (cur + dir + mediaLen) % mediaLen;
+      return { ...prev, [cardIdx]: ni };
+    });
+  };
 
   return (
     <div className={`min-h-screen ${colors.background} ${colors.text}`}>
@@ -820,12 +828,13 @@ export default function App() {
           </h2>
 
           {!gridReady ? (
-            <p className="mt-14 text-center text-gray-2 00/80">Loading projects…</p>
+            <p className="mt-14 text-center text-gray-200/80">Loading projects…</p>
           ) : (
             <div className="mt-14 md:mt-16 lg:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
               {projects.map((p, i) => {
                 const k = `${p.title}-${i}`;
-                const first = p.media[0];
+                const mediaIdx = (isMobile && activeCard === i && p.media.length > 0) ? (cardMediaIdx[i] ?? 0) : 0;
+                const first = p.media[mediaIdx];
                 const isYT  = first?.type === "youtube";
                 const isMP4 = first?.type === "video";
                 const isIMG = first?.type === "image";
@@ -835,28 +844,95 @@ export default function App() {
                 const ratioStr = ratioString(ratioNum);
                 const ytPrefer = Math.abs(ratioNum - 16/9) < 0.05 ? "maxres" : "hq";
 
+                // touch handlers per card
+                const onTouchStart = (e) => {
+                  if (!isMobile) return;
+                  const t = e.changedTouches[0];
+                  touchRef.current[i] = { x: t.clientX, y: t.clientY, moved: false, when: Date.now() };
+                };
+                const onTouchMove = (e) => {
+                  if (!isMobile) return;
+                  const st = touchRef.current[i];
+                  if (!st) return;
+                  const t = e.changedTouches[0];
+                  const dx = t.clientX - st.x;
+                  const dy = t.clientY - st.y;
+                  if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy)) {
+                    st.moved = true;
+                    e.preventDefault?.();
+                  }
+                };
+                const onTouchEnd = (e) => {
+                  if (!isMobile) return;
+                  const st = touchRef.current[i];
+                  delete touchRef.current[i];
+                  if (!st) return;
+                  const t = e.changedTouches[0];
+                  const dx = t.clientX - st.x;
+                  const dy = t.clientY - st.y;
+                  const dt = Date.now() - st.when;
+                  const SWIPE_TH = 40;
+                  const TAP_TH   = 8;
+
+                  if (Math.abs(dx) > SWIPE_TH && Math.abs(dx) > Math.abs(dy)) {
+                    if (activeCard === i) {
+                      if (p.media.length > 1) {
+                        nextMedia(i, dx < 0 ? +1 : -1, p.media.length);
+                      }
+                    } else {
+                      nextProject(i, dx < 0 ? +1 : -1, projects.length);
+                    }
+                    return;
+                  }
+
+                  // tap
+                  if (Math.abs(dx) < TAP_TH && Math.abs(dy) < TAP_TH && dt < 400) {
+                    if (activeCard !== i) {
+                      setActiveCard(i);
+                      setHovered(i);
+                      setHasInteracted(true);
+                    } else {
+                      const idx = cardMediaIdx[i] ?? 0;
+                      setLightbox({ open: true, project: p, index: idx });
+                    }
+                  }
+                };
+
                 return (
                   <div
                     key={k}
                     className={`${spanFor(i)}`}
                     onMouseEnter={() => { setHovered(i); setHasInteracted(true); }}
                     onMouseLeave={() => setHovered(null)}
-                    onTouchStart={() => { setHovered(i); setHasInteracted(true); }}
+                    onTouchStart={(e) => { /* noop at wrapper */ }}
                   >
                     <Card
-                      className="overflow-hidden rounded-3xl border-white/10 group bg-black/20 relative cursor-pointer"
-                      onClick={() => setLightbox({ open: true, project: p, index: 0 })}
+                      className={[
+                        "overflow-hidden rounded-3xl border-white/10 group bg-black/20 relative cursor-pointer transition-transform",
+                        isMobile && activeCard === i ? "ring-2 ring-white/50 scale-[0.98]" : ""
+                      ].join(" ")}
+                      onClick={() => {
+                        if (!isMobile) {
+                          setLightbox({ open: true, project: p, index: mediaIdx });
+                        }
+                      }}
                     >
                       <CardContent className="p-0 relative">
                         {/* Fixed-size media box */}
-                        <div className="relative w-full" style={{ aspectRatio: ratioStr }}>
+                        <div
+                          className="relative w-full"
+                          style={{ aspectRatio: ratioStr, touchAction: "pan-y" }}
+                          onTouchStart={onTouchStart}
+                          onTouchMove={onTouchMove}
+                          onTouchEnd={onTouchEnd}
+                        >
                           {/* MP4 */}
                           {isMP4 && (
                             <video
                               ref={(el) => (videoRefs.current[i] = el)}
                               src={first.src}
                               poster={first.poster || p.poster || (p.media.find(x => x.type === "image")?.src) || undefined}
-                              className="absolute inset-0 w-full h-full object-cover"
+                              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                               preload="none"
                               muted
                               playsInline
@@ -870,7 +946,7 @@ export default function App() {
                               <iframe
                                 src={ytEmbedMuted(first.src, origin)}
                                 title={p.title}
-                                className="absolute inset-0 w-full h-full"
+                                className="absolute inset-0 w-full h-full pointer-events-none"
                                 allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
                                 loading="lazy"
                                 referrerPolicy="strict-origin-when-cross-origin"
@@ -879,7 +955,7 @@ export default function App() {
                               <img
                                 src={ytThumb(first.src, { prefer: ytPrefer }) || ""}
                                 alt={p.title}
-                                className="absolute inset-0 w-full h-full object-cover"
+                                className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                                 draggable={false}
                               />
                             )
@@ -890,36 +966,41 @@ export default function App() {
                             <img
                               src={first.src}
                               alt={p.title}
-                              className="absolute inset-0 w-full h-full object-cover"
+                              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                             />
                           )}
 
                           {/* Multiple-items marker */}
                           {p.media?.length > 1 && <MediaBadge media={p.media} />}
-                          {p.media?.length > 1 && !playing && (
-                            <div className="absolute bottom-3 right-3 z-30 flex gap-1.5">
-                              {p.media.slice(0,3).map((_,idx)=>(
-                                <span key={idx} className="h-1.5 w-1.5 rounded-full bg-white/70"></span>
-                              ))}
-                            </div>
-                          )}
 
-                          {/* veil (slightly lighter) */}
-                          <div className={`absolute inset-0 z-10 transition-opacity duration-300 ${playing ? "opacity-0" : "opacity-30"} bg-black`} />
+                          {/* veil (lighter) */}
+                          <div
+                            className={[
+                              "absolute inset-0 z-10 transition-opacity duration-300 bg-black",
+                              playing ? "opacity-0" : "opacity-30",
+                              isMobile && activeCard === i ? "opacity-0" : ""
+                            ].join(" ")}
+                          />
 
-                          {/* overlay text */}
-                          <div className="absolute inset-x-0 bottom-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none opacity-100 group-hover:opacity-0 transition-opacity duration-300">
+                          {/* overlay text (hidden in mobile spotlight) */}
+                          <div
+                            className={[
+                              "absolute inset-x-0 bottom-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none transition-opacity duration-300",
+                              "opacity-100 group-hover:opacity-0",
+                              isMobile && activeCard === i ? "opacity-0" : ""
+                            ].join(" ")}
+                          >
                             <div className="flex gap-2 mb-3 flex-wrap">
                               {p.tags?.map((t) => (
                                 <span key={t} className="px-2 py-1 rounded-full text-xs border border-white/30 bg-black/40 backdrop-blur">{t}</span>
                               ))}
                             </div>
-                            <h3 className="text-lg md:text-2xl font-semibold">{p.title}</h3>
+                            <h3 className="text-sm md:text-2xl font-semibold">{p.title}</h3>
                             <p className="mt-2 text-sm md:text-base text-gray-300 max-w-xl">{p.blurb}</p>
                           </div>
 
-                          {/* center play cue */}
-                          {!playing && (
+                          {/* center play cue (hidden in mobile spotlight) */}
+                          {!playing && !(isMobile && activeCard === i) && (
                             <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
                               <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm grid place-items-center text-white">
                                 <PlayIcon className="w-9 h-9" />
@@ -1010,7 +1091,7 @@ export default function App() {
       </section>
 
       {/* Contact */}
-      <section id="contact" className="theme-contact section-surface py-24 md:py-32 border-t border-white/100 text-gray-100">
+      <section id="contact" className="theme-contact section-surface py-24 md:py-32 text-gray-100 border-t border-white/100">
         <div className={container}>
           <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
             Contact
