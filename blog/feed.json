@@ -17,6 +17,15 @@
       "image": "cat_game/thumbnail.png",
       "date_published": "2025-08-05T10:00:00Z",
       "tags": ["Blender", "Workflow"]
+    },
+    {
+      "id": "https://daninverno.com/blog/phyllotaxisGenerator.html",
+      "url": "/blog/phyllotaxisGenerator.html",
+      "title": "Phyllotaxis Generator UE5",
+      "summary": "Implementing Battle system",
+      "image": "cat_game/thumbnail.png",
+      "date_published": "2025-08-05T10:00:00Z",
+      "tags": ["Blender", "Workflow"]
     }
   ]
 }

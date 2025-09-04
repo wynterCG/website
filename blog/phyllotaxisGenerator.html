@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Phyllotaxis in UE5 — Real-Time Parametric Generator (Editor) — Daniel Inverno</title>
+  <meta name="description" content="A visual write-up of my phyllotaxis generator in Unreal Engine 5: goals, controls, shaping tools, materials, performance notes, and what’s next. No code—just the results and design decisions." />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://daninverno.com/blog/phyllotaxisUE5.html" />
+
+  <!-- Feed discovery -->
+  <link rel="alternate" type="application/feed+json" href="../feed.json" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Phyllotaxis in UE5 — Real-Time Parametric Generator (Editor)" />
+  <meta property="og:description" content="Goals, controls, shaping tools, materials, performance notes, and next steps—no code." />
+  <meta property="og:url" content="https://daninverno.com/blog/phyllotaxisUE5.html" />
+  <meta property="og:image" content="https://daninverno.com/blog/phyllo/thumbnail.png" />
+  <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Phyllotaxis in UE5 — Real-Time Parametric Generator (Editor)" />
+  <meta name="twitter:description" content="A visual write-up of the generator: design, controls, look-dev, performance, and next steps." />
+  <meta name="twitter:image" content="https://daninverno.com/blog/phyllo/thumbnail.png" />
+
+  <!-- JSON-LD Article schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Phyllotaxis in UE5 — Real-Time Parametric Generator (Editor)",
+    "description": "A visual write-up of a phyllotaxis generator built for Unreal Engine 5—goals, controls, shaping tools, materials, performance, and next steps. No code included.",
+    "author": { "@type": "Person", "name": "Daniel Inverno", "url": "https://daninverno.com/" },
+    "datePublished": "2025-09-04T10:00:00Z",
+    "dateModified": "2025-09-04T10:00:00Z",
+    "image": ["https://daninverno.com/blog/phyllo/thumbnail.png"],
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://daninverno.com/blog/phyllotaxisUE5.html" },
+    "publisher": { "@type": "Person", "name": "Daniel Inverno" }
+  }
+  </script>
+
+  <style>
+    /* ---- modern, self-contained dark theme (same base as the other post) ---- */
+    :root{
+      --bg1:#07090e; --bg2:#0d1322; --bg3:#0e172a;
+      --card:#0b1220; --paper:#0f1422;
+      --text:#e5e7eb; --muted:#9aa3b2; --border:rgba(255,255,255,.12);
+      --accent:#a78bfa; --accent2:#60a5fa;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.35);
+      --ok:#34d399; --warn:#fbbf24;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(96,165,250,.18), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(167,139,250,.16), transparent 55%),
+        linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
+      font:16px/1.7 system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+
+    header{position:sticky;top:0;z-index:50;background:rgba(7,9,14,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .links{display:none;gap:1.1rem;color:#cbd5e1}
+    @media(min-width:768px){.links{display:flex}}
+
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;z-index:60}
+
+    main{padding:2.25rem 0 3.25rem}
+    .heroWrap{position:relative}
+    .hero{width:100%;height:360px;object-fit:cover;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow)}
+    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(6,10,20,.6);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:#dbeafe}
+
+    h1{font-size:clamp(2rem,4vw,2.9rem);line-height:1.1;margin:1.3rem 0 .65rem}
+    .meta{color:var(--muted);font-size:.92rem;margin-bottom:1rem}
+
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.85rem 0 1.35rem}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.75rem;color:#d1d5db;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0))}
+
+    article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
+    @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
+
+    /* TOC */
+    .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
+    .toc h3{margin:.2rem 0 .5rem;font-size:1rem;color:#cbd5e1}
+    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6}
+    .toc a:hover{background:rgba(255,255,255,.05);color:#fff}
+
+    /* Content */
+    .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
+    @media(min-width:768px){.content{padding:2rem}}
+    .content h2{margin:1.25rem 0 .5rem;font-size:1.35rem}
+    .content h3{margin:1rem 0 .35rem;font-size:1.05rem;color:#dbeafe}
+    .content p{margin:.6rem 0}
+    .lead{color:#dbeafe}
+
+    .callout{border:1px solid var(--border);background:var(--paper);border-radius:16px;padding:1rem;margin:.85rem 0}
+    .callout.good{border-color:rgba(52,211,153,.28)}
+    .callout.warn{border-color:rgba(251,191,36,.28)}
+
+    .checklist{display:grid;grid-template-columns:1fr;gap:.5rem}
+    @media(min-width:768px){.checklist{grid-template-columns:repeat(2,1fr)}}
+    .card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0));border-radius:14px;padding:.85rem}
+
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
+
+    /* Video grid/cards — single column and big */
+    .videoGrid{display:grid;gap:1.25rem;grid-template-columns:1fr}
+    @media(min-width:768px){.videoGrid{grid-template-columns:1fr}}
+    @media(min-width:1200px){.videoGrid{grid-template-columns:1fr}}
+
+    .videoCard{border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));padding:.9rem}
+    .videoCard .media{width:100%;height:auto;aspect-ratio:16/9;border-radius:10px;border:1px solid var(--border);display:block;background:#000}
+    .videoCard .thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;border:1px solid var(--border);display:block}
+    .videoCard figcaption{color:var(--muted);font-size:.95rem;margin-top:.6rem}
+
+    footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af}
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header>
+    <div class="container nav">
+      <a href="../" aria-label="Home">Daniel Inverno</a>
+      <nav class="links" aria-label="Primary"></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="heroWrap">
+      <img class="hero" src="./phyllotaxis_generator/devlog00.png" alt="Phyllotaxis generator preview in UE5" />
+      <span class="heroBadge">UE5 • Procedural</span>
+    </div>
+
+    <h1>Phyllotaxis in Unreal Engine 5 — Real-Time Generator</h1>
+    <div class="meta">Updated Sept 4, 2025 • ~8–10 min read</div>
+
+    <div class="tags">
+      <span class="tag">UE5</span>
+      <span class="tag">Blueprints</span>
+      <span class="tag">Procedural</span>
+      <span class="tag">Phyllotaxis</span>
+      <span class="tag">Instancing</span>
+    </div>
+
+    <article>
+      <!-- Table of contents -->
+      <aside class="toc" aria-label="On this page">
+        <h3>On this page</h3>
+        <a href="#overview">Overview</a>
+        <a href="#goals">Goals & Constraints</a>
+        <a href="#realtime">Real-Time Workflow (Editor)</a>
+        <a href="#controls">Creative Controls & Shaping</a>
+        <a href="#look">Look-Dev & Materials</a>
+        <a href="#perf">Performance Notes</a>
+        <a href="#dev-videos">Dev Progression (Videos)</a>
+        <a href="#next">What’s Next</a>
+        <a href="#changelog">Changelog</a>
+      </aside>
+
+      <!-- Main content -->
+      <section class="content">
+        <p class="lead" id="overview">
+          A fully parametric phyllotaxis generator that updates instantly in the Unreal editor.
+          No bake yet—this stage focuses on creative iteration, clarity, and speed.
+        </p>
+
+        <div class="callout good">
+          <strong>TL;DR:</strong> One actor generates thousands of instances in place, live in the editor.
+          You can dial the shape from sunflower disks to cones, spheres, and torus-like forms—then tint and
+          grade the result with simple material controls.
+        </div>
+
+        <h2 id="goals">Goals & Constraints</h2>
+        <div class="checklist">
+          <div class="card"><strong>Instant feedback</strong><br>Changes apply as you tweak. It is great for exploration and layout.</div>
+          <div class="card"><strong>Artist-first</strong><br>Controls are about shape and feel, not implementation details.</div>
+          <div class="card"><strong>Single actor</strong><br>Drop one in a level and drive everything from its details.</div>
+          <div class="card"><strong>No bake (yet)</strong><br>This phase is preview-only in the editor. Baking to a single mesh is planned.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="realtime">Real-Time Workflow (Editor)</h2>
+        <p>
+          The generator runs during construction, so you see the result immediately while adjusting sliders.
+          It scatters instances efficiently and keeps the viewport responsive. Rebuilds are triggered only
+          when something actually changes, so you can nudge values without stutter.
+        </p>
+        <div class="callout warn">
+          <strong>Note:</strong> In packaged builds, construction logic runs at spawn time.
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="controls">Creative Controls & Shaping</h2>
+        <p>
+          Rather than hardcoding a single formula, the generator exposes intuitive controls that morph the
+          pattern across a wide family of botanical looks:
+        </p>
+        <div class="checklist">
+          <div class="card"><strong>Density & spread</strong><br>How many elements, how far they reach, and how tall the form grows.</div>
+          <div class="card"><strong>Divergence</strong><br>Set near the classical “golden angle” for natural spirals, or drift for stylized arms and rings.</div>
+          <div class="card"><strong>Growth curves</strong><br>Lightweight curves shape radius, height, scale, and subtle rotation drift across the sequence.</div>
+          <div class="card"><strong>Deformers</strong><br>Blend toward sphere-like shells, cones, or torus-like loops; add gentle bend and taper for character.</div>
+          <div class="card"><strong>Orientation</strong><br>Face elements outward, along the spiral, or lock them to a preferred direction.</div>
+          <div class="card"><strong>Variation</strong><br>Controlled randomness for position and angle.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="look">Look-Dev & Materials</h2>
+        <p>
+          For look development, the instance material reads a few light signals from each element and turns them
+          into gradients and micro-variation:
+        </p>
+        <ul class="checklist">
+          <li class="card"><strong>Center → rim gradient</strong><br>Ease color or brightness from the core to the edge for a natural seed-head feel.</li>
+          <li class="card"><strong>Vertical tint</strong><br>Subtle top/bottom difference helps depth and readability on taller forms.</li>
+          <li class="card"><strong>Per-element variance</strong><br>Tiny roughness or color offsets break uniformity without noise.</li>
+          <li class="card"><strong>Optional glow</strong><br>Center emphasis via emissive works well for graphic or VFX looks.</li>
+        </ul>
+        <p>
+          The source mesh matters: a simple “seed” or “petal” with a consistent pivot and forward direction gives
+          predictable alignment and avoids surprises while rotating along the spiral.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="perf">Performance Notes</h2>
+        <p>
+          The generator is built for large counts. A few habits keep it smooth:
+        </p>
+        <ul class="checklist">
+          <li class="card"><strong>Instancing</strong><br>All elements are instances of a single mesh, minimizing draw calls.</li>
+          <li class="card"><strong>Cheap previews</strong><br>Collision disabled for previews; shadows kept minimal or off for dense sets.</li>
+          <li class="card"><strong>Reasonable culling</strong><br>Only render what the camera can reasonably see.</li>
+          <li class="card"><strong>Lean materials</strong><br>Opaque, simple shading; use emissive instead of translucency for glow.</li>
+        </ul>
+        <div class="callout good">
+          <strong>Nanite?</strong> Useful for heavier source meshes or a future baked asset. For tiny seeds, classic instancing
+          with a light material is already very fast.
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="dev-videos">Dev Progression</h2>
+        <p>Short clips showing the generator evolving—from flat disks to cones and sphere-like forms.</p>
+
+        <div class="videoGrid">
+          <figure class="videoCard">
+            <video class="media" controls preload="metadata" poster="/blog/phyllotaxis_generator/devlog00.png">
+              <source src="/blog/phyllotaxis_generator/devlog00.mp4" type="video/mp4" />
+              <source src="/blog/phyllotaxis_generator/devlog00.webm" type="video/webm" />
+              Sorry, your browser can’t play this video.
+            </video>
+            <figcaption><strong>First pass</strong> — clean sunflower-style disk with live controls.</figcaption>
+          </figure>
+
+        <div class="divider"></div>
+
+        <h2 id="next">What’s Next</h2>
+        <div class="checklist">
+          <div class="card"><strong>Bake</strong><br>Create a one-click path to a single static mesh (with Nanite and simple collision) once a look is approved.</div>
+          <div class="card"><strong>Presets</strong><br>Save/load favorite shapes: sunflower head, pinecone, rosette, torus flower, column.</div>
+          <div class="card"><strong>World distribution</strong><br>Optional graph-driven scattering for placing multiple clusters in a level.</div>
+          <div class="card"><strong>Photo matching</strong><br>A tiny “fit from reference” helper to nudge divergence and growth curves toward a target plant.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="changelog">Changelog</h2>
+        <ul>
+          <li><strong>Sept 4, 2025:</strong> Initial write-up: real-time editor generator, controls, materials, and performance notes.</li>
+        </ul>
+
+        <a class="btn" href="../">← Back to blog</a>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="y"></span> Daniel Inverno. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    // progress bar
+    const prog = document.getElementById('progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      prog.style.width = (scrolled * 100).toFixed(2) + '%';
+    };
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+
+    // footer year
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

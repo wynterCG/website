@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <title>Iddle Cat — Pre-Combat Foundation & Battle Slice (UE5) — Daniel Inverno</title>
-  <meta name="description" content="A clear, visual walkthrough of the Cat Iddle project: core systems, the new turn-based battle slice, and what’s next." />
+  <meta name="description" content="A clear, visual walkthrough of the Cat Iddle project: core systems, the new turn-based battle slice, good practices, and what’s next." />
 
-  <!-- Canonical (adjust to your domain if needed) -->
+  <!-- Canonical (adjust if needed) -->
   <link rel="canonical" href="https://daninverno.com/blog/catIddleGamePrototype.html" />
 
   <!-- Feed discovery -->
@@ -16,7 +16,7 @@
   <!-- Open Graph -->
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Iddle Cat — Pre-Combat Foundation & Battle Slice (UE5)" />
-  <meta property="og:description" content="What exists, what the battle slice adds, and how the systems connect." />
+  <meta property="og:description" content="What exists, what the battle slice adds, good practices, and how the systems connect." />
   <meta property="og:url" content="https://daninverno.com/blog/catIddleGamePrototype.html" />
   <meta property="og:image" content="https://daninverno.com/blog/cat_game/thumbnail.png" />
   <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
@@ -33,7 +33,7 @@
     "@context": "https://schema.org",
     "@type": "Article",
     "headline": "Iddle Cat — Pre-Combat Foundation & Battle Slice (UE5)",
-    "description": "What exists, what the battle slice adds, and how the systems connect.",
+    "description": "What exists, what the battle slice adds, good practices, and how the systems connect.",
     "author": { "@type": "Person", "name": "Daniel Inverno", "url": "https://daninverno.com/" },
     "datePublished": "2025-08-05T10:00:00Z",
     "dateModified": "2025-09-04T10:00:00Z",
@@ -46,11 +46,12 @@
   <style>
     /* ---- modern, self-contained dark theme ---- */
     :root{
-      --bg1:#07090e; --bg2:#0d1322; --bg3:#0e172a; /* layered backdrop */
+      --bg1:#07090e; --bg2:#0d1322; --bg3:#0e172a;
       --card:#0b1220; --paper:#0f1422;
       --text:#e5e7eb; --muted:#9aa3b2; --border:rgba(255,255,255,.12);
       --accent:#a78bfa; --accent2:#60a5fa;
       --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.35);
+      --ok:#34d399; --warn:#fbbf24;
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
@@ -87,14 +88,17 @@
     article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
     @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
 
+    /* TOC */
     .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
     .toc h3{margin:.2rem 0 .5rem;font-size:1rem;color:#cbd5e1}
     .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6}
     .toc a:hover{background:rgba(255,255,255,.05);color:#fff}
 
+    /* Content */
     .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
     @media(min-width:768px){.content{padding:2rem}}
     .content h2{margin:1.25rem 0 .5rem;font-size:1.35rem}
+    .content h3{margin:1rem 0 .35rem;font-size:1.05rem;color:#dbeafe}
     .content p{margin:.6rem 0}
     .lead{color:#dbeafe}
 
@@ -108,6 +112,22 @@
 
     .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
 
+    /* Video grid/cards — now ALWAYS single column and bigger */
+    .videoGrid{display:grid;gap:1.25rem;grid-template-columns:1fr}
+    /* keep single column even on large screens */
+    @media(min-width:768px){.videoGrid{grid-template-columns:1fr}}
+    @media(min-width:1200px){.videoGrid{grid-template-columns:1fr}}
+
+    .videoCard{border:1px solid var(--border);border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0));padding:.9rem}
+    .videoCard .media{width:100%;height:auto;aspect-ratio:16/9;border-radius:10px;border:1px solid var(--border);display:block;background:#000}
+    .videoCard .thumb{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:10px;border:1px solid var(--border);display:block}
+    .videoCard figcaption{color:var(--muted);font-size:.95rem;margin-top:.6rem}
+
+    /* Lightweight YouTube placeholder */
+    .ytLite{position:relative;display:block;width:100%;aspect-ratio:16/9;border-radius:10px;border:1px solid var(--border);overflow:hidden;background:#000;padding:0}
+    .ytLite .play{position:absolute;inset:auto auto 10px 10px;background:rgba(255,255,255,.9);color:#000;border-radius:999px;font-weight:700;font-size:.95rem;line-height:1;padding:.55rem .8rem}
+    .ytLite:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
     footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af}
   </style>
 </head>
@@ -117,7 +137,6 @@
     <div class="container nav">
       <a href="../" aria-label="Home">Daniel Inverno</a>
       <nav class="links" aria-label="Primary">
-
       </nav>
     </div>
   </header>
@@ -129,7 +148,7 @@
     </div>
 
     <h1>Cat iddle game prototype</h1>
-    <div class="meta">Updated Sept 4, 2025 • ~8 min read</div>
+    <div class="meta">Updated Sept 4, 2025 • ~10 min read</div>
 
     <div class="tags">
       <span class="tag">UE5</span>
@@ -139,13 +158,15 @@
     </div>
 
     <article>
-      <!-- Table of contents (sticky on desktop) -->
+      <!-- Table of contents -->
       <aside class="toc" aria-label="On this page">
         <h3>On this page</h3>
         <a href="#overview">Overview</a>
         <a href="#foundation">Pre-Battle Foundation</a>
         <a href="#battle">The Battle Slice</a>
-        <a href="#player-exp">Player Experience</a>
+        <a href="#practices">Good Practices & Optimization</a>
+        <a href="#dev-videos">Dev Progression (Videos)</a>
+        <a href="#player-exp">Player Experience </a>
         <a href="#changelog">Changelog</a>
       </aside>
 
@@ -172,8 +193,8 @@
           <div class="card"><strong>Economy (“Purr”)</strong><br>Active & passive gain, growth curves, and upgrade hooks.</div>
           <div class="card"><strong>Leveling</strong><br>XP → Levels → Points, with clean thresholds and pacing.</div>
           <div class="card"><strong>Stats & Attributes</strong><br>Long-term values feeding derived combat numbers; player point spend.</div>
+          <div class="card"><strong>Purr Power</strong><br>Session-bound resource for impactful moments; reset per encounter.</div>
           <div class="card"><strong>UI & Previews</strong><br>Dynamic lists, two live scene captures, throttled for performance.</div>
-          <div class="card"><strong>Production polish</strong><br>Stable references & texture handling so package ≈ editor.</div>
         </div>
 
         <div class="divider"></div>
@@ -181,20 +202,117 @@
         <h2 id="battle">The Battle Slice</h2>
         <p>
           The slice mounts cleanly on top of that foundation. Encounters start from the main UI, freeze current
-          stats into a per-fight snapshot, alternate turns with readable logs.
+          stats into a per-fight snapshot, alternate turns with readable logs, and award XP on victory.
         </p>
         <div class="checklist">
-          <div class="card"><strong>Flow</strong><br>Start → Player turn ↔ Enemy turn → AutoBattle.</div>
+          <div class="card"><strong>Flow</strong><br>Start → Player turn ↔ Enemy turn → Auto-battle.</div>
           <div class="card"><strong>Enemy data</strong><br>Defined in a table for fast authoring (ID, name, HP, ATK, XP).</div>
           <div class="card"><strong>Snapshot</strong><br>Freeze stats at fight start so mid-fight tweaks don’t drift numbers.</div>
           <div class="card"><strong>Combat feel</strong><br>Hit/crit/dodge basics, simple mitigation, fair flee checks.</div>
-          <div class="card"><strong>UI</strong><br>Scroll battle log; fight button .</div>
+          <div class="card"><strong>UI</strong><br>Two HP bars, Attack/Flee, scroll log; buttons enable only on your turn.</div>
           <div class="card"><strong>Events</strong><br>Combat broadcasts; UI listens. No tight coupling.</div>
         </div>
 
         <div class="divider"></div>
 
-        <h2 id="player-exp">Player Experience & Tuning</h2>
+        <h2 id="practices">Good Practices & Optimization</h2>
+        <p>
+          Habits that keep it fast, legible, and easy to extend.
+        </p>
+
+        <h3>Data-first, then visuals</h3>
+        <p>
+          Enemies, upgrades, and long-term stats live in data assets/tables. Balance work and content additions
+          don’t require touching gameplay graphs. Visuals read from data and react to events.
+        </p>
+
+        <h3>Modularity & separation</h3>
+        <p>
+          Each concern sits in its own module: economy, leveling, stats, and combat. UI doesn’t know how numbers are produced;
+          it just displays what it’s told. Safer changes, easier testing.
+        </p>
+
+        <h3>Blueprint Interfaces (contracts, not references)</h3>
+        <p>
+          UI talks to gameplay via interface messages (“start fight”, “attack”, “flee”). No hard references, no circular deps,
+          tidier input handling, easy swapping of controller/character shells.
+        </p>
+
+        <h3>Event Dispatchers (one-way, payloaded)</h3>
+        <p>
+          Gameplay emits simple, one-way events: state changes, HP updates, and log lines. Listeners receive the values they need
+          and update in place. Widgets stay lightweight; no polling.
+        </p>
+
+        <div class="callout good">
+          <strong>Naming tip:</strong> Use “OnThingChanged(Value…)” for dispatchers and keep them focused. If the data itself is the point of the event (HP, State, Log),
+          include it in the payload; if it’s just a ping, keep it param-less.
+        </div>
+
+        <h3>RNG you can trust (and replay)</h3>
+        <p>
+          A single Random Stream is seeded once per session. All chances (hit, crit, flee) draw from it.
+          For debugging, switch to a fixed seed to reproduce the exact sequence.
+        </p>
+        <ul class="checklist">
+          <li class="card"><strong>Session seed:</strong> random at startup for fresh play; fixed in debug for repeatability.</li>
+          <li class="card"><strong>From-Stream rolls:</strong> use the “from Stream” random nodes so the sequence advances consistently.</li>
+          <li class="card"><strong>Auditability:</strong> log the seed + first few rolls when debugging “impossible” streaks.</li>
+        </ul>
+
+        <div class="divider"></div>
+
+        <h2 id="dev-videos">Dev Progression (Videos)</h2>
+        <p>Short clips showing the project coming together—from idle foundation to the turn-based slice.</p>
+
+        <div class="videoGrid">
+          <!-- Option A — Self-hosted MP4/WebM -->
+          <figure class="videoCard">
+            <video class="media" controls preload="metadata"
+                   poster="/blog/cat_game/devlog00.png">
+              <source src="/blog/cat_game/devlog00.mp4" type="video/mp4" />
+              <source src="./videos/idle_foundation.webm" type="video/webm" />
+              <!-- <track src="./videos/idle_foundation_captions.vtt" kind="captions" srclang="en" label="English"> -->
+              Sorry, your browser can’t play this video.
+            </video>
+            <figcaption>
+              <strong>Cat iddle game</strong> — Main resource system.
+            </figcaption>
+          </figure>
+        
+          <div class="videoGrid">
+          <!-- Option A — Self-hosted MP4/WebM -->
+          <figure class="videoCard">
+            <video class="media" controls preload="metadata"
+                   poster="/blog/cat_game/devlog01.png">
+              <source src="/blog/cat_game/devlog01.mp4" type="video/mp4" />
+              <source src="./videos/idle_foundation.webm" type="video/webm" />
+              <!-- <track src="./videos/idle_foundation_captions.vtt" kind="captions" srclang="en" label="English"> -->
+              Sorry, your browser can’t play this video.
+            </video>
+            <figcaption>
+              <strong>Cat iddle game</strong> — Main resource system iteration 01.
+            </figcaption>
+          </figure>
+
+          <div class="videoGrid">
+          <!-- Option A — Self-hosted MP4/WebM -->
+          <figure class="videoCard">
+            <video class="media" controls preload="metadata"
+                   poster="/blog/cat_game/devlog02.png">
+              <source src="/blog/cat_game/devlog02.mp4" type="video/mp4" />
+              <source src="./videos/idle_foundation.webm" type="video/webm" />
+              <!-- <track src="./videos/idle_foundation_captions.vtt" kind="captions" srclang="en" label="English"> -->
+              Sorry, your browser can’t play this video.
+            </video>
+            <figcaption>
+              <strong>Cat iddle game</strong> — Main resource system iteration 01.
+            </figcaption>
+          </figure>
+
+        <div class="divider"></div>
+
+        <h2 id="player-exp">Player Experience</h2>
         <p>
           Early upgrades nudge reliability and pace (accuracy, survivability, resource gain). Randomness is seeded
           once per session for stable testing while still feeling fresh.
@@ -204,69 +322,11 @@
           <div class="card"><strong>Balance</strong><br>Simple knobs (HP, ATK, chances, resource flow) for first-hour tuning.</div>
           <div class="card"><strong>UX</strong><br>Concise logs, minimal UI, clear turn state.</div>
         </div>
-
-        <div class="divider"></div>
-
-        <h2 id="practices">Good Practices & Optimization</h2>
-        <p>
-          Under the hood, the project follows a few habits that keep it fast, legible, and easy to extend. This is the practical checklist
-          I used while building the slice.
-        </p>
-
-        <h3>Data-first, then visuals</h3>
-        <p>
-          Enemies, upgrades, and long-term stats live in data assets/tables. That means balance work, content additions,
-          and variant testing don’t require touching gameplay graphs. Visuals (widgets, previews) read from data and react to events.
-        </p>
-
-        <h3>Modularity & separation</h3>
-        <p>
-          Each major concern sits in its own module: economy, leveling, stats, and combat. The UI doesn’t know how numbers are produced;
-          it just displays what it’s told. This lowers risk when changing any one system and makes testing straightforward.
-        </p>
-
-        <h3>Blueprint Interfaces</h3>
-        <p>
-          UI talks to gameplay via interface messages (e.g., “start fight”, “pet button”,"upgrade buttons", "upgrade stats"). No hard references needed, which prevents
-          circular dependencies and makes swapping controllers/characters safe. Interfaces also keep input handling tidy.
-        </p>
-
-        <h3>Event Dispatchers</h3>
-        <p>
-          Gameplay emits simple, one-way events: state changes, HP updates, and log lines. Listeners receive the values they need
-          and update in place. This keeps widgets lightweight and avoids polling or tight coupling.
-        </p>
-
-        <div class="callout good">
-          <strong>Naming tip:</strong> Use “OnThingChanged(Value…)” for dispatchers and keep them focused. If the data itself is the point of the event (HP, State, Log),
-          include it in the payload.
-        </div>
-
-        <h3>RNG you can trust (and replay)</h3>
-        <p>
-          A single Random Stream is seeded once per session. All chances (hit, crit, flee) draw from it. For debugging,
-          switch to a fixed seed and you’ll reproduce the exact same sequence—perfect for tracking “impossible” streaks.
-        </p>
-        <ul class="checklist">
-          <li class="card"><strong>Session seed:</strong> random at startup for fresh play; fixed in debug for repeatability.</li>
-          <li class="card"><strong>From-Stream rolls:</strong> use the “from Stream” random nodes so the sequence advances consistently.</li>
-          <li class="card"><strong>Auditability:</strong> log the seed + first few rolls when debugging; makes bug reports actionable.</li>
-        </ul>
-
-        <h3>Optimization that matters</h3>
-        <ul class="checklist">
-          <li class="card"><strong>No wasteful ticks:</strong> timers for cadence; widgets update only on events.</li>
-          <li class="card"><strong>SceneCapture throttle:</strong> previews update on a controlled interval, not every frame.</li>
-          <li class="card"><strong>Lightweight UI:</strong> small log item widget, autoscroll, and no expensive per-frame bindings.</li>
-          <li class="card"><strong>Packaged parity:</strong> stable references for spawned objects; texture priority quirks handled.</li>
-        </ul>
-
-  
-
         <div class="divider"></div>
 
         <h2 id="changelog">Changelog</h2>
         <ul>
+          <li><strong>Sept 4, 2025:</strong> Added “Good Practices & Optimization” and “Dev Progression (Videos)” sections.</li>
           <li><strong>Aug 20, 2025:</strong> Post fully refreshed; added battle slice details, snapshot model, and clearer flow. New design & meta.</li>
           <li><strong>Aug 5, 2025:</strong> Initial prototype notes (idle foundation, previews, and planned combat).</li>
         </ul>
@@ -295,6 +355,30 @@
 
     // footer year
     document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Lazy YouTube: replace button with iframe on click (privacy-enhanced domain)
+    document.querySelectorAll('.ytLite').forEach(el => {
+      el.addEventListener('click', () => {
+        const id = el.dataset.ytid;
+        const iframe = document.createElement('iframe');
+        iframe.setAttribute('allowfullscreen', '');
+        iframe.setAttribute('title', 'YouTube video player');
+        iframe.setAttribute('loading', 'lazy');
+        iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin');
+        iframe.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&hl=en';
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = '0';
+        const wrapper = document.createElement('div');
+        wrapper.style.width = '100%';
+        wrapper.style.aspectRatio = '16 / 9';
+        wrapper.style.borderRadius = '10px';
+        wrapper.style.overflow = 'hidden';
+        wrapper.style.border = '1px solid var(--border)';
+        wrapper.appendChild(iframe);
+        el.replaceWith(wrapper);
+      }, { once: true });
+    });
   </script>
 </body>
 </html>
