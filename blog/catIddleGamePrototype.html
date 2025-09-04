@@ -4,164 +4,275 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <title>Building a fast hard-surface toolkit in Blender — Daniel Inverno</title>
-  <meta name="description" content="Notes on bevel strategies, booleans that don’t bite, and a trim-sheet setup for clean silhouettes in Blender." />
+  <title>Iddle Cat — Pre-Combat Foundation & Battle Slice (UE5) — Daniel Inverno</title>
+  <meta name="description" content="A clear, visual walkthrough of the Cat Iddle project: core systems, the new turn-based battle slice, and what’s next." />
 
-  <!-- Canonical -->
-  <link rel="canonical" href="https://daninverno.com/catIddleGamePrototype.html" />
+  <!-- Canonical (adjust to your domain if needed) -->
+  <link rel="canonical" href="https://daninverno.com/blog/catIddleGamePrototype.html" />
 
   <!-- Feed discovery -->
-  <link rel="alternate" type="application/feed+json" href="/blog/feed.json" />
+  <link rel="alternate" type="application/feed+json" href="../feed.json" />
 
-  <!-- Open Graph (social share) -->
+  <!-- Open Graph -->
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="Iddle Cat Dev Game" />
-  <meta property="og:description" content="Implementing Battle system" />
-  <meta property="og:url" content="/catIddleGamePrototype.html" />
-  <meta property="og:image" content="cat_game/thumbnail.png" />
+  <meta property="og:title" content="Iddle Cat — Pre-Combat Foundation & Battle Slice (UE5)" />
+  <meta property="og:description" content="What exists, what the battle slice adds, and how the systems connect." />
+  <meta property="og:url" content="https://daninverno.com/blog/catIddleGamePrototype.html" />
+  <meta property="og:image" content="https://daninverno.com/blog/cat_game/thumbnail.png" />
   <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
 
-  <!-- Twitter Card (falls back to OG if some tags missing) -->
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <!-- <meta name="twitter:site" content="@your_handle" /> Optional -->
-  <meta name="twitter:title" content="Building a fast hard-surface toolkit in Blender" />
-  <meta name="twitter:description" content="Notes on bevel strategies, booleans that don’t bite, and trim-sheet setup for clean silhouettes." />
-  <meta name="twitter:image" content="https://daninverno.com/blog/assets/hard-surface-toolkit/cover.jpg" />
+  <meta name="twitter:title" content="Iddle Cat — Pre-Combat Foundation & Battle Slice (UE5)" />
+  <meta name="twitter:description" content="A clear, visual walkthrough of the Cat Iddle project and the new battle slice." />
+  <meta name="twitter:image" content="https://daninverno.com/blog/cat_game/thumbnail.png" />
 
   <!-- JSON-LD Article schema -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "Article",
-    "headline": "Building a fast hard-surface toolkit in Blender",
-    "description": "Notes on bevel strategies, booleans that don’t bite, and a trim-sheet setup for clean silhouettes.",
+    "headline": "Iddle Cat — Pre-Combat Foundation & Battle Slice (UE5)",
+    "description": "What exists, what the battle slice adds, and how the systems connect.",
     "author": { "@type": "Person", "name": "Daniel Inverno", "url": "https://daninverno.com/" },
     "datePublished": "2025-08-05T10:00:00Z",
-    "dateModified": "2025-08-05T10:00:00Z",
-    "image": ["https://daninverno.com/blog/assets/hard-surface-toolkit/cover.jpg"],
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": "https://daninverno.com/blog/hard-surface-toolkit.html"
-    },
+    "dateModified": "2025-09-04T10:00:00Z",
+    "image": ["https://daninverno.com/blog/cat_game/thumbnail.png"],
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://daninverno.com/blog/catIddleGamePrototype.html" },
     "publisher": { "@type": "Person", "name": "Daniel Inverno" }
   }
   </script>
 
   <style>
-    /* ---- minimal, self-contained styling (dark, matches your site) ---- */
-    :root {
-      --bg1:#000; --bg2:#111827; --bg3:#1f2937;
-      --text:#e5e7eb; --muted:#9ca3af; --card:#0c111b; --border:rgba(255,255,255,.16);
-      --accent:#fff; --maxw:72rem;
+    /* ---- modern, self-contained dark theme ---- */
+    :root{
+      --bg1:#07090e; --bg2:#0d1322; --bg3:#0e172a; /* layered backdrop */
+      --card:#0b1220; --paper:#0f1422;
+      --text:#e5e7eb; --muted:#9aa3b2; --border:rgba(255,255,255,.12);
+      --accent:#a78bfa; --accent2:#60a5fa;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.35);
     }
     *{box-sizing:border-box}
-    body{margin:0;color:var(--text);background:linear-gradient(to bottom,var(--bg1),var(--bg2),var(--bg3));
-         font:16px/1.7 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
+    html,body{margin:0;padding:0}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(96,165,250,.18), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(167,139,250,.16), transparent 55%),
+        linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
+      font:16px/1.7 system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
     a{color:inherit;text-decoration:none}
     .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
-    header{position:sticky;top:0;z-index:50;background:rgba(0,0,0,.55);
-           backdrop-filter:saturate(120%) blur(6px);border-bottom:1px solid rgba(255,255,255,.18)}
+
+    header{position:sticky;top:0;z-index:50;background:rgba(7,9,14,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
     .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
-    .links{display:none;gap:1rem;color:#cbd5e1}
+    .links{display:none;gap:1.1rem;color:#cbd5e1}
     @media(min-width:768px){.links{display:flex}}
 
-    main{padding:2.25rem 0 3.25rem}
-    h1{font-size:clamp(1.9rem,4vw,2.6rem);line-height:1.1;margin:1.25rem 0 .5rem}
-    .meta{color:var(--muted);font-size:.92rem;margin-bottom:1rem}
-    .hero{width:100%;height:340px;object-fit:cover;border-radius:16px;border:1px solid var(--border)}
-    .tags{display:flex;flex-wrap:wrap;gap:.45rem;margin: .75rem 0 1.25rem}
-    .tag{border:1px solid var(--border);border-radius:999px;padding:.15rem .6rem;font-size:.75rem;color:#d1d5db}
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;z-index:60}
 
-    article{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:1.25rem}
-    @media(min-width:768px){article{padding:2rem}}
-    article h2{margin:1.25rem 0 .5rem;font-size:1.25rem}
-    article p{margin:.6rem 0}
-    pre{background:#0b0f16;border:1px solid var(--border);border-radius:14px;overflow:auto;padding: .85rem 1rem}
-    code, pre{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size:.92rem}
-    .btn{display:inline-block;margin-top:1.25rem;padding:.55rem .9rem;border-radius:999px;background:#fff;color:#000;font-weight:700}
-    footer{border-top:1px solid rgba(255,255,255,.18);padding:2rem 0;color:#9ca3af}
+    main{padding:2.25rem 0 3.25rem}
+    .heroWrap{position:relative}
+    .hero{width:100%;height:360px;object-fit:cover;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow)}
+    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(6,10,20,.6);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:#dbeafe}
+
+    h1{font-size:clamp(2rem,4vw,2.9rem);line-height:1.1;margin:1.3rem 0 .65rem}
+    .meta{color:var(--muted);font-size:.92rem;margin-bottom:1rem}
+
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.85rem 0 1.35rem}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.75rem;color:#d1d5db;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0))}
+
+    article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
+    @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
+
+    .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
+    .toc h3{margin:.2rem 0 .5rem;font-size:1rem;color:#cbd5e1}
+    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6}
+    .toc a:hover{background:rgba(255,255,255,.05);color:#fff}
+
+    .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
+    @media(min-width:768px){.content{padding:2rem}}
+    .content h2{margin:1.25rem 0 .5rem;font-size:1.35rem}
+    .content p{margin:.6rem 0}
+    .lead{color:#dbeafe}
+
+    .callout{border:1px solid var(--border);background:var(--paper);border-radius:16px;padding:1rem;margin:.85rem 0}
+    .callout.good{border-color:rgba(52,211,153,.28)}
+    .callout.warn{border-color:rgba(251,191,36,.28)}
+
+    .checklist{display:grid;grid-template-columns:1fr;gap:.5rem}
+    @media(min-width:768px){.checklist{grid-template-columns:repeat(2,1fr)}}
+    .card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0));border-radius:14px;padding:.85rem}
+
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
+
+    footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af}
   </style>
 </head>
 <body>
+  <div class="progress" id="progress"></div>
   <header>
     <div class="container nav">
-      <a href="/" aria-label="Home">Daniel Inverno</a>
+      <a href="../" aria-label="Home">Daniel Inverno</a>
       <nav class="links" aria-label="Primary">
-        <a href="/#work">Work</a>
-        <a href="/#blog">Home Blog</a>
-        <a href="/#about">About</a>
-        <a href="/#contact">Contact</a>
+
       </nav>
     </div>
   </header>
 
   <main class="container">
-    <h1>Implementing Battle system</h1>
-    <div class="meta">Aug 5, 2025 • 6–8 min read</div>
+    <div class="heroWrap">
+      <img class="hero" src="./cat_game/thumbnail.png" alt="Iddle Cat—battle slice preview" />
+      <span class="heroBadge">UE5 • Prototype</span>
+    </div>
 
-    <!-- Cover image (swap to your actual asset path) -->
-    <img class="hero" src="cat_game/thumbnail.png" alt="Hard-surface toolkit cover image" />
+    <h1>Cat iddle game prototype</h1>
+    <div class="meta">Updated Sept 4, 2025 • ~8 min read</div>
 
-    <!-- Tags (optional) -->
     <div class="tags">
       <span class="tag">UE5</span>
-      <span class="tag">Workflow</span>
-      <span class="tag">Game Dev</span>
+      <span class="tag">Blueprints</span>
+      <span class="tag">Systems Design</span>
+      <span class="tag">Cat Game</span>
     </div>
 
     <article>
-  <p>
-    This is a concise snapshot of the current battle prototype: what already works, what’s still pending,
-    and the next small wins to land. It’s written for my dev blog in a quick-read format.
-  </p>
+      <!-- Table of contents (sticky on desktop) -->
+      <aside class="toc" aria-label="On this page">
+        <h3>On this page</h3>
+        <a href="#overview">Overview</a>
+        <a href="#foundation">Pre-Battle Foundation</a>
+        <a href="#battle">The Battle Slice</a>
+        <a href="#player-exp">Player Experience</a>
+        <a href="#changelog">Changelog</a>
+      </aside>
 
-  <h2>1) What’s already working</h2>
-  <p>
-    The combat slice boots from the main UI and runs a simple turn loop for testing. A lightweight battle log
-    shows the sequence so I can trace each step without extra UI.
-  </p>
-  <ul>
-    <li><strong>Fight entry from the main UI:</strong> pressing the button cleanly kicks off a battle sequence.</li>
-    <li><strong>Automatic opening action:</strong> the first player strike triggers on turn start to validate flow, then it hands off to the opponent and back.</li>
-    <li><strong>Battle log feedback:</strong> on-screen messages reflect key moments (entering, spawns-to-come, turns, hits) for fast debugging.</li>
-    <li><strong>Live scene preview:</strong> the arena’s scene-capture feed is already visible in the UI and updates reliably.</li>
-  </ul>
+      <!-- Main content -->
+      <section class="content">
+        <p class="lead" id="overview">
+          A clean, modular idle → battle pipeline. This post shows what existed, what the battle slice adds,
+          and why the pieces click together without drama.
+        </p>
 
-  <h2>2) Not implemented yet</h2>
-  <p>
-    These systems are planned but not in the prototype so far.
-  </p>
-  <ul>
-    <li><strong>Arena population & cleanup:</strong> spawning the cat and enemy into the studio on fight start, then despawning them at the end.</li>
-    <li><strong>3D health bars:</strong> overhead bars anchored to the models and facing the capture camera.</li>
-    <li><strong>Player inputs beyond “Fight”:</strong> attack/flee buttons in the main UI with proper enable/disable by turn.</li>
-    <li><strong>Combat rules:</strong> proper hit/miss, dodge, crits, mitigation, and damage values driven by character stats.</li>
-    <li><strong>Stat snapshot at battle start:</strong> freezing the cat’s values so mid-fight changes don’t affect the round.</li>
-    <li><strong>Luck (“Paw of Fate”):</strong> flee checks, limited rerolls, and a short pre-fight dice effect.</li>
-    <li><strong>Outcome flow:</strong> victory/defeat handling, rewards, return to idle, and automatic arena reset.</li>
-    <li><strong>Enemy variety:</strong> pulling different opponents from data and showing the right visuals.</li>
-    <li><strong>Feedback polish:</strong> basic animation/VFX/sound cues for hits, crits, spawns, and defeats.</li>
-    <li><strong>Inventory & equipment visuals:</strong> showing items and reflecting them on the 3D preview.</li>
-    <li><strong>Battle log polish:</strong> autoscroll, color accents, and trimming long histories.</li>
-    <li><strong>State hardening:</strong> centralized transitions and safe timers to avoid duplicate triggers.</li>
-  </ul>
+        <div class="callout good">
+          <strong>TL;DR:</strong> Single-player, data-driven, with a battle screen that swaps in,
+          runs a tidy turn loop, awards XP, and hands control back to the idle layer.
+        </div>
 
-  <h2>3) Next small wins</h2>
-  <p>
-    The fastest improvements that will make the slice feel complete while keeping scope tight.
-  </p>
-  <ul>
-    <li><strong>Spawn & despawn pass:</strong> populate the arena on fight start, clear it on end, and force a capture update.</li>
-    <li><strong>Overhead health bars:</strong> simple world-space widgets that update on damage and always face the capture.</li>
-    <li><strong>Baseline combat checks:</strong> add simple hit/miss and damage reduction to replace placeholder damage.</li>
-  </ul>
+        <h2 id="foundation">Pre-Battle Foundation</h2>
+        <p>
+          Before combat, the project already had a solid backbone: a central controller managing UI and input; a
+          modular trio for economy (Purr), progression (Leveling), and attributes (Stats); and a resource loop
+          (Purr Power) pacing bigger moments. UI was dynamic and performance-friendly, with dual live previews
+          and packaged-build fixes in place.
+        </p>
+        <div class="checklist">
+          <div class="card"><strong>Economy (“Purr”)</strong><br>Active & passive gain, growth curves, and upgrade hooks.</div>
+          <div class="card"><strong>Leveling</strong><br>XP → Levels → Points, with clean thresholds and pacing.</div>
+          <div class="card"><strong>Stats & Attributes</strong><br>Long-term values feeding derived combat numbers; player point spend.</div>
+          <div class="card"><strong>UI & Previews</strong><br>Dynamic lists, two live scene captures, throttled for performance.</div>
+          <div class="card"><strong>Production polish</strong><br>Stable references & texture handling so package ≈ editor.</div>
+        </div>
 
-  <p class="muted">
-    Notes: UI layout target is battle log in the top-right and inventory in the bottom-right; those panels will come online after
-    the arena population and health bars are in.
-  </p>
+        <div class="divider"></div>
 
-      <a class="btn" href="/blog/">← All posts</a>
+        <h2 id="battle">The Battle Slice</h2>
+        <p>
+          The slice mounts cleanly on top of that foundation. Encounters start from the main UI, freeze current
+          stats into a per-fight snapshot, alternate turns with readable logs.
+        </p>
+        <div class="checklist">
+          <div class="card"><strong>Flow</strong><br>Start → Player turn ↔ Enemy turn → AutoBattle.</div>
+          <div class="card"><strong>Enemy data</strong><br>Defined in a table for fast authoring (ID, name, HP, ATK, XP).</div>
+          <div class="card"><strong>Snapshot</strong><br>Freeze stats at fight start so mid-fight tweaks don’t drift numbers.</div>
+          <div class="card"><strong>Combat feel</strong><br>Hit/crit/dodge basics, simple mitigation, fair flee checks.</div>
+          <div class="card"><strong>UI</strong><br>Scroll battle log; fight button .</div>
+          <div class="card"><strong>Events</strong><br>Combat broadcasts; UI listens. No tight coupling.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="player-exp">Player Experience & Tuning</h2>
+        <p>
+          Early upgrades nudge reliability and pace (accuracy, survivability, resource gain). Randomness is seeded
+          once per session for stable testing while still feeling fresh.
+        </p>
+        <div class="checklist">
+          <div class="card"><strong>Feel</strong><br>Crits and spends create peaks; base loop stays legible.</div>
+          <div class="card"><strong>Balance</strong><br>Simple knobs (HP, ATK, chances, resource flow) for first-hour tuning.</div>
+          <div class="card"><strong>UX</strong><br>Concise logs, minimal UI, clear turn state.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="practices">Good Practices & Optimization</h2>
+        <p>
+          Under the hood, the project follows a few habits that keep it fast, legible, and easy to extend. This is the practical checklist
+          I used while building the slice.
+        </p>
+
+        <h3>Data-first, then visuals</h3>
+        <p>
+          Enemies, upgrades, and long-term stats live in data assets/tables. That means balance work, content additions,
+          and variant testing don’t require touching gameplay graphs. Visuals (widgets, previews) read from data and react to events.
+        </p>
+
+        <h3>Modularity & separation</h3>
+        <p>
+          Each major concern sits in its own module: economy, leveling, stats, and combat. The UI doesn’t know how numbers are produced;
+          it just displays what it’s told. This lowers risk when changing any one system and makes testing straightforward.
+        </p>
+
+        <h3>Blueprint Interfaces</h3>
+        <p>
+          UI talks to gameplay via interface messages (e.g., “start fight”, “pet button”,"upgrade buttons", "upgrade stats"). No hard references needed, which prevents
+          circular dependencies and makes swapping controllers/characters safe. Interfaces also keep input handling tidy.
+        </p>
+
+        <h3>Event Dispatchers</h3>
+        <p>
+          Gameplay emits simple, one-way events: state changes, HP updates, and log lines. Listeners receive the values they need
+          and update in place. This keeps widgets lightweight and avoids polling or tight coupling.
+        </p>
+
+        <div class="callout good">
+          <strong>Naming tip:</strong> Use “OnThingChanged(Value…)” for dispatchers and keep them focused. If the data itself is the point of the event (HP, State, Log),
+          include it in the payload.
+        </div>
+
+        <h3>RNG you can trust (and replay)</h3>
+        <p>
+          A single Random Stream is seeded once per session. All chances (hit, crit, flee) draw from it. For debugging,
+          switch to a fixed seed and you’ll reproduce the exact same sequence—perfect for tracking “impossible” streaks.
+        </p>
+        <ul class="checklist">
+          <li class="card"><strong>Session seed:</strong> random at startup for fresh play; fixed in debug for repeatability.</li>
+          <li class="card"><strong>From-Stream rolls:</strong> use the “from Stream” random nodes so the sequence advances consistently.</li>
+          <li class="card"><strong>Auditability:</strong> log the seed + first few rolls when debugging; makes bug reports actionable.</li>
+        </ul>
+
+        <h3>Optimization that matters</h3>
+        <ul class="checklist">
+          <li class="card"><strong>No wasteful ticks:</strong> timers for cadence; widgets update only on events.</li>
+          <li class="card"><strong>SceneCapture throttle:</strong> previews update on a controlled interval, not every frame.</li>
+          <li class="card"><strong>Lightweight UI:</strong> small log item widget, autoscroll, and no expensive per-frame bindings.</li>
+          <li class="card"><strong>Packaged parity:</strong> stable references for spawned objects; texture priority quirks handled.</li>
+        </ul>
+
+  
+
+        <div class="divider"></div>
+
+        <h2 id="changelog">Changelog</h2>
+        <ul>
+          <li><strong>Aug 20, 2025:</strong> Post fully refreshed; added battle slice details, snapshot model, and clearer flow. New design & meta.</li>
+          <li><strong>Aug 5, 2025:</strong> Initial prototype notes (idle foundation, previews, and planned combat).</li>
+        </ul>
+
+        <a class="btn" href="../">← Back to blog</a>
+      </section>
     </article>
   </main>
 
@@ -171,6 +282,19 @@
     </div>
   </footer>
 
-  <script>document.getElementById("y").textContent = new Date().getFullYear();</script>
+  <script>
+    // progress bar
+    const prog = document.getElementById('progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      prog.style.width = (scrolled * 100).toFixed(2) + '%';
+    };
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+
+    // footer year
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
