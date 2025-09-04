@@ -13,19 +13,19 @@
       "id": "https://daninverno.com/blog/catIddleGamePrototype.html",
       "url": "/blog/catIddleGamePrototype.html",
       "title": "Iddle Cat Dev Game",
-      "summary": "Implementing Battle system",
+      "summary": "Implementing battle system",
       "image": "cat_game/thumbnail.png",
       "date_published": "2025-08-05T10:00:00Z",
-      "tags": ["Blender", "Workflow"]
+      "tags": ["UE5", "GameDev"]
     },
     {
       "id": "https://daninverno.com/blog/phyllotaxisGenerator.html",
       "url": "/blog/phyllotaxisGenerator.html",
       "title": "Phyllotaxis Generator UE5",
-      "summary": "Implementing Battle system",
-      "image": "cat_game/thumbnail.png",
+      "summary": "Playing with parameters to get realistic and natural forms ",
+      "image": "./phyllotaxis_generator/devlog00.png",
       "date_published": "2025-08-05T10:00:00Z",
-      "tags": ["Blender", "Workflow"]
+      "tags": ["UE5", "TechArt"]
     }
   ]
 }
