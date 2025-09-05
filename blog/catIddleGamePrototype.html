@@ -52,6 +52,11 @@
       --accent:#a78bfa; --accent2:#60a5fa;
       --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.35);
       --ok:#34d399; --warn:#fbbf24;
+      /* NEW: keep anchor targets visible below sticky header */
+      scroll-padding-top: 90px;
+    }
+    @media (max-width:1023px){
+      :root{ scroll-padding-top: 70px; }
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
@@ -93,6 +98,18 @@
     .toc h3{margin:.2rem 0 .5rem;font-size:1rem;color:#cbd5e1}
     .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6}
     .toc a:hover{background:rgba(255,255,255,.05);color:#fff}
+    /* NEW: on mobile/tablet, don't float the TOC; let it flow above content */
+    @media (max-width:1023px){
+      .toc{
+        position: static;
+        top: auto;
+        max-height: none;
+        overflow: visible;
+        width: auto;
+        margin: 0 0 1rem 0;
+        z-index: auto;
+      }
+    }
 
     /* Content */
     .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
@@ -114,7 +131,6 @@
 
     /* Video grid/cards — now ALWAYS single column and bigger */
     .videoGrid{display:grid;gap:1.25rem;grid-template-columns:1fr}
-    /* keep single column even on large screens */
     @media(min-width:768px){.videoGrid{grid-template-columns:1fr}}
     @media(min-width:1200px){.videoGrid{grid-template-columns:1fr}}
 
@@ -279,8 +295,7 @@
               <strong>Cat iddle game</strong> — Main resource system.
             </figcaption>
           </figure>
-        
-          <div class="videoGrid">
+
           <!-- Option A — Self-hosted MP4/WebM -->
           <figure class="videoCard">
             <video class="media" controls preload="metadata"
@@ -295,7 +310,6 @@
             </figcaption>
           </figure>
 
-          <div class="videoGrid">
           <!-- Option A — Self-hosted MP4/WebM -->
           <figure class="videoCard">
             <video class="media" controls preload="metadata"
@@ -309,6 +323,7 @@
               <strong>Cat iddle game</strong> — Main resource system iteration 01.
             </figcaption>
           </figure>
+        </div>
 
         <div class="divider"></div>
 

@@ -52,6 +52,11 @@
       --accent:#a78bfa; --accent2:#60a5fa;
       --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.35);
       --ok:#34d399; --warn:#fbbf24;
+      /* Smooth anchor jumps under the sticky header */
+      scroll-padding-top: 90px;
+    }
+    @media(max-width:1023px){
+      :root{ scroll-padding-top: 70px; }
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
@@ -93,6 +98,19 @@
     .toc h3{margin:.2rem 0 .5rem;font-size:1rem;color:#cbd5e1}
     .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6}
     .toc a:hover{background:rgba(255,255,255,.05);color:#fff}
+
+    /* ✅ Mobile/tablet: TOC should NOT float, so it won't cover content */
+    @media(max-width:1023px){
+      .toc{
+        position:static;
+        top:auto;
+        max-height:none;
+        overflow:visible;
+        width:auto;
+        margin:0 0 1rem 0;
+        z-index:auto;
+      }
+    }
 
     /* Content */
     .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
@@ -264,6 +282,7 @@
             </video>
             <figcaption><strong>Phyllotaxis generator</strong> Just a sneak peek.</figcaption>
           </figure>
+        </div>
 
         <div class="divider"></div>
 
@@ -271,8 +290,6 @@
         <div class="checklist">
           <div class="card"><strong>Bake</strong><br>Create a one-click path to a single static mesh (with Nanite and simple collision) once a look is approved.</div>
           <div class="card"><strong>Presets</strong><br>Save/load favorite shapes: sunflower head, pinecone, rosette, torus flower, column.</div>
-          <div class="card"><strong>World distribution</strong><br>Optional graph-driven scattering for placing multiple clusters in a level.</div>
-          <div class="card"><strong>Photo matching</strong><br>A tiny “fit from reference” helper to nudge divergence and growth curves toward a target plant.</div>
         </div>
 
         <div class="divider"></div>
