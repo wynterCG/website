@@ -44,7 +44,7 @@ const projectsData = [
     title: "Can Game - Prototype",
     tags: ["Indie Dev", "UE5", "Game Art"],
     blurb: "Process, blockout.",
-    link: "https://www.artstation.com/artwork/XXXXX",
+    link: "#",
     media: [
       { type: "youtube", src: "https://youtu.be/ZfSN77J8tL4", ratio: "16 / 9" },
       { type: "image", src: "https://i.ytimg.com/vi/ZfSN77J8tL4/maxresdefault.jpg" },
@@ -53,7 +53,7 @@ const projectsData = [
   {
     title: "Mochis",
     tags: ["Product Visualization", "Blender", "Materials"],
-    blurb: "Materials, lighting & rendering.",
+    blurb: "Nine material variants, one device.",
     link: "#",
     poster: "/posters/Mochis.png",
     media: [
@@ -72,7 +72,7 @@ const projectsData = [
   {
     title: "Lapis Lazuli - Substance Designer Material",
     tags: ["Materials","Product Visualization","Rendering"],
-    blurb: "Materials, lighting & rendering.",
+    blurb: "Procedural lapis in Substance Designer.",
     link: "#",
     media: [
       { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/090/780/581/large/dan-inverno-render00-final.jpg?1754901377" },
@@ -110,7 +110,7 @@ const projectsData = [
   {
     title: "Yves Saint Laurent MYSLF Le Parfum",
     tags: ["Materials","Product Visualization","Rendering"],
-    blurb: "Materials, lighting & rendering.",
+    blurb: "Lacquer, brass, glass.",
     link: "#",
     media: [
       { type: "image", src: "/ysl/render03_final.png" },
@@ -140,7 +140,7 @@ const projectsData = [
   {
     title: "STARVIZ",
     tags: ["Materials","Product Visualization","Rendering"],
-    blurb: "Materials, lighting & rendering.",
+    blurb: "Bathroom interior product viz.",
     link: "#",
     media: [
       { type: "image", src: "/posters/STARVIZ01.jpg" },
@@ -811,7 +811,10 @@ export default function App() {
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs backdrop-blur">
                   <Sparkles className="h-3.5 w-3.5" /> Looking for New Projects
                 </div>
-                <h1 className="mt-4 text-4xl sm:text-6xl md:text-7xl font-semibold leading-[0.98] tracking-tight">
+                <p className="mt-4 text-sm sm:text-base font-medium uppercase tracking-[0.2em] text-white/70">
+                  Daniel Inverno
+                </p>
+                <h1 className="mt-2 text-4xl sm:text-6xl md:text-7xl font-semibold leading-[0.98] tracking-tight">
                   3D Artist &amp; Indie Game Dev
                 </h1>
               </div>
