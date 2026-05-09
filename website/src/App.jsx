@@ -264,10 +264,12 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
       return (
         <Wrap>
           <img
+            key={index}
             src={m.src}
             alt={project.title}
             className="absolute inset-0 w-full h-full object-contain"
             draggable={false}
+            decoding="async"
           />
         </Wrap>
       );
@@ -286,19 +288,17 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
           </div>
         );
       }
-      const poster =
-        m.poster || project.media.find((x) => x.type === "image")?.src || project.poster || undefined;
 
       return (
         <Wrap>
           <video
+            key={index}
             className="absolute inset-0 w-full h-full object-contain bg-black"
             controls
             autoPlay
             muted
             playsInline
             preload="metadata"
-            poster={poster}
             onError={() => setVidError((e) => ({ ...e, [index]: true }))}
           >
             <source src={m.src} type="video/mp4" />
@@ -312,6 +312,7 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
       return (
         <Wrap>
           <iframe
+            key={index}
             src={src}
             title={project.title}
             className="absolute inset-0 w-full h-full"
@@ -799,7 +800,7 @@ export default function App() {
               preload="metadata"
               poster="/og-cover.png"
               className="absolute inset-0 h-full w-full object-cover"
-              src="/hero-reel.mp4"
+              src="/archviz.mp4"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/40" />
           </div>
