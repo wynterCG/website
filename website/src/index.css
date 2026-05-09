@@ -6,18 +6,28 @@
 /* ---------- Section theme tokens & helpers ---------- */
 @layer base {
   :root {
-    /* You can tweak these; they’re OKLCH so small changes feel natural */
-    --work-bg:  oklch(48.11% 0.099 234.04);  
-    --work-title: oklch(100% 0.00011 271.152); 
+    /* OKLCH backgrounds; hex fallbacks so older browsers (Samsung Internet)
+       still render the section colors instead of falling through to currentColor. */
+    --work-bg:  #1f4f6b;
+    --work-title: #ffffff;
 
-    --blog-bg:  oklch(58.428% 0.13362 35.278); 
-    --blog-title: oklch(100% 0.00011 271.152);
+    --blog-bg:  #b54a32;
+    --blog-title: #ffffff;
 
-    --about-bg: oklch(29.48% 0.081 256.36);  
-    --about-title: oklch(100% 0.0001 271.152);
+    --about-bg: #1c2745;
+    --about-title: #ffffff;
 
-    --contact-bg: oklch(54.429% 0.1272 146.497);
-    --contact-title: oklch(100% 0.0001 271.152);
+    --contact-bg: #2c8244;
+    --contact-title: #ffffff;
+  }
+
+  @supports (color: oklch(0% 0 0)) {
+    :root {
+      --work-bg:  oklch(48.11% 0.099 234.04);
+      --blog-bg:  oklch(58.428% 0.13362 35.278);
+      --about-bg: oklch(29.48% 0.081 256.36);
+      --contact-bg: oklch(54.429% 0.1272 146.497);
+    }
   }
 
   /* Map tokens to per-section CSS vars */
@@ -31,16 +41,13 @@
   /* Solid surface color per section */
   .section-surface { background-color: var(--section-bg); }
 
-  /* High-contrast title: gradient from title color → lighter mix of same hue */
+  /* Solid title color, guaranteed visible on every section bg.
+     The previous `background-clip: text` + `color-mix(in oklch, …)` gradient
+     looked nice on Chrome desktop but rendered invisible on Samsung Internet
+     (the browser advertised support but parsed the oklch mix to near-black,
+     leaving transparent text on a dark section bg). */
   .section-title {
-    background-image: linear-gradient(
-      to right,
-      var(--section-title),
-      color-mix(in oklch, var(--section-title), white 18%)
-    );
-    -webkit-background-clip: text;
-            background-clip: text;
-    color: transparent;
+    color: var(--section-title);
     letter-spacing: 0.02em;
   }
 }

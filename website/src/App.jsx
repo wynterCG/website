@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button.jsx";
 import { Card, CardContent } from "@/components/ui/Card.jsx";
 import {
-  Mail, Sparkles,
+  Mail, Sparkles, Menu as MenuIcon,
   Play as PlayIcon, X as XIcon, ChevronLeft, ChevronRight as CaretRight,
   Image as ImageIcon, Video as VideoIcon, Youtube as YoutubeIcon
 } from "lucide-react";
@@ -510,7 +510,7 @@ const ContactFormCard = memo(function ContactFormCard() {
                   required
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="h-11 w-full rounded-xl bg-gray-200 border border-gray-700/60 text-gray-600 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3"
+                  className="h-11 w-full rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/40 focus:border-white/40 focus:ring-0 px-3"
                 />
               </div>
             </div>
@@ -527,7 +527,7 @@ const ContactFormCard = memo(function ContactFormCard() {
                   required
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="h-11 w-full rounded-xl bg-gray-200 border border-gray-700/60 text-gray-600 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3"
+                  className="h-11 w-full rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/40 focus:border-white/40 focus:ring-0 px-3"
                 />
               </div>
             </div>
@@ -543,7 +543,7 @@ const ContactFormCard = memo(function ContactFormCard() {
                 name="company"
                 value={formData.company}
                 onChange={handleInputChange}
-                className="h-11 w-full rounded-xl bg-gray-200 border border-gray-700/60 text-gray-600 placeholder:text-gray-500 focus:border-gray-500 focus:ring-0 px-3"
+                className="h-11 w-full rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/40 focus:border-white/40 focus:ring-0 px-3"
               />
             </div>
           </div>
@@ -560,7 +560,7 @@ const ContactFormCard = memo(function ContactFormCard() {
                 required
                 value={formData.message}
                 onChange={handleInputChange}
-                className="w-full rounded-xl bg-gray-200 border border-gray-700/60 text-gray-600 placeholder:text-white focus:border-gray-500 focus:ring-0 px-3 py-2"
+                className="w-full rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/40 focus:border-white/40 focus:ring-0 px-3 py-2"
               />
             </div>
           </div>
@@ -594,6 +594,7 @@ const fmtDate = (iso) =>
 export default function App() {
   const [projects] = useState(projectsData);
   const [lightbox, setLightbox] = useState({ open: false, project: null, index: 0 });
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const marquee = useMemo(() => ["3ds Max","Maya","Blender","Substance","Unreal Engine","Unity","ZBrush","Clo3D"], []);
 
   // Blog (latest 3)
@@ -736,7 +737,7 @@ export default function App() {
     <div className={`min-h-screen ${colors.background} ${colors.text}`}>
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-gray-700/60 backdrop-blur supports-[backdrop-filter]:bg-black/60">
-        <div className={`${container} h-16 flex items-center justify-between`}>
+        <div className={`${container} h-16 flex items-center justify-between gap-3`}>
           <a href="#top" className="font-semibold tracking-tight text-lg md:text-xl">Daniel Inverno</a>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="#work" className="hover:opacity-80">Work</a>
@@ -744,35 +745,73 @@ export default function App() {
             <a href="#about" className="hover:opacity-80">About</a>
             <a href="#contact" className="hover:opacity-80">Contact</a>
           </nav>
-          <Button asChild className="rounded-full bg-gray-200 text-black hover:bg-white px-4 py-2 text-sm">
-            <a href="#contact" className="flex items-center gap-2"><Mail className="h-4 w-4" /> Hire me</a>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild className="rounded-full bg-gray-200 text-black hover:bg-white px-4 py-2 text-sm">
+              <a href="#contact" className="flex items-center gap-2"><Mail className="h-4 w-4" /> Hire me</a>
+            </Button>
+            <button
+              type="button"
+              onClick={() => setMobileNavOpen((v) => !v)}
+              aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileNavOpen}
+              aria-controls="mobile-nav"
+              className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-white/20 text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/60"
+            >
+              {mobileNavOpen ? <XIcon className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
+            </button>
+          </div>
         </div>
+        {mobileNavOpen && (
+          <nav
+            id="mobile-nav"
+            className="md:hidden border-t border-white/10 bg-black/80 backdrop-blur"
+          >
+            <div className={`${container} py-3 flex flex-col`}>
+              {[
+                ["Work", "#work"],
+                ["Blog", "#blog"],
+                ["About", "#about"],
+                ["Contact", "#contact"],
+              ].map(([label, href]) => (
+                <a
+                  key={href}
+                  href={href}
+                  onClick={() => setMobileNavOpen(false)}
+                  className="py-3 text-base text-gray-100 hover:text-white border-b border-white/5 last:border-b-0"
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+          </nav>
+        )}
       </header>
 
       {/* Hero */}
-      <section id="top" className="relative pt-24 md:pt-28">
-        <div className="relative h-[78vh] min-h-[560px] w-full overflow-hidden">
+      <section id="top" className="relative">
+        <div className="relative h-[100dvh] min-h-[560px] w-full overflow-hidden">
           <div className="absolute inset-0">
             <video
               autoPlay
               loop
               muted
               playsInline
+              preload="metadata"
+              poster="/og-cover.png"
               className="absolute inset-0 h-full w-full object-cover"
-              src="/your-video-filename.mp4"
+              src="/hero-reel.mp4"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/40" />
           </div>
 
           <div className="relative z-10 h-full">
-            <div className={`${container} h-full flex items-center`}>
+            <div className={`${container} h-full flex items-center pt-16`}>
               <div className="max-w-3xl text-white">
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs backdrop-blur">
                   <Sparkles className="h-3.5 w-3.5" /> Looking for New Projects
                 </div>
                 <h1 className="mt-4 text-4xl sm:text-6xl md:text-7xl font-semibold leading-[0.98] tracking-tight">
-                  3D Artist & Indie Game Dev
+                  3D Artist &amp; Indie Game Dev
                 </h1>
               </div>
             </div>
@@ -881,15 +920,24 @@ export default function App() {
                     className={`${spanFor(i)}`}
                     onMouseEnter={() => { setHovered(i); setHasInteracted(true); }}
                     onMouseLeave={() => setHovered(null)}
-                    onTouchStart={(e) => { /* noop at wrapper */ }}
                   >
                     <Card
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Open ${p.title} gallery`}
                       className={[
                         "overflow-hidden rounded-3xl border-white/10 group bg-black/20 relative cursor-pointer transition-transform",
+                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
                         isMobile && activeCard === i ? "ring-2 ring-white/50 scale-[0.98]" : ""
                       ].join(" ")}
                       onClick={() => {
                         if (!isMobile) {
+                          setLightbox({ open: true, project: p, index: mediaIdx });
+                        }
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
                           setLightbox({ open: true, project: p, index: mediaIdx });
                         }
                       }}
@@ -976,8 +1024,10 @@ export default function App() {
                             <p className="mt-2 text-sm md:text-base text-gray-300 max-w-xl">{p.blurb}</p>
                           </div>
 
-                          {/* center play cue (hidden in mobile spotlight) */}
-                          {!playing && !(isMobile && activeCard === i) && (
+                          {/* center play cue — desktop only; on mobile the
+                              cards are too narrow and the cue overlapped tags
+                              and titles. Mobile users tap to spotlight. */}
+                          {!playing && !isMobile && (
                             <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
                               <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm grid place-items-center text-white">
                                 <PlayIcon className="w-9 h-9" />
@@ -1073,11 +1123,6 @@ export default function App() {
             Contact
           </h2>
 
-          <div className="mt-6 flex items-center justify-center gap-6 text-sm text-gray-100">
-            <a href="#" className="hover:opacity-80">LinkedIn</a>
-            <a href="#" className="hover:opacity-80">Instagram</a>
-            <a href="#" className="hover:opacity-80">X/Twitter</a>
-          </div>
 
           <div className="mt-10 md:mt-12 lg:mt-14 grid">
             <div className="mx-auto w-full max-w-3xl">
