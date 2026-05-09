@@ -137,6 +137,16 @@ const projectsData = [
     link: "#",
     media: [{ type: "image", src: "/posters/Snake.png" }],
   },
+  {
+    title: "STARVIZ",
+    tags: ["Materials","Product Visualization","Rendering"],
+    blurb: "Materials, lighting & rendering.",
+    link: "#",
+    media: [
+      { type: "image", src: "/posters/STARVIZ01.jpg" },
+      { type: "image", src: "/posters/STARVIZ00.jpg" },
+    ],
+  },
 ];
 
 /* ---------- ratio utils ---------- */
@@ -700,40 +710,7 @@ export default function App() {
         if (alive) setBlog({ items, status: "ready" });
       } catch (e) {
         console.error("Blog feed load failed:", e);
-        if (alive) {
-          setBlog({
-            status: "ready",
-            items: [
-              {
-                id: "sample-1",
-                url: join(BASE, "blog/"),
-                title: "Volumetric logic dev diary",
-                summary: "Translating Akari-style constraints into a readable 3D grid with light paths.",
-                date_published: "2025-07-22T10:00:00Z",
-                tags: ["Unreal", "Design"],
-                image: "",
-              },
-              {
-                id: "sample-2",
-                url: join(BASE, "blog/"),
-                title: "Hard-surface toolkit notes",
-                summary: "Bevel strategies, trim sheets, and boolean hygiene for clean silhouettes.",
-                date_published: "2025-08-05T10:00:00Z",
-                tags: ["Blender", "Workflow"],
-                image: "",
-              },
-              {
-                id: "sample-3",
-                url: join(BASE, "blog/"),
-                title: "Clo3D → Unreal lookdev",
-                summary: "Quick pipeline tests moving garments into a real-time lighting setup.",
-                date_published: "2025-07-01T10:00:00Z",
-                tags: ["Clo3D", "Unreal"],
-                image: "",
-              },
-            ],
-          });
-        }
+        if (alive) setBlog({ status: "ready", items: [] });
       }
     })();
 
@@ -1083,8 +1060,7 @@ export default function App() {
 
           <div className="mt-14 md:mt-16 lg:mt-20 grid">
             <div className="mx-auto max-w-3xl text-gray-100/90 leading-relaxed space-y-6 text-center">
-              <p>I’m Daniel, a 3D artist focused on hard-surface and real-time assets. I’ve shipped content for games, ads, fashion, and interactive media. My approach is simple: clean topology, strong silhouettes, and materials that read instantly.</p>
-              <p>Recent explorations include translating Akari-style logic into volumetric 3D puzzles, and building modular kits that scale from prototypes to production.</p>
+              <p>I’m Daniel Inverno, a 3D artist, game tinkerer, and pipeline nerd. Born in Portugal and now based in the Netherlands, I have contributed to luxury brand projects with Platforme. Today I focus on indie game art direction, creating efficient pipelines and playful interactive design. I keep things fast, clean, and always fun to explore.</p>
             </div>
           </div>
         </div>
