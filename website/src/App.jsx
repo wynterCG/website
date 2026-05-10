@@ -631,103 +631,87 @@ const ContactFormCard = memo(function ContactFormCard() {
 
   const stopAll = useCallback((e) => e.stopPropagation(), []);
 
+  // Subtle filled inputs: clear "well" shape so the field reads as clickable,
+  // brass focus state for identity, no heavy boxed-form chrome.
+  const fieldClass = (extra = "") => [
+    "w-full bg-white/[0.04] hover:bg-white/[0.06] focus:bg-white/[0.08]",
+    "border border-white/10 hover:border-white/20 focus:border-[var(--accent)]",
+    "rounded-lg px-4 py-3 text-white placeholder:text-white/30",
+    "outline-none focus:ring-0 transition-colors",
+    extra,
+  ].join(" ");
+  const labelClass = "eyebrow block mb-2";
+
   return (
-    <Card
-      className="rounded-[28px] border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-[0_10px_40px_-15px_rgba(0,0,0,0.7)]"
-      onClickCapture={stopAll}
-      onMouseDownCapture={stopAll}
-      onFocusCapture={stopAll}
-      onKeyDownCapture={stopAll}
-    >
-      <CardContent className="p-6 sm:p-8 lg:p-10">
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6" noValidate>
-          <input ref={honeypotRef} name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+    <form onSubmit={handleSubmit} className="space-y-8" noValidate>
+      <input ref={honeypotRef} name="_gotcha" className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
-          <div className="grid sm:grid-cols-2 gap-6">
-            <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
-              <label htmlFor="cf-name" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-white px-4 pt-3">
-                Your name
-              </label>
-              <div className="px-4 pb-4 pt-1">
-                <input
-                  id="cf-name"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="h-11 w-full rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/40 focus:border-white/40 focus:ring-0 px-3"
-                />
-              </div>
-            </div>
+      <div className="grid sm:grid-cols-2 gap-x-8 gap-y-8">
+        <div>
+          <label htmlFor="cf-name" className={labelClass}>Your name</label>
+          <input
+            id="cf-name"
+            name="name"
+            required
+            value={formData.name}
+            onChange={handleInputChange}
+            className={fieldClass()}
+          />
+        </div>
+        <div>
+          <label htmlFor="cf-email" className={labelClass}>Email</label>
+          <input
+            id="cf-email"
+            name="email"
+            type="email"
+            required
+            value={formData.email}
+            onChange={handleInputChange}
+            className={fieldClass()}
+          />
+        </div>
+      </div>
 
-            <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
-              <label htmlFor="cf-email" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-white px-4 pt-3">
-                Email
-              </label>
-              <div className="px-4 pb-4 pt-1">
-                <input
-                  id="cf-email"
-                  name="email"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  className="h-11 w-full rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/40 focus:border-white/40 focus:ring-0 px-3"
-                />
-              </div>
-            </div>
-          </div>
+      <div>
+        <label htmlFor="cf-company" className={labelClass}>Company <span className="lowercase opacity-60">(optional)</span></label>
+        <input
+          id="cf-company"
+          name="company"
+          value={formData.company}
+          onChange={handleInputChange}
+          className={fieldClass()}
+        />
+      </div>
 
-          <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
-            <label htmlFor="cf-company" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-white px-4 pt-3">
-              Company (optional)
-            </label>
-            <div className="px-4 pb-4 pt-1">
-              <input
-                id="cf-company"
-                name="company"
-                value={formData.company}
-                onChange={handleInputChange}
-                className="h-11 w-full rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/40 focus:border-white/40 focus:ring-0 px-3"
-              />
-            </div>
-          </div>
+      <div>
+        <label htmlFor="cf-message" className={labelClass}>Project brief</label>
+        <textarea
+          id="cf-message"
+          name="message"
+          rows={6}
+          required
+          value={formData.message}
+          onChange={handleInputChange}
+          className={fieldClass("resize-none min-h-[140px]")}
+        />
+      </div>
 
-          <div className="group rounded-2xl border border-white/10 bg-white/5/50 hover:border-white/20 focus-within:border-white/40 shadow-[0_0_0_1px_rgba(255,255,255,0.02)] backdrop-blur-sm transition-colors">
-            <label htmlFor="cf-message" className="block text-[11px] font-semibold tracking-[0.12em] uppercase text-white px-4 pt-3">
-              Project brief
-            </label>
-            <div className="px-4 pb-4 pt-1">
-              <textarea
-                id="cf-message"
-                name="message"
-                rows={8}
-                required
-                value={formData.message}
-                onChange={handleInputChange}
-                className="w-full rounded-xl bg-white/10 border border-white/15 text-white placeholder:text-white/40 focus:border-white/40 focus:ring-0 px-3 py-2"
-              />
-            </div>
-          </div>
-
-          <div className="mt-2 flex items-center justify-between">
-            <p className="text-xs text-white" aria-live="polite">
-              {formStatus === "success" && "Thanks! I’ll get back to you soon."}
-              {formStatus === "error" && "Something went wrong. Please try again."}
-              {formStatus === "idle" && "By sending, you agree to be contacted back."}
-              {formStatus === "sending" && "Sending…"}
-            </p>
-            <Button
-              type="submit"
-              disabled={formStatus === "sending"}
-              className="rounded-full bg-white text-black hover:bg-gray-100 px-6 py-2 h-11 shadow-[0_6px_20px_-6px_rgba(255,255,255,0.35)]"
-            >
-              {formStatus === "sending" ? "Sending…" : "Send"}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4">
+        <p className="text-xs text-white/60" aria-live="polite">
+          {formStatus === "success" && "Thanks! I’ll get back to you soon."}
+          {formStatus === "error" && "Something went wrong. Please try again."}
+          {formStatus === "idle" && "By sending, you agree to be contacted back."}
+          {formStatus === "sending" && "Sending…"}
+        </p>
+        <button
+          type="submit"
+          disabled={formStatus === "sending"}
+          className="self-start sm:self-auto inline-flex items-center justify-center rounded-full bg-[var(--accent)] hover:bg-[var(--accent-soft)] text-black px-6 py-2.5 text-sm font-medium transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+        >
+          {formStatus === "sending" ? "Sending…" : "Send message"}
+        </button>
+      </div>
+    </form>
   );
 });
 
@@ -759,6 +743,12 @@ export default function App() {
   // (Effect itself lives further down so it can depend on `gridReady`.)
   const [spotlitIndex, setSpotlitIndex] = useState(null);
   const cardRefs = useRef({});
+
+  // Parallel spotlight for blog entries — same centred-in-viewport detection
+  // as the work grid, but for the journal articles further down. Only the
+  // article's IMAGE gets the brass ring/glow; the text caption stays clear.
+  const [blogSpotlitIndex, setBlogSpotlitIndex] = useState(null);
+  const blogCardRefs = useRef({});
 
   // NEW: mobile/coarse-pointer detection
   const [isMobile, setIsMobile] = useState(false);
@@ -859,6 +849,30 @@ export default function App() {
     els.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, [gridReady, projects.length]);
+
+  // Spotlight observer for the blog entries — runs once posts have loaded.
+  useEffect(() => {
+    if (blog.status !== "ready" || blog.items.length === 0) return;
+    if (typeof window === "undefined" || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let bestIndex = null;
+        let bestRatio = 0;
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > bestRatio) {
+            bestRatio = entry.intersectionRatio;
+            const idx = entry.target.getAttribute("data-blog-index");
+            bestIndex = idx === null ? null : Number(idx);
+          }
+        });
+        setBlogSpotlitIndex((prev) => (bestIndex === null ? prev : bestIndex));
+      },
+      { rootMargin: "-40% 0px -40% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+    const els = Object.values(blogCardRefs.current).filter(Boolean);
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [blog.status, blog.items.length]);
 
   // -------- BLOG FEED (robust path + URL fixing) --------
   useEffect(() => {
@@ -1267,7 +1281,10 @@ export default function App() {
                               <span key={t} className="px-2 py-1 rounded-full text-xs border border-white/30 bg-white/10">{t}</span>
                             ))}
                           </div>
-                          <h3 className="display-serif text-xl md:text-3xl font-medium tracking-tight">{p.title}</h3>
+                          <h3 className={[
+                            "display-serif text-xl md:text-3xl font-medium tracking-tight transition-colors duration-300",
+                            isSpotlit ? "text-[var(--accent)]" : "",
+                          ].join(" ")}>{p.title}</h3>
                           <p className="mt-2 text-sm md:text-base text-gray-300 max-w-xl">{p.blurb}</p>
                         </div>
                       </CardContent>
@@ -1280,61 +1297,125 @@ export default function App() {
         </div>
       </section>
 
-      {/* Blog */}
+      {/* Blog — editorial article entries: image-left + text-right per row,
+          matching a magazine listing rather than a SaaS card grid. Each post
+          gets substantial vertical space, separated by a thin brass-tinged
+          rule so the section reads as a journal index. */}
       <section id="blog" className="theme-blog section-surface py-24 md:py-32 border-t border-white/5 text-gray-100">
         <div className={container}>
           <div className="text-center">
             <span className="eyebrow">02 — Journal</span>
             <h2 className="section-title mt-3 text-3xl sm:text-5xl tracking-tight">
-              Latest from the Dev Blog
+              Notes from the studio
             </h2>
+            <p className="mt-6 text-base text-white/70 max-w-2xl mx-auto">
+              Process, experiments, and dev logs from the projects I&apos;m working on.
+            </p>
           </div>
 
           {blog.status === "loading" && (
-            <p className="mt-8 text-center text-gray-200/80">Loading…</p>
+            <p className="mt-12 text-center text-white/60">Loading…</p>
           )}
 
-          {blog.status === "ready" && (
-            <div className="mt-14 md:mt-16 lg:mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {blog.items.map((post) => (
-                <Card key={post.id} className="rounded-3xl border-white/15 bg-black/20 overflow-hidden">
-                  <CardContent className="p-0">
+          {blog.status === "ready" && blog.items.length === 0 && (
+            <p className="mt-12 text-center text-white/60">No posts yet — check back soon.</p>
+          )}
+
+          {blog.status === "ready" && blog.items.length > 0 && (
+            <div className="mt-14 md:mt-16 lg:mt-20 mx-auto max-w-5xl">
+              {blog.items.map((post, idx) => {
+                const isBlogSpotlit = blogSpotlitIndex === idx;
+                return (
+                <article
+                  key={post.id}
+                  ref={(el) => { if (el) blogCardRefs.current[idx] = el; else delete blogCardRefs.current[idx]; }}
+                  data-blog-index={idx}
+                  className={[
+                    "grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-10 items-center py-10 md:py-12",
+                    idx > 0 ? "border-t border-white/5" : "",
+                  ].join(" ")}
+                >
+                  {/* Image column — spotlight ring/glow when this entry is
+                      the centred-in-viewport one (matches Work section). */}
+                  <a
+                    href={post.url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className={[
+                      "md:col-span-5 block group overflow-hidden transition-all duration-300",
+                      isBlogSpotlit
+                        ? "ring-2 ring-[var(--accent)] shadow-[0_0_80px_-10px_var(--accent)]"
+                        : "",
+                    ].join(" ")}
+                    aria-label={`Read ${post.title}`}
+                  >
                     {post.image ? (
-                      <img src={post.image} alt="" className="w-full h-48 object-cover" />
+                      <img
+                        src={post.image}
+                        alt=""
+                        loading="lazy"
+                        className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                      />
                     ) : (
-                      <div className="w-full h-48 bg-gradient-to-br from-black/30 to-black/10" />
+                      <div className="w-full aspect-[4/3] bg-white/[0.04]" />
                     )}
-                    <div className="p-6 flex flex-col gap-3">
-                      <div className="text-xs text-gray-200/80">{fmtDate(post.date_published || post.date_modified)}</div>
-                      <h3 className="text-xl font-semibold leading-tight">{post.title}</h3>
-                      {post.summary && <p className="text-sm text-gray-100/90 line-clamp-3">{post.summary}</p>}
+                  </a>
+
+                  {/* Text column */}
+                  <div className="md:col-span-7">
+                    <div className="flex items-center gap-3 text-white/50 text-xs uppercase tracking-[0.2em]">
+                      <span>{fmtDate(post.date_published || post.date_modified)}</span>
                       {Array.isArray(post.tags) && post.tags.length > 0 && (
-                        <div className="mt-1 flex flex-wrap gap-2">
-                          {post.tags.slice(0, 4).map((t) => (
-                            <span key={t} className="px-2 py-0.5 rounded-full text-[11px] border border-white/20 text-gray-100/90">
-                              {t}
-                            </span>
-                          ))}
-                        </div>
+                        <>
+                          <span className="text-[var(--accent)]/50">/</span>
+                          <span>{post.tags.slice(0, 3).join(" · ")}</span>
+                        </>
                       )}
-                      <div className="mt-3">
-                        <Button asChild variant="ghost" className="px-0 h-auto text-gray-100 hover:text-white">
-                          <a href={post.url} target="_blank" rel="noreferrer noopener" className="inline-flex items-center gap-1">
-                            Read article
-                          </a>
-                        </Button>
-                      </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+
+                    <h3 className="display-serif mt-4 text-2xl md:text-3xl font-medium leading-tight tracking-tight">
+                      <a
+                        href={post.url}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className={[
+                          "transition-colors duration-300 hover:text-[var(--accent)]",
+                          isBlogSpotlit ? "text-[var(--accent)]" : "",
+                        ].join(" ")}
+                      >
+                        {post.title}
+                      </a>
+                    </h3>
+
+                    {post.summary && (
+                      <p className="mt-3 text-base text-white/70 leading-relaxed line-clamp-3">
+                        {post.summary}
+                      </p>
+                    )}
+
+                    <a
+                      href={post.url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="group inline-flex items-center gap-2 mt-5 text-sm text-[var(--accent)] hover:text-[var(--accent-soft)] transition-colors"
+                    >
+                      Read article
+                      <span className="transition-transform group-hover:translate-x-1">→</span>
+                    </a>
+                  </div>
+                </article>
+                );
+              })}
             </div>
           )}
 
-          <div className="mt-10 text-center">
-            <Button asChild className="rounded-full bg-white text-black hover:bg-gray-100 px-6 py-2 h-11">
-              <a href="/blog/">View all posts</a>
-            </Button>
+          <div className="mt-12 text-center">
+            <a
+              href="/blog/"
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-black px-6 py-2.5 text-sm font-medium transition-colors"
+            >
+              View all posts
+            </a>
           </div>
         </div>
       </section>
@@ -1363,15 +1444,19 @@ export default function App() {
           <div className="text-center">
             <span className="eyebrow">04 — Contact</span>
             <h2 className="section-title mt-3 text-3xl sm:text-5xl tracking-tight">
-              Contact
+              Let&apos;s build something
             </h2>
           </div>
 
+          {/* Subtle one-line intro under the heading instead of a full
+              left column — keeps the section warm without the splitting
+              layout the user didn't like. */}
+          <p className="mt-6 text-center text-base text-white/70 max-w-2xl mx-auto">
+            Send a brief, an idea, or just say hi. I usually reply within 48 hours.
+          </p>
 
-          <div className="mt-10 md:mt-12 lg:mt-14 grid">
-            <div className="mx-auto w-full max-w-3xl">
-              <ContactFormCard />
-            </div>
+          <div className="mt-12 md:mt-14 mx-auto w-full max-w-3xl">
+            <ContactFormCard />
           </div>
         </div>
       </section>

@@ -6,14 +6,18 @@
 /* ---------- Section theme tokens & helpers ---------- */
 @layer base {
   :root {
-    /* Pure-dark mono palette — every section sits on the same rich charcoal
-       so the artwork carries the colour story, not the chrome. */
-    --section-base: #0b0f16;
-
-    --work-bg:    var(--section-base);
-    --blog-bg:    var(--section-base);
-    --about-bg:   var(--section-base);
-    --contact-bg: var(--section-base);
+    /* Cool-luminance palette — same blue-cool family across all sections,
+       just stepping up/down in lightness. Reads like layered floors of a
+       building rather than rooms painted different colours. No warm/green
+       tints (which read as muddy/mouldy on screen).
+        - Work: deepest (anchors the artwork)
+        - About: one notch darker (calm "step down")
+        - Contact: one notch lighter
+        - Blog: lightest of the four (most "open" feeling) */
+    --work-bg:    #0b0f16;
+    --blog-bg:    #10141c;
+    --about-bg:   #080c12;
+    --contact-bg: #0e131a;
 
     --work-title:    #ffffff;
     --blog-title:    #ffffff;
