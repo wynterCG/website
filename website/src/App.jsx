@@ -64,25 +64,6 @@ const projectsData = [
     media: [{ type: "youtube", src: "https://www.youtube.com/watch?v=B7W1erPk05c", ratio: "16 / 9" }],
   },
   {
-    title: "Mochis",
-    tags: ["Product Visualization", "Blender", "Materials"],
-    blurb: "Nine material variants, one device.",
-    link: "#",
-    poster: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212",
-    media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/661/water.mp4" },
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4" },
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/679/0811-1.mp4" },
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/658/ghfjgfj.mp4" },
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/671/ergershf.mp4" },
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/669/0000-0119-1.mp4" },
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/659/0000-0119-3.mp4" },
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/667/gummy-2.mp4" },
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/670/0000-0119.mp4" },
-      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
-    ],
-  },
-  {
     title: "STARVIZ",
     tags: ["Materials","Product Visualization","Rendering"],
     blurb: "Bathroom interior product viz.",
@@ -135,6 +116,25 @@ const projectsData = [
       { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/030/977/130/large/dan-wynter-highresscreenshot00003.jpg?1602204731" },
       { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/030/977/373/large/dan-wynter-highresscreenshot00005.jpg?1602205532" },
       { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/030/977/233/large/dan-wynter-highresscreenshot00004.jpg?1602205044" },
+    ],
+  },
+  {
+    title: "Mochis",
+    tags: ["Product Visualization", "Blender", "Materials"],
+    blurb: "Nine material variants, one device.",
+    link: "#",
+    poster: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212",
+    media: [
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/661/water.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/679/0811-1.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/658/ghfjgfj.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/671/ergershf.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/669/0000-0119-1.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/659/0000-0119-3.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/667/gummy-2.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/670/0000-0119.mp4" },
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
     ],
   },
   {
@@ -384,10 +384,18 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
           </button>
         </div>
 
-        {/* media area */}
+        {/* media area: explicit height on the player + thumb strip flowing
+            naturally below it (no longer overlaying the video controls).
+            The player is shorter on md+ to reserve room for the strip. */}
         <div className="relative min-h-0">
+          {/* player */}
           <div
-            className="h-[70dvh] sm:h-[70dvh] md:h-[72dvh] lg:h-[72dvh]"
+            className={[
+              "relative",
+              media.length > 1
+                ? "h-[60dvh] md:h-[60dvh] lg:h-[62dvh]"
+                : "h-[70dvh] md:h-[70dvh] lg:h-[72dvh]",
+            ].join(" ")}
             style={{ touchAction: "pan-y" }}
             onTouchStart={onLBTouchStart}
             onTouchEnd={onLBTouchEnd}
@@ -413,18 +421,19 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
                 </button>
               </>
             )}
+          </div>
 
-            {/* desktop chips on hover/focus */}
-            {media.length > 1 && (
+          {/* Thumbnail filmstrip — actual mini-previews of each item, in its
+              own row beneath the player so it never collides with native
+              video controls. Always visible (it's the navigation rail). */}
+          {media.length > 1 && (
               <div
                 role="tablist"
                 aria-label="Media items"
                 className="
-                  pointer-events-auto
-                  absolute inset-x-0 bottom-0 hidden md:flex
-                  items-center justify-center gap-6 px-4 py-3
-                  bg-gradient-to-t from-black/70 to-transparent
-                  opacity-0 focus-within:opacity-100 group-hover:opacity-100 transition-opacity
+                  shrink-0 hidden md:flex
+                  items-center justify-center gap-3 px-4 py-3
+                  bg-black overflow-x-auto
                 "
               >
                 {media.map((m, idx) => {
@@ -433,6 +442,10 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
                     m.type === "video"   ? `Video ${idx+1}` :
                     m.type === "youtube" ? `YouTube ${idx+1}` :
                     m.type === "image"   ? `Image ${idx+1}` : `Item ${idx+1}`;
+                  const thumbSrc =
+                    m.type === "image"   ? m.src :
+                    m.type === "youtube" ? ytThumb(m.src, { prefer: "hq" }) :
+                    null; // video uses <video> below
                   return (
                     <button
                       key={idx}
@@ -440,24 +453,49 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
                       aria-selected={active}
                       aria-current={active ? "true" : undefined}
                       aria-label={label}
+                      title={label}
                       onClick={() => setIndex(idx)}
                       className={[
-                        "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm",
+                        "shrink-0 relative overflow-hidden rounded-md transition-opacity",
+                        // Square box + object-contain below: every item shows
+                        // its full shape (portraits stay portrait, landscapes
+                        // stay landscape) instead of being cropped to a fixed
+                        // landscape box. Use a 2px border (not ring) so the
+                        // frame is part of the box, never overflowing into the
+                        // gap between thumbs.
+                        "w-16 h-16 bg-black/60 border-2",
                         active
-                          ? "bg-white text-black border-white"
-                          : "bg-black/50 text-white border-white/30 hover:bg-black/70"
+                          ? "border-white opacity-100"
+                          : "border-white/20 opacity-60 hover:opacity-100"
                       ].join(" ")}
                     >
-                      {m.type === "video" && <VideoIcon className="w-3.5 h-3.5" />}
-                      {m.type === "youtube" && <YoutubeIcon className="w-3.5 h-3.5" />}
-                      {m.type === "image" && <ImageIcon className="w-3.5 h-3.5" />}
-                      <span className="text-xs opacity-90">{label}</span>
+                      {m.type === "video" ? (
+                        <video
+                          src={m.src}
+                          className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                          preload="metadata"
+                          muted
+                          playsInline
+                        />
+                      ) : thumbSrc ? (
+                        <img
+                          src={thumbSrc}
+                          alt=""
+                          loading="lazy"
+                          className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                        />
+                      ) : null}
+                      {/* type badge in the corner */}
+                      <span className="absolute bottom-1 right-1 z-10 inline-flex items-center justify-center rounded bg-black/70 p-0.5 text-white">
+                        {m.type === "video"   && <VideoIcon className="w-3 h-3" />}
+                        {m.type === "youtube" && <YoutubeIcon className="w-3 h-3" />}
+                        {m.type === "image"   && <ImageIcon className="w-3 h-3" />}
+                      </span>
                     </button>
                   );
                 })}
               </div>
             )}
-          </div>
         </div>
 
         {/* footer spacer */}
@@ -684,10 +722,10 @@ export default function App() {
     });
   }, [hovered, hasInteracted, spotlitIndex]);
 
-  const spanFor = (i) =>
-    i % 4 === 0 ? "lg:col-span-7" :
-    i % 4 === 1 ? "lg:col-span-5" :
-    i % 4 === 2 ? "lg:col-span-5" : "lg:col-span-7";
+  // Vertical stack: every project is its own full-width hero at its native
+  // aspect ratio. No horizontal neighbours to fight with, so the eye reads
+  // one piece at a time and the spotlight effect lands cleanly.
+  const spanFor = () => "";
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
 
@@ -928,7 +966,7 @@ export default function App() {
           {!gridReady ? (
             <p className="mt-14 text-center text-gray-200/80">Loading projects…</p>
           ) : (
-            <div className="mt-14 md:mt-16 lg:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
+            <div className="mt-14 md:mt-16 lg:mt-20 mx-auto max-w-5xl grid grid-cols-1 gap-10 md:gap-14">
               {projects.map((p, i) => {
                 const k = `${p.title}-${i}`;
                 const mediaIdx = (isMobile && activeCard === i && p.media.length > 0) ? (cardMediaIdx[i] ?? 0) : 0;
@@ -1012,7 +1050,10 @@ export default function App() {
                       tabIndex={0}
                       aria-label={`Open ${p.title} gallery`}
                       className={[
-                        "overflow-hidden rounded-3xl border-white/10 group bg-black/20 relative cursor-pointer transition-transform",
+                        // No card chrome — the image sits directly on the
+                        // section background. Keep `overflow-hidden` so the
+                        // absolute-positioned media still respects the box.
+                        "overflow-hidden group relative cursor-pointer transition-transform",
                         "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
                         isMobile && activeCard === i ? "ring-2 ring-white/50 scale-[0.98]" : ""
                       ].join(" ")}
@@ -1029,10 +1070,19 @@ export default function App() {
                       }}
                     >
                       <CardContent className="p-0 relative">
-                        {/* Fixed-size media box */}
+                        {/* Media box: keep the source's native aspect, but
+                            cap the height at 85vh so a portrait piece can't
+                            blow taller than the viewport on 1080p. The
+                            matching max-width = 85vh × ratio keeps the box
+                            proportional even when the height cap kicks in. */}
                         <div
-                          className="relative w-full"
-                          style={{ aspectRatio: ratioStr, touchAction: "pan-y" }}
+                          className="relative w-full mx-auto"
+                          style={{
+                            aspectRatio: ratioStr,
+                            maxHeight: "85vh",
+                            maxWidth: `calc(85vh * ${ratioNum})`,
+                            touchAction: "pan-y",
+                          }}
                           onTouchStart={onTouchStart}
                           onTouchMove={onTouchMove}
                           onTouchEnd={onTouchEnd}
