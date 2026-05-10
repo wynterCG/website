@@ -41,46 +41,59 @@ const container = "mx-auto max-w-7xl px-4 sm:px-6 lg:px-8";
 /* ---------- sample projects ---------- */
 const projectsData = [
   {
-    title: "Can Game - Prototype",
-    tags: ["Indie Dev", "UE5", "Game Art"],
-    blurb: "Process, blockout.",
+    title: "YSL MYSLF Le Parfum",
+    tags: ["Materials","Product Visualization","Rendering"],
+    blurb: "Lacquer, brass, glass.",
     link: "#",
     media: [
-      { type: "youtube", src: "https://youtu.be/ZfSN77J8tL4", ratio: "16 / 9" },
-      { type: "image", src: "https://i.ytimg.com/vi/ZfSN77J8tL4/maxresdefault.jpg" },
+      { type: "image", src: "/ysl/render03_final.png" },
+      { type: "image", src: "/ysl/render00.png" },
+      { type: "image", src: "/ysl/00.png" },
+      { type: "image", src: "/ysl/01.png" },
+      { type: "image", src: "/ysl/02.png" },
+      { type: "image", src: "/ysl/03.png" },
+      { type: "image", src: "/ysl/04.png" },
     ],
+  },
+  {
+    title: "Modern House — Archviz",
+    tags: ["Archviz", "UE5", "Environment"],
+    blurb: "3D Modern house based on archdaily project.",
+    link: "#",
+    poster: "posters/Archviz.png",
+    media: [{ type: "youtube", src: "https://www.youtube.com/watch?v=B7W1erPk05c", ratio: "16 / 9" }],
   },
   {
     title: "Mochis",
     tags: ["Product Visualization", "Blender", "Materials"],
     blurb: "Nine material variants, one device.",
     link: "#",
-    poster: "/posters/Mochis.png",
+    poster: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212",
     media: [
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4", ratio: "16 / 9"},
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/679/0811-1.mp4", ratio: "16 / 9"},
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/658/ghfjgfj.mp4", ratio: "16 / 9"},
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/661/water.mp4", ratio: "16 / 9"},
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/671/ergershf.mp4", ratio: "16 / 9"},
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/669/0000-0119-1.mp4", ratio: "16 / 9"},
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/659/0000-0119-3.mp4", ratio: "16 / 9"},
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/667/gummy-2.mp4", ratio: "16 / 9"},
-      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/670/0000-0119.mp4", ratio: "16 / 9"},
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/661/water.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/695/0811-2.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/679/0811-1.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/658/ghfjgfj.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/671/ergershf.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/669/0000-0119-1.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/659/0000-0119-3.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/667/gummy-2.mp4" },
+      { type: "video", src: "https://cdn.artstation.com/p/video_sources/002/776/670/0000-0119.mp4" },
       { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212" },
     ],
   },
   {
-    title: "Lapis Lazuli - Substance Designer Material",
+    title: "STARVIZ",
     tags: ["Materials","Product Visualization","Rendering"],
-    blurb: "Procedural lapis in Substance Designer.",
+    blurb: "Bathroom interior product viz.",
     link: "#",
     media: [
-      { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/090/780/581/large/dan-inverno-render00-final.jpg?1754901377" },
-      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/780/444/large/dan-inverno-screenshot-2025-08-11-102910.jpg?1754901019" },
+      { type: "image", src: "/posters/STARVIZ01.jpg" },
+      { type: "image", src: "/posters/STARVIZ00.jpg" },
     ],
   },
   {
-    title: "Phyllotaxis With Substance Designer ",
+    title: "Phyllotaxis Generator",
     tags: ["Procedural", "Substance Designer", "Technical Art"],
     blurb: "Spiral generator in Substance Designer with fxmaps.",
     link: "#",
@@ -96,7 +109,24 @@ const projectsData = [
     ],
   },
   {
-    title: "Mix of overwatch/world of warcraft UE5",
+    title: "Lapis Lazuli",
+    tags: ["Materials","Product Visualization","Rendering"],
+    blurb: "Procedural lapis in Substance Designer.",
+    link: "#",
+    media: [
+      { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/090/780/581/large/dan-inverno-render00-final.jpg?1754901377" },
+      { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/090/780/444/large/dan-inverno-screenshot-2025-08-11-102910.jpg?1754901019" },
+    ],
+  },
+  {
+    title: "Snake Fountain",
+    tags: ["Game Art","Hand painted","Stylized","Environment"],
+    blurb: "Hand painted Textures.",
+    link: "#",
+    media: [{ type: "image", src: "/posters/Snake.png" }],
+  },
+  {
+    title: "Stylized hand-painted environment",
     tags: ["Game Art","Hand painted","UE5","Environment"],
     blurb: "Game art environment with ue5.",
     link: "#",
@@ -108,43 +138,13 @@ const projectsData = [
     ],
   },
   {
-    title: "Yves Saint Laurent MYSLF Le Parfum",
-    tags: ["Materials","Product Visualization","Rendering"],
-    blurb: "Lacquer, brass, glass.",
+    title: "Can Game",
+    tags: ["Indie Dev", "UE5", "Game Art"],
+    blurb: "Process, blockout.",
     link: "#",
     media: [
-      { type: "image", src: "/ysl/render03_final.png" },
-      { type: "image", src: "/ysl/render00.png" },
-      { type: "image", src: "/ysl/00.png" },
-      { type: "image", src: "/ysl/01.png" },
-      { type: "image", src: "/ysl/02.png" },
-      { type: "image", src: "/ysl/03.png" },
-      { type: "image", src: "/ysl/04.png" },
-    ],
-  },
-  {
-    title: "Modern House 4k - Archviz ue5",
-    tags: ["Archviz", "UE5", "Environment"],
-    blurb: "3D Modern house based on archdaily project.",
-    link: "#",
-    poster: "posters/Archviz.png",
-    media: [{ type: "youtube", src: "https://www.youtube.com/watch?v=B7W1erPk05c", ratio: "16 / 9" }],
-  },
-  {
-    title: "Snake Fountain Stylized",
-    tags: ["Game Art","Hand painted","Stylized","Environment"],
-    blurb: "Hand painted Textures.",
-    link: "#",
-    media: [{ type: "image", src: "/posters/Snake.png" }],
-  },
-  {
-    title: "STARVIZ",
-    tags: ["Materials","Product Visualization","Rendering"],
-    blurb: "Bathroom interior product viz.",
-    link: "#",
-    media: [
-      { type: "image", src: "/posters/STARVIZ01.jpg" },
-      { type: "image", src: "/posters/STARVIZ00.jpg" },
+      { type: "youtube", src: "https://youtu.be/ZfSN77J8tL4", ratio: "16 / 9" },
+      { type: "image", src: "https://i.ytimg.com/vi/ZfSN77J8tL4/maxresdefault.jpg" },
     ],
   },
 ];
@@ -173,6 +173,29 @@ const loadImageRatio = (src) =>
     img.src = src;
   });
 
+// Mirror of loadImageRatio for video sources — pulls the file's metadata so
+// the card sizes to the video's actual aspect instead of the project's
+// declared ratio (which was often a guess).
+const loadVideoRatio = (src) =>
+  new Promise((resolve) => {
+    if (typeof document === "undefined") { resolve(16/9); return; }
+    const v = document.createElement("video");
+    v.preload = "metadata";
+    v.muted = true;
+    v.playsInline = true;
+    let done = false;
+    const finish = (r) => { if (done) return; done = true; resolve(r); };
+    v.onloadedmetadata = () => {
+      const r = v.videoWidth && v.videoHeight ? v.videoWidth / v.videoHeight : 16/9;
+      finish(r);
+    };
+    v.onerror = () => finish(16/9);
+    // Safety timeout so a stuck request doesn't keep the grid in the loading
+    // state forever.
+    setTimeout(() => finish(16/9), 4000);
+    v.src = src;
+  });
+
 /* ---------- media badges & helpers ---------- */
 const mediaCounts = (media = []) =>
   media.reduce((a, m) => {
@@ -188,10 +211,15 @@ const iconForType = (t) => (
   t === "image"   ? <ImageIcon className="w-3.5 h-3.5" /> : null
 );
 
-function MediaBadge({ media }) {
+function MediaBadge({ media, hidden = false }) {
   const c = mediaCounts(media);
   return (
-    <div className="absolute top-3 right-3 z-30 rounded-full border border-white/20 bg-black/60 backdrop-blur px-3 py-1 text-[11px] text-white/95 flex items-center gap-2">
+    <div
+      className={[
+        "absolute top-3 right-3 z-30 rounded-full border border-white/20 bg-black/60 backdrop-blur px-3 py-1 text-[11px] text-white/95 flex items-center gap-2 transition-opacity duration-300",
+        hidden ? "opacity-0" : "opacity-100",
+      ].join(" ")}
+    >
       <span className="font-semibold">{c.total}</span>
       <span className="opacity-80">items</span>
       <span className="h-3.5 w-px bg-white/25 mx-1" />
@@ -604,7 +632,17 @@ export default function App() {
   const [hovered, setHovered] = useState(null);
   const [hasInteracted, setHasInteracted] = useState(false);
   const videoRefs = useRef({});
-  const isPlaying = (i) => (hovered === i) || (!hasInteracted && i === 0);
+  // A card "plays" when hovered (desktop), when it's the initial first card
+  // (so something is moving on first paint), or when it's the spotlit card
+  // in the centre of the viewport.
+  const isPlaying = (i) => (hovered === i) || (!hasInteracted && i === 0) || (spotlitIndex === i);
+
+  // Spotlight whichever work-card is most centered in the viewport. While a
+  // card is "spotlit" its veil + overlay text + media badge fade out so the
+  // raw image/video reads as the focal element. Other cards stay normal.
+  // (Effect itself lives further down so it can depend on `gridReady`.)
+  const [spotlitIndex, setSpotlitIndex] = useState(null);
+  const cardRefs = useRef({});
 
   // NEW: mobile/coarse-pointer detection
   const [isMobile, setIsMobile] = useState(false);
@@ -634,9 +672,17 @@ export default function App() {
     Object.entries(videoRefs.current).forEach(([idx, el]) => {
       if (!el) return;
       const i = Number(idx);
-      if (isPlaying(i)) { el.play?.().catch(() => {}); } else { el.pause?.(); }
+      if (isPlaying(i)) {
+        // Force muted at the DOM level — React's declarative `muted` prop
+        // doesn't always sync, and unmuted autoplay is blocked.
+        el.muted = true;
+        el.playsInline = true;
+        el.play?.().catch(() => {});
+      } else {
+        el.pause?.();
+      }
     });
-  }, [hovered, hasInteracted]);
+  }, [hovered, hasInteracted, spotlitIndex]);
 
   const spanFor = (i) =>
     i % 4 === 0 ? "lg:col-span-7" :
@@ -658,7 +704,7 @@ export default function App() {
         const direct = normRatio(m.ratio);
         if (direct) return direct;
         if (m.type === "youtube") return 16/9;
-        if (m.type === "video")   return 16/9;
+        if (m.type === "video" && m.src) return await loadVideoRatio(m.src);
         if (m.type === "image" && m.src) return await loadImageRatio(m.src);
         return 16/9;
       });
@@ -669,6 +715,34 @@ export default function App() {
     })();
     return () => { live = false; };
   }, [projects]);
+
+  // Spotlight observer — set up once the cards are rendered (gridReady).
+  useEffect(() => {
+    if (!gridReady) return;
+    if (typeof window === "undefined" || typeof IntersectionObserver === "undefined") return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        let bestIndex = null;
+        let bestRatio = 0;
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > bestRatio) {
+            bestRatio = entry.intersectionRatio;
+            const idx = entry.target.getAttribute("data-card-index");
+            bestIndex = idx === null ? null : Number(idx);
+          }
+        });
+        setSpotlitIndex((prev) => (bestIndex === null ? prev : bestIndex));
+      },
+      {
+        // Centre band = middle 20% of the viewport.
+        rootMargin: "-40% 0px -40% 0px",
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      }
+    );
+    const els = Object.values(cardRefs.current).filter(Boolean);
+    els.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, [gridReady, projects.length]);
 
   // -------- BLOG FEED (robust path + URL fixing) --------
   useEffect(() => {
@@ -739,7 +813,7 @@ export default function App() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-gray-700/60 backdrop-blur supports-[backdrop-filter]:bg-black/60">
         <div className={`${container} h-16 flex items-center justify-between gap-3`}>
-          <a href="#top" className="font-semibold tracking-tight text-lg md:text-xl">Daniel Inverno</a>
+          <a href="#top" className="font-semibold tracking-tight text-lg md:text-xl lowercase">daninverno</a>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="#work" className="hover:opacity-80">Work</a>
             <a href="#blog" className="hover:opacity-80">Blog</a>
@@ -790,7 +864,11 @@ export default function App() {
 
       {/* Hero */}
       <section id="top" className="relative">
-        <div className="relative h-[100dvh] min-h-[560px] w-full overflow-hidden">
+        {/* h-[100svh] (small viewport height) instead of dvh — Samsung Internet
+            recomputes dvh when its toolbar shows/hides, which reflows the page
+            and causes a visible scroll jump after refresh. svh is the fixed
+            "minimum visible viewport" so the layout is stable. */}
+        <div className="relative h-[100svh] min-h-[560px] w-full overflow-hidden">
           <div className="absolute inset-0">
             <video
               autoPlay
@@ -858,7 +936,7 @@ export default function App() {
                 const isYT  = first?.type === "youtube";
                 const isMP4 = first?.type === "video";
                 const isIMG = first?.type === "image";
-                const playing = (hovered === i) || (!hasInteracted && i === 0);
+                const playing = (hovered === i) || (!hasInteracted && i === 0) || (spotlitIndex === i);
 
                 const ratioNum = ratios[i] ?? (16/9);
                 const ratioStr = ratioString(ratioNum);
@@ -918,9 +996,13 @@ export default function App() {
                   }
                 };
 
+                const isSpotlit = spotlitIndex === i;
+
                 return (
                   <div
                     key={k}
+                    ref={(el) => { if (el) cardRefs.current[i] = el; else delete cardRefs.current[i]; }}
+                    data-card-index={i}
                     className={`${spanFor(i)}`}
                     onMouseEnter={() => { setHovered(i); setHasInteracted(true); }}
                     onMouseLeave={() => setHovered(null)}
@@ -960,9 +1042,9 @@ export default function App() {
                             <video
                               ref={(el) => (videoRefs.current[i] = el)}
                               src={first.src}
-                              poster={first.poster || p.poster || (p.media.find(x => x.type === "image")?.src) || undefined}
+                              poster={first.poster || undefined}
                               className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-                              preload="none"
+                              preload="metadata"
                               muted
                               playsInline
                               loop={first.loop !== false}
@@ -1000,23 +1082,27 @@ export default function App() {
                           )}
 
                           {/* Multiple-items marker */}
-                          {p.media?.length > 1 && <MediaBadge media={p.media} />}
+                          {p.media?.length > 1 && <MediaBadge media={p.media} hidden={isSpotlit} />}
 
                           {/* veil (lighter) */}
                           <div
                             className={[
                               "absolute inset-0 z-10 transition-opacity duration-300 bg-black",
-                              playing ? "opacity-0" : "opacity-30",
-                              isMobile && activeCard === i ? "opacity-0" : ""
+                              (playing || (isMobile && activeCard === i) || isSpotlit)
+                                ? "opacity-0"
+                                : "opacity-30",
                             ].join(" ")}
                           />
 
-                          {/* overlay text (hidden in mobile spotlight) */}
+                          {/* overlay text (hidden in the mobile tap-spotlight,
+                              when the card is the centre-of-viewport spotlight,
+                              or while the card is actively playing) */}
                           <div
                             className={[
-                              "absolute inset-x-0 bottom-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none transition-opacity duration-300",
-                              "opacity-100 group-hover:opacity-0",
-                              isMobile && activeCard === i ? "opacity-0" : ""
+                              "absolute inset-x-0 bottom-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none transition-opacity duration-300 group-hover:opacity-0",
+                              ((isMobile && activeCard === i) || isSpotlit)
+                                ? "opacity-0"
+                                : "opacity-100",
                             ].join(" ")}
                           >
                             <div className="flex gap-2 mb-3 flex-wrap">
