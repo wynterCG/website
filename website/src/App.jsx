@@ -1031,7 +1031,7 @@ export default function App() {
       </section>
 
       {/* Skills marquee */}
-      <section className="border-y border-white/5 bg-[#2a2620]">
+      <section className="border-y border-white/5 bg-[#181818]">
         <SpotlightMarquee
           items={[
             "Blender", "Maya", "3ds Max", "ZBrush",
