@@ -43,7 +43,7 @@ const projectsData = [
   {
     title: "YSL MYSLF Le Parfum",
     tags: ["Materials","Product Visualization","Rendering"],
-    blurb: "Lacquer, brass, glass.",
+    blurb: "Photorealistic render based on a real perfume sample.",
     link: "#",
     media: [
       { type: "image", src: "/ysl/render03_final.png" },
@@ -58,7 +58,7 @@ const projectsData = [
   {
     title: "Modern House — Archviz",
     tags: ["Archviz", "UE5", "Environment"],
-    blurb: "3D Modern house based on archdaily project.",
+    blurb: "Archviz study based on a real ArchDaily project.",
     link: "#",
     poster: "posters/Archviz.png",
     media: [{ type: "youtube", src: "https://www.youtube.com/watch?v=B7W1erPk05c", ratio: "16 / 9" }],
@@ -66,7 +66,7 @@ const projectsData = [
   {
     title: "STARVIZ",
     tags: ["Materials","Product Visualization","Rendering"],
-    blurb: "Bathroom interior product viz.",
+    blurb: "Photorealistic bathroom interior visualization.",
     link: "#",
     media: [
       { type: "image", src: "/posters/STARVIZ01.jpg" },
@@ -76,7 +76,7 @@ const projectsData = [
   {
     title: "Phyllotaxis Generator",
     tags: ["Procedural", "Substance Designer", "Technical Art"],
-    blurb: "Spiral generator in Substance Designer with fxmaps.",
+    blurb: "Procedural spiral generator built in Substance Designer with FX-Maps.",
     link: "#",
     poster: "/posters/Phyllotaxis.png",
     media: [
@@ -92,7 +92,7 @@ const projectsData = [
   {
     title: "Lapis Lazuli",
     tags: ["Materials","Product Visualization","Rendering"],
-    blurb: "Procedural lapis in Substance Designer.",
+    blurb: "Procedural lapis lazuli material in Substance Designer.",
     link: "#",
     media: [
       { type: "image", src: "https://cdnb.artstation.com/p/assets/images/images/090/780/581/large/dan-inverno-render00-final.jpg?1754901377" },
@@ -102,14 +102,14 @@ const projectsData = [
   {
     title: "Snake Fountain",
     tags: ["Game Art","Hand painted","Stylized","Environment"],
-    blurb: "Hand painted Textures.",
+    blurb: "Hand-painted stylized prop, WoW-inspired.",
     link: "#",
     media: [{ type: "image", src: "/posters/Snake.png" }],
   },
   {
     title: "Stylized hand-painted environment",
     tags: ["Game Art","Hand painted","UE5","Environment"],
-    blurb: "Game art environment with ue5.",
+    blurb: "Hand-painted environment in Unreal — Overwatch & WoW art style.",
     link: "#",
     media: [
       { type: "image", src: "https://cdna.artstation.com/p/assets/images/images/030/977/060/large/dan-wynter-highresscreenshot00002.jpg?1602204167" },
@@ -121,7 +121,7 @@ const projectsData = [
   {
     title: "Mochis",
     tags: ["Product Visualization", "Blender", "Materials"],
-    blurb: "Nine material variants, one device.",
+    blurb: "Virtual pet concept device — nine material variants on one model.",
     link: "#",
     poster: "https://cdna.artstation.com/p/assets/images/images/090/781/582/large/dan-inverno-mochi.jpg?1754904212",
     media: [
@@ -140,7 +140,7 @@ const projectsData = [
   {
     title: "Can Game",
     tags: ["Indie Dev", "UE5", "Game Art"],
-    blurb: "Process, blockout.",
+    blurb: "Early process and blockouts of an indie game prototype.",
     link: "#",
     media: [
       { type: "youtube", src: "https://youtu.be/ZfSN77J8tL4", ratio: "16 / 9" },
@@ -210,6 +210,84 @@ const iconForType = (t) => (
   t === "youtube" ? <YoutubeIcon className="w-3.5 h-3.5" /> :
   t === "image"   ? <ImageIcon className="w-3.5 h-3.5" /> : null
 );
+
+/* ---------- SpotlightMarquee ----------
+ * News-ticker style horizontal scroll where every word is dimmed except
+ * the one currently closest to the viewport centre. A requestAnimationFrame
+ * loop measures each visible word's bounding rect on every frame and sets
+ * the active index — guaranteeing whole-word highlighting (the previous
+ * gradient-mask approach split words in the middle of a character).
+ */
+function SpotlightMarquee({ items, direction = "left", duration = 60, rowClassName = "", itemClassName = "", gapPx = 48, activeClassName = "text-white", dimClassName = "text-white/[0.07]" }) {
+  const containerRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    let raf;
+    const detect = () => {
+      const container = containerRef.current;
+      if (container) {
+        const cRect = container.getBoundingClientRect();
+        const centerX = (cRect.left + cRect.right) / 2;
+        const els = container.querySelectorAll("[data-mq-index]");
+        let bestIdx = 0;
+        let bestDist = Infinity;
+        els.forEach((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.right < cRect.left || r.left > cRect.right) return;
+          const itemCenter = (r.left + r.right) / 2;
+          const dist = Math.abs(itemCenter - centerX);
+          if (dist < bestDist) {
+            bestDist = dist;
+            bestIdx = Number(el.getAttribute("data-mq-index"));
+          }
+        });
+        setActiveIndex((prev) => (prev === bestIdx ? prev : bestIdx));
+      }
+      raf = requestAnimationFrame(detect);
+    };
+    raf = requestAnimationFrame(detect);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  // Three copies of the content so the viewport stays full even when one
+  // cycle is narrower than the screen. Animating exactly -33.333% (= one
+  // cycle width) keeps the loop seamless.
+  const animate = direction === "right" ? { x: ["-33.333%", "0%"] } : { x: ["0%", "-33.333%"] };
+
+  return (
+    <div ref={containerRef} className={`relative overflow-hidden ${rowClassName}`}>
+      <motion.div
+        className="absolute inset-0 flex w-max items-center"
+        animate={animate}
+        transition={{ repeat: Infinity, duration, ease: "linear" }}
+      >
+        {Array.from({ length: 3 }).map((_, j) => (
+          <div
+            key={j}
+            aria-hidden={j !== 0}
+            className="flex items-center whitespace-nowrap"
+            style={{ gap: `${gapPx}px`, paddingRight: `${gapPx}px` }}
+          >
+            {items.map((item, i) => (
+              <span
+                key={`${j}-${i}`}
+                data-mq-index={i}
+                className={[
+                  itemClassName,
+                  "transition-colors duration-200",
+                  activeIndex === i ? activeClassName : dimClassName,
+                ].join(" ")}
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        ))}
+      </motion.div>
+    </div>
+  );
+}
 
 function MediaBadge({ media, hidden = false }) {
   const c = mediaCounts(media);
@@ -374,10 +452,10 @@ function Lightbox({ open, onClose, project, startIndex = 0 }) {
       >
         {/* header */}
         <div className="p-3 sm:p-4 flex items-center justify-between gap-3 text-gray-200">
-          <div className="text-sm sm:text-base truncate">{project.title}</div>
+          <div className="display-serif text-base sm:text-lg truncate">{project.title}</div>
           <button
             ref={closeBtnRef} type="button" onClick={onClose}
-            className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/10 text-white border border-white/30 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/60"
+            className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/10 text-white border border-white/30 hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             aria-label="Close"
           >
             <XIcon className="w-5 h-5" />
@@ -851,7 +929,7 @@ export default function App() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 border-b border-gray-700/60 backdrop-blur supports-[backdrop-filter]:bg-black/60">
         <div className={`${container} h-16 flex items-center justify-between gap-3`}>
-          <a href="#top" className="font-semibold tracking-tight text-lg md:text-xl lowercase">daninverno</a>
+          <a href="#top" className="display-serif font-medium tracking-tight text-xl md:text-2xl lowercase">daninverno</a>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <a href="#work" className="hover:opacity-80">Work</a>
             <a href="#blog" className="hover:opacity-80">Blog</a>
@@ -859,7 +937,7 @@ export default function App() {
             <a href="#contact" className="hover:opacity-80">Contact</a>
           </nav>
           <div className="flex items-center gap-2">
-            <Button asChild className="rounded-full bg-gray-200 text-black hover:bg-white px-4 py-2 text-sm">
+            <Button asChild className="rounded-full bg-[var(--accent)] text-black hover:bg-[var(--accent-soft)] px-4 py-2 text-sm font-medium">
               <a href="#contact" className="flex items-center gap-2"><Mail className="h-4 w-4" /> Hire me</a>
             </Button>
             <button
@@ -868,7 +946,7 @@ export default function App() {
               aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileNavOpen}
               aria-controls="mobile-nav"
-              className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-white/20 text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/60"
+              className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full border border-white/20 text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
             >
               {mobileNavOpen ? <XIcon className="h-5 w-5" /> : <MenuIcon className="h-5 w-5" />}
             </button>
@@ -924,15 +1002,14 @@ export default function App() {
           <div className="relative z-10 h-full">
             <div className={`${container} h-full flex items-center pt-16`}>
               <div className="max-w-3xl text-white">
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs backdrop-blur">
-                  <Sparkles className="h-3.5 w-3.5" /> Looking for New Projects
-                </div>
-                <p className="mt-4 text-sm sm:text-base font-medium uppercase tracking-[0.2em] text-white/70">
-                  Daniel Inverno
-                </p>
-                <h1 className="mt-2 text-4xl sm:text-6xl md:text-7xl font-semibold leading-[0.98] tracking-tight">
+                <span className="eyebrow">00 — Daniel Inverno</span>
+                <h1 className="display-serif mt-3 text-5xl sm:text-7xl md:text-[5.5rem] font-medium leading-[0.96] tracking-tight">
                   3D Artist &amp; Indie Game Dev
                 </h1>
+                <p className="mt-6 inline-flex items-center gap-2 text-sm text-white/70">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
+                  Available for new projects
+                </p>
               </div>
             </div>
           </div>
@@ -940,28 +1017,46 @@ export default function App() {
       </section>
 
       {/* Skills marquee */}
-      <section className="py-6 border-y border-gray-700">
-        <div className="overflow-hidden">
-          <motion.div
-            className="flex gap-10 whitespace-nowrap text-sm text-gray-400 px-4"
-            animate={{ x: [0, -600] }}
-            transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
-          >
-            {Array.from({ length: 2 }).flatMap((_, j) =>
-              ["3ds Max","Maya","Blender","Substance","Unreal Engine","Unity","ZBrush","Clo3D"].map((m, i) => (
-                <span key={`${j}-${i}`} className="tracking-wide">{m}</span>
-              ))
-            )}
-          </motion.div>
-        </div>
+      <section className="border-y border-white/5">
+        <SpotlightMarquee
+          items={[
+            "Blender", "Maya", "3ds Max", "ZBrush",
+            "Substance Designer", "Substance Painter",
+            "Unreal Engine", "Blueprints", "Python",
+            "Photoshop", "Illustrator", "DaVinci Resolve",
+            "Inventor", "Corona Renderer",
+            "Texturing", "Retopology", "UV Mapping", "PBR", "Rendering",
+          ]}
+          direction="left"
+          duration={60}
+          rowClassName="h-14 border-b border-white/5"
+          itemClassName="text-base font-medium tracking-wide"
+          gapPx={56}
+        />
+        <SpotlightMarquee
+          items={[
+            "Communication", "Creativity", "Curiosity", "Adaptability",
+            "Efficiency Seeking", "Attention to Detail",
+            "Mentorship", "Problem Solving", "Leadership",
+          ]}
+          direction="right"
+          duration={50}
+          rowClassName="h-12"
+          itemClassName="display-serif text-sm italic"
+          gapPx={64}
+          activeClassName="text-[var(--accent)]"
+        />
       </section>
 
       {/* Work */}
       <section id="work" className="theme-work section-surface py-24 md:py-32 text-gray-100">
         <div className={container}>
-          <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
-            Portfolio Projects
-          </h2>
+          <div className="text-center">
+            <span className="eyebrow">01 — Work</span>
+            <h2 className="section-title mt-3 text-3xl sm:text-5xl tracking-tight">
+              Portfolio Projects
+            </h2>
+          </div>
 
           {!gridReady ? (
             <p className="mt-14 text-center text-gray-200/80">Loading projects…</p>
@@ -1037,25 +1132,29 @@ export default function App() {
                 const isSpotlit = spotlitIndex === i;
 
                 return (
-                  <div
+                  <motion.div
                     key={k}
                     ref={(el) => { if (el) cardRefs.current[i] = el; else delete cardRefs.current[i]; }}
                     data-card-index={i}
                     className={`${spanFor(i)}`}
                     onMouseEnter={() => { setHovered(i); setHasInteracted(true); }}
                     onMouseLeave={() => setHovered(null)}
+                    initial={{ opacity: 0, y: 32 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-12% 0px" }}
+                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <Card
                       role="button"
                       tabIndex={0}
                       aria-label={`Open ${p.title} gallery`}
                       className={[
-                        // No card chrome — the image sits directly on the
-                        // section background. Keep `overflow-hidden` so the
-                        // absolute-positioned media still respects the box.
-                        "overflow-hidden group relative cursor-pointer transition-transform",
-                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70",
-                        isMobile && activeCard === i ? "ring-2 ring-white/50 scale-[0.98]" : ""
+                        // No overflow-hidden on the Card — that would clip the
+                        // spotlight ring/glow that lives on the inner media
+                        // box. The media box clips its own content.
+                        "group relative cursor-pointer transition-all duration-300",
+                        "focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]",
+                        isMobile && activeCard === i ? "scale-[0.98]" : ""
                       ].join(" ")}
                       onClick={() => {
                         if (!isMobile) {
@@ -1074,9 +1173,17 @@ export default function App() {
                             cap the height at 85vh so a portrait piece can't
                             blow taller than the viewport on 1080p. The
                             matching max-width = 85vh × ratio keeps the box
-                            proportional even when the height cap kicks in. */}
+                            proportional even when the height cap kicks in.
+                            Spotlight (brass ring + glow) lives here so it
+                            hugs the image, not the caption below. */}
                         <div
-                          className="relative w-full mx-auto"
+                          className={[
+                            "relative w-full mx-auto overflow-hidden transition-all duration-300",
+                            isSpotlit
+                              ? "ring-2 ring-[var(--accent)] shadow-[0_0_80px_-10px_var(--accent)]"
+                              : "",
+                            isMobile && activeCard === i ? "ring-2 ring-white/50" : "",
+                          ].join(" ")}
                           style={{
                             aspectRatio: ratioStr,
                             maxHeight: "85vh",
@@ -1134,35 +1241,6 @@ export default function App() {
                           {/* Multiple-items marker */}
                           {p.media?.length > 1 && <MediaBadge media={p.media} hidden={isSpotlit} />}
 
-                          {/* veil (lighter) */}
-                          <div
-                            className={[
-                              "absolute inset-0 z-10 transition-opacity duration-300 bg-black",
-                              (playing || (isMobile && activeCard === i) || isSpotlit)
-                                ? "opacity-0"
-                                : "opacity-30",
-                            ].join(" ")}
-                          />
-
-                          {/* overlay text (hidden in the mobile tap-spotlight,
-                              when the card is the centre-of-viewport spotlight,
-                              or while the card is actively playing) */}
-                          <div
-                            className={[
-                              "absolute inset-x-0 bottom-0 z-20 p-6 md:p-8 text-white bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none transition-opacity duration-300 group-hover:opacity-0",
-                              ((isMobile && activeCard === i) || isSpotlit)
-                                ? "opacity-0"
-                                : "opacity-100",
-                            ].join(" ")}
-                          >
-                            <div className="flex gap-2 mb-3 flex-wrap">
-                              {p.tags?.map((t) => (
-                                <span key={t} className="px-2 py-1 rounded-full text-xs border border-white/30 bg-black/40 backdrop-blur">{t}</span>
-                              ))}
-                            </div>
-                            <h3 className="text-sm md:text-2xl font-semibold">{p.title}</h3>
-                            <p className="mt-2 text-sm md:text-base text-gray-300 max-w-xl">{p.blurb}</p>
-                          </div>
 
                           {/* center play cue — desktop only; on mobile the
                               cards are too narrow and the cue overlapped tags
@@ -1175,9 +1253,26 @@ export default function App() {
                             </div>
                           )}
                         </div>
+
+                        {/* Title / tags / blurb — flat caption beneath the
+                            image. No panel chrome — just a thin top rule
+                            separating image from text, matching the image's
+                            sharp/flat aesthetic. */}
+                        <div
+                          className="mx-auto mt-4 md:mt-5 pt-4 md:pt-5 border-t border-white/15 text-white"
+                          style={{ maxWidth: `calc(85vh * ${ratioNum})` }}
+                        >
+                          <div className="flex gap-2 mb-3 flex-wrap">
+                            {p.tags?.map((t) => (
+                              <span key={t} className="px-2 py-1 rounded-full text-xs border border-white/30 bg-white/10">{t}</span>
+                            ))}
+                          </div>
+                          <h3 className="display-serif text-xl md:text-3xl font-medium tracking-tight">{p.title}</h3>
+                          <p className="mt-2 text-sm md:text-base text-gray-300 max-w-xl">{p.blurb}</p>
+                        </div>
                       </CardContent>
                     </Card>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -1186,11 +1281,14 @@ export default function App() {
       </section>
 
       {/* Blog */}
-      <section id="blog" className="theme-blog section-surface py-24 md:py-32 border-t border-white/100 text-gray-100">
+      <section id="blog" className="theme-blog section-surface py-24 md:py-32 border-t border-white/5 text-gray-100">
         <div className={container}>
-          <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
-            Latest from the Dev Blog
-          </h2>
+          <div className="text-center">
+            <span className="eyebrow">02 — Journal</span>
+            <h2 className="section-title mt-3 text-3xl sm:text-5xl tracking-tight">
+              Latest from the Dev Blog
+            </h2>
+          </div>
 
           {blog.status === "loading" && (
             <p className="mt-8 text-center text-gray-200/80">Loading…</p>
@@ -1242,11 +1340,14 @@ export default function App() {
       </section>
 
       {/* About */}
-      <section id="about" className="theme-about section-surface py-24 md:py-32 border-t border-white/100 text-gray-100">
+      <section id="about" className="theme-about section-surface py-24 md:py-32 border-t border-white/5 text-gray-100">
         <div className={container}>
-          <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
-            About
-          </h2>
+          <div className="text-center">
+            <span className="eyebrow">03 — About</span>
+            <h2 className="section-title mt-3 text-3xl sm:text-5xl tracking-tight">
+              About
+            </h2>
+          </div>
 
           <div className="mt-14 md:mt-16 lg:mt-20 grid">
             <div className="mx-auto max-w-3xl text-gray-100/90 leading-relaxed space-y-6 text-center">
@@ -1257,11 +1358,14 @@ export default function App() {
       </section>
 
       {/* Contact */}
-      <section id="contact" className="theme-contact section-surface py-24 md:py-32 text-gray-100 border-t border-white/100">
+      <section id="contact" className="theme-contact section-surface py-24 md:py-32 text-gray-100 border-t border-white/5">
         <div className={container}>
-          <h2 className="section-title text-center text-3xl sm:text-5xl font-semibold tracking-tight">
-            Contact
-          </h2>
+          <div className="text-center">
+            <span className="eyebrow">04 — Contact</span>
+            <h2 className="section-title mt-3 text-3xl sm:text-5xl tracking-tight">
+              Contact
+            </h2>
+          </div>
 
 
           <div className="mt-10 md:mt-12 lg:mt-14 grid">
@@ -1273,14 +1377,18 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="py-10 border-t border-white/100 border-gray-700">
-        <div className={`${container} flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400`}>
-          <p>© {new Date().getFullYear()} Daniel Inverno. All rights reserved.</p>
+      <footer className="py-12 border-t border-white/5">
+        <div className={`${container} flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-gray-400`}>
+          <div className="flex items-center gap-3">
+            <span className="display-serif text-base lowercase text-white/90">daninverno</span>
+            <span className="h-px w-8 bg-[var(--accent)]" />
+            <span>© {new Date().getFullYear()}</span>
+          </div>
           <nav className="flex items-center gap-6">
-            <a href="#work" className="hover:opacity-80">Work</a>
-            <a href="#blog" className="hover:opacity-80">Blog</a>
-            <a href="#about" className="hover:opacity-80">About</a>
-            <a href="#contact" className="hover:opacity-80">Contact</a>
+            <a href="#work" className="hover:text-white transition-colors">Work</a>
+            <a href="#blog" className="hover:text-white transition-colors">Blog</a>
+            <a href="#about" className="hover:text-white transition-colors">About</a>
+            <a href="#contact" className="hover:text-white transition-colors">Contact</a>
           </nav>
         </div>
       </footer>

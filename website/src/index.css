@@ -6,28 +6,31 @@
 /* ---------- Section theme tokens & helpers ---------- */
 @layer base {
   :root {
-    /* OKLCH backgrounds; hex fallbacks so older browsers (Samsung Internet)
-       still render the section colors instead of falling through to currentColor. */
-    --work-bg:  #1f4f6b;
-    --work-title: #ffffff;
+    /* Pure-dark mono palette — every section sits on the same rich charcoal
+       so the artwork carries the colour story, not the chrome. */
+    --section-base: #0b0f16;
 
-    --blog-bg:  #b54a32;
-    --blog-title: #ffffff;
+    --work-bg:    var(--section-base);
+    --blog-bg:    var(--section-base);
+    --about-bg:   var(--section-base);
+    --contact-bg: var(--section-base);
 
-    --about-bg: #1c2745;
-    --about-title: #ffffff;
-
-    --contact-bg: #2c8244;
+    --work-title:    #ffffff;
+    --blog-title:    #ffffff;
+    --about-title:   #ffffff;
     --contact-title: #ffffff;
+
+    /* Brand identity: brass accent + Fraunces display serif. The accent is
+       used sparingly (eyebrows, primary CTA, focus rings) so it reads as a
+       signature rather than UI noise. */
+    --accent: #c9a76c;
+    --accent-soft: #d8bd8a;
+    --font-display: "Fraunces", ui-serif, Georgia, serif;
+    --font-body: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
 
-  @supports (color: oklch(0% 0 0)) {
-    :root {
-      --work-bg:  oklch(48.11% 0.099 234.04);
-      --blog-bg:  oklch(58.428% 0.13362 35.278);
-      --about-bg: oklch(29.48% 0.081 256.36);
-      --contact-bg: oklch(54.429% 0.1272 146.497);
-    }
+  html, body {
+    font-family: var(--font-body);
   }
 
   /* Map tokens to per-section CSS vars */
@@ -41,13 +44,30 @@
   /* Solid surface color per section */
   .section-surface { background-color: var(--section-bg); }
 
-  /* Solid title color, guaranteed visible on every section bg.
-     The previous `background-clip: text` + `color-mix(in oklch, …)` gradient
-     looked nice on Chrome desktop but rendered invisible on Samsung Internet
-     (the browser advertised support but parsed the oklch mix to near-black,
-     leaving transparent text on a dark section bg). */
+  /* Section titles use the display serif for editorial weight. */
   .section-title {
     color: var(--section-title);
-    letter-spacing: 0.02em;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    font-optical-sizing: auto;
+  }
+
+  /* Numbered eyebrow above each section heading — the recurring brand mark.
+     Wide tracking + brass colour reads as a magazine chapter cue. */
+  .eyebrow {
+    display: inline-block;
+    color: var(--accent);
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  /* Display serif also drives hero H1 and project titles. */
+  .display-serif {
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
   }
 }
