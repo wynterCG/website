@@ -1031,7 +1031,7 @@ export default function App() {
       </section>
 
       {/* Skills marquee */}
-      <section className="border-y border-white/5">
+      <section className="border-y border-white/5 bg-[#2a2620]">
         <SpotlightMarquee
           items={[
             "Blender", "Maya", "3ds Max", "ZBrush",
@@ -1043,10 +1043,13 @@ export default function App() {
           ]}
           direction="left"
           duration={60}
-          rowClassName="h-14 border-b border-white/5"
+          rowClassName="h-14"
           itemClassName="text-base font-medium tracking-wide"
           gapPx={56}
         />
+        {/* Thin black divider — gives the two marquee rows a clear visual
+            break (vs the section's warm-dark bg showing through). */}
+        <div aria-hidden className="h-2 bg-[#0b0f16]" />
         <SpotlightMarquee
           items={[
             "Communication", "Creativity", "Curiosity", "Adaptability",
