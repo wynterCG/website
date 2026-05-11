@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Tinder-swipe the canvas: building mural gestures — Stridekeep dev log — Daniel Inverno</title>
+  <meta name="description" content="Rewriting Stridekeep's mural canvas as a single PanResponder that handles tap / horizontal-pan / vertical-no-op, with a snap-back hijack fix so re-grabs feel continuous. And the rarity-colour system layered on top." />
+
+  <link rel="canonical" href="https://daninverno.com/blog/stridekeep-mural-gestures.html" />
+  <link rel="alternate" type="application/feed+json" href="../feed.json" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Tinder-swipe the canvas: building mural gestures — Stridekeep dev log" />
+  <meta property="og:description" content="Single PanResponder, three gesture states, one snap-back hijack fix. Plus the rarity-colour system that turned the inventory into a slot machine." />
+  <meta property="og:url" content="https://daninverno.com/blog/stridekeep-mural-gestures.html" />
+  <meta property="og:image" content="https://daninverno.com/blog/stridekeep-mural-gestures/thumbnail.png" />
+  <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tinder-swipe the canvas: building mural gestures — Stridekeep dev log" />
+  <meta name="twitter:description" content="A single PanResponder running a three-state gesture machine, and the rarity colour system layered on top." />
+  <meta name="twitter:image" content="https://daninverno.com/blog/stridekeep-mural-gestures/thumbnail.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Tinder-swipe the canvas: building mural gestures — Stridekeep dev log",
+    "description": "Rewriting Stridekeep's mural canvas as a single PanResponder, plus the rarity-colour system layered on top.",
+    "author": { "@type": "Person", "name": "Daniel Inverno", "url": "https://daninverno.com/" },
+    "datePublished": "2026-05-04T11:00:00Z",
+    "dateModified": "2026-05-04T11:00:00Z",
+    "image": ["https://daninverno.com/blog/stridekeep-mural-gestures/thumbnail.png"],
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://daninverno.com/blog/stridekeep-mural-gestures.html" },
+    "publisher": { "@type": "Person", "name": "Daniel Inverno" }
+  }
+  </script>
+
+  <style>
+    :root{
+      --bg1:#0b0f16; --bg2:#0e1219; --bg3:#11151c;
+      --card:#10141b; --paper:#13171f;
+      --text:#ffffff; --muted:#9aa3b2; --border:rgba(255,255,255,.08);
+      --accent:#c9a76c; --accent2:#d8bd8a;
+      --display:'Fraunces', ui-serif, Georgia, serif;
+      --body:'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.45);
+      --ok:#34d399; --warn:#fbbf24;
+      scroll-padding-top: 90px;
+    }
+    @media (max-width:1023px){ :root{ scroll-padding-top: 70px; } }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(201,167,108,.10), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(216,189,138,.07), transparent 55%),
+        linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
+      font:16px/1.7 var(--body);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+    header{position:sticky;top:0;z-index:50;background:rgba(11,15,22,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav > a{font-family:var(--display);font-weight:500;letter-spacing:-.01em;text-transform:lowercase;font-size:1.15rem}
+    .links{display:none;gap:1.1rem;color:#cbd5e1}
+    @media(min-width:768px){.links{display:flex}}
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;z-index:60}
+    main{padding:2.25rem 0 3.25rem}
+    .heroWrap{position:relative}
+    .hero{width:100%;height:360px;object-fit:cover;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow);background:linear-gradient(135deg,#13171f,#0b0f16)}
+    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(11,15,22,.7);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:var(--accent2);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}
+    h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4vw,2.9rem);line-height:1.05;letter-spacing:-.01em;margin:1.3rem 0 .65rem;font-optical-sizing:auto}
+    .meta{color:var(--muted);font-size:.85rem;margin-bottom:1rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.18em;text-transform:uppercase}
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.85rem 0 1.35rem}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.72rem;color:var(--accent2);background:rgba(255,255,255,.04);letter-spacing:.05em}
+    article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
+    @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
+    .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
+    .toc h3{margin:.2rem 0 .5rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6;font-size:.93rem;transition:color .2s, background .2s}
+    .toc a:hover{background:rgba(255,255,255,.04);color:var(--accent)}
+    @media (max-width:1023px){.toc{position:static;top:auto;max-height:none;overflow:visible;width:auto;margin:0 0 1rem 0;z-index:auto}}
+    .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
+    @media(min-width:768px){.content{padding:2rem}}
+    .content h2{font-family:var(--display);font-weight:600;margin:1.5rem 0 .5rem;font-size:1.6rem;letter-spacing:-.005em;font-optical-sizing:auto}
+    .content h3{font-family:var(--display);font-weight:500;margin:1.1rem 0 .35rem;font-size:1.15rem;color:var(--accent2);font-optical-sizing:auto}
+    .content p{margin:.6rem 0}
+    .lead{color:#d1d5db}
+    .callout{border:1px solid var(--border);background:var(--paper);border-radius:16px;padding:1rem;margin:.85rem 0}
+    .callout.good{border-color:rgba(52,211,153,.28)}
+    .callout.warn{border-color:rgba(251,191,36,.28)}
+    .checklist{display:grid;grid-template-columns:1fr;gap:.5rem}
+    @media(min-width:768px){.checklist{grid-template-columns:repeat(2,1fr)}}
+    .card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0));border-radius:14px;padding:.85rem}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
+    pre.code{background:#070a0f;border:1px solid var(--border);border-radius:12px;padding:1rem;overflow-x:auto;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.85rem;line-height:1.55;color:#e5e7eb}
+    code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.88em;background:rgba(255,255,255,.06);padding:.08em .35em;border-radius:5px;color:var(--accent2)}
+    pre.code code{background:transparent;padding:0;color:inherit}
+    footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af}
+    .btn{display:inline-block;padding:.55rem 1.1rem;border-radius:999px;background:var(--accent);color:#000;font-weight:500;font-size:.9rem;transition:background .2s}
+    .btn:hover{background:var(--accent2)}
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header>
+    <div class="container nav">
+      <a href="../" aria-label="Home">daninverno</a>
+      <nav class="links" aria-label="Primary"></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="heroWrap">
+      <img class="hero" src="./stridekeep-mural-gestures/thumbnail.png" alt="Stridekeep mural canvas with rarity-coloured tile frames" />
+      <span class="heroBadge">Stridekeep • Vibe Coding</span>
+    </div>
+
+    <h1>Tinder-swipe the canvas: building mural gestures</h1>
+    <div class="meta">May 4, 2026 · ~7 min read · with Claude Opus 4.7</div>
+
+    <div class="tags">
+      <span class="tag">Stridekeep</span>
+      <span class="tag">React Native</span>
+      <span class="tag">Gestures</span>
+      <span class="tag">Vibe Coding</span>
+    </div>
+
+    <article>
+      <aside class="toc" aria-label="On this page">
+        <h3>On this page</h3>
+        <a href="#problem">The misfire problem</a>
+        <a href="#state-machine">Three states, one PanResponder</a>
+        <a href="#snap-back">The snap-back hijack</a>
+        <a href="#live-enemy">Live enemy canvas while you drag</a>
+        <a href="#rarity">Rarity colours, in sync</a>
+        <a href="#takeaways">Takeaways</a>
+      </aside>
+
+      <section class="content">
+        <p class="lead" id="problem">
+          The mural canvas in Stridekeep used to be a tap-only target wrapped in <code>Pressable</code>. You tapped a
+          tile to open the placer. That was fine — until I wanted to let players see <em>the other team’s</em> canvas
+          by swiping horizontally on it. The moment I added a swipe, the tap started misfiring on every vertical
+          flick. Time to rewrite.
+        </p>
+
+        <div class="callout good">
+          <strong>TL;DR:</strong> One <code>PanResponder</code> runs a three-state machine (tap / horizontal pan /
+          vertical no-op) with a Tinder-style live drag and a card-swipe commit. The trickiest fix was a snap-back
+          hijack: if the player re-grabs mid spring-back, the new pan has to be <em>additive</em> on top of the still-running
+          animation, not a fresh start.
+        </p>
+
+        <h2 id="problem">The misfire problem</h2>
+        <p>
+          A <code>Pressable</code> doesn’t know what a <code>PanResponder</code> is doing. When the parent intercepts
+          a vertical flick (to scroll the page), the child Pressable still ticks <em>onPress</em> on touch end if
+          the touch moved less than its default tolerance. So pulling the page up to scroll <em>also</em> opened
+          the tile placer on whichever tile your finger started on. Annoying.
+        </p>
+        <p>
+          The fix isn’t a config flag — it’s replacing <code>Pressable</code> with a gesture that owns the whole
+          touch lifecycle and decides, at the end, whether this was a tap or something else.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="state-machine">Three states, one PanResponder</h2>
+        <p>
+          The CanvasPanel’s single <code>PanResponder</code> classifies every touch into one of three states at
+          release time:
+        </p>
+
+        <div class="checklist">
+          <div class="card">
+            <strong>tap</strong><br>
+            Total movement under <code>TAP_TOLERANCE = 8</code>&nbsp;dp. Fires the placer for the cell under
+            the start coordinate. No animation. The thing the player intended.
+          </div>
+          <div class="card">
+            <strong>horizontal pan / swipe</strong><br>
+            Horizontal delta past <code>H_SWIPE_THRESHOLD = 50</code>&nbsp;dp <em>or</em> a fling with
+            <code>|vx| &gt; 0.4</code>. Commits the own ↔ enemy canvas swap with a card-swipe slide animation.
+          </div>
+          <div class="card">
+            <strong>vertical no-op</strong><br>
+            If the dominant axis is vertical (e.g. the user is scrolling the page), the responder simply doesn’t
+            claim the gesture. Page scroll wins. No tap fired.
+          </div>
+          <div class="card">
+            <strong>live follow</strong><br>
+            During a horizontal pan, the canvas <em>follows the finger</em> in real time via
+            <code>onPanMove(dx)</code> — Tinder-style. Release commits or springs back depending on whether the
+            threshold was crossed.
+          </div>
+        </div>
+
+        <p>
+          The “<em>vertical drags don’t fire taps</em>” line in the commit message is the one I’m proudest of.
+          The old behaviour was the misfire; the new behaviour is just… correct.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="snap-back">The snap-back hijack</h2>
+        <p>
+          The interesting bug is on re-grab. Say the player drags the canvas 30&nbsp;dp to the right, lifts (under
+          threshold, so it springs back), then grabs again while the spring is mid-flight. What should happen?
+        </p>
+        <p>
+          Naive answer: stop the animation, start a new pan from zero. Looks broken — the canvas jumps back to
+          centre instantly before the new drag, which feels like a glitch.
+        </p>
+        <p>
+          Correct answer: don’t stop the animation. <em>Hijack</em> it.
+        </p>
+
+        <pre class="code"><code>// On a fresh grab, if we're mid spring-back:
+const current = (panX as any)._value;     // current visual offset
+panX.stopAnimation();                     // freeze it where it is
+panX.setOffset(current);                  // make that the new origin
+panX.setValue(0);                         // delta is now relative to origin
+
+// onPanMove can now do panX.setValue(dx) and the new pan
+// rides on top of wherever the spring-back had reached.</code></pre>
+
+        <p>
+          The release pass undoes it (<code>flattenOffset()</code> + spring or commit). Claude wrote this pattern
+          on the first try; I never would have, because I’d have reached for <code>.stop()</code> first and
+          stared at the jump.
+        </p>
+
+        <div class="callout warn">
+          <strong>Don’t simplify:</strong> changing the hijack to a naive <code>.stop()</code> is a one-line
+          regression that <em>looks fine</em> in dev (you don’t re-grab during a spring-back when you’re testing
+          features) but is brutally obvious in the hands of a real user. There’s a comment block on this exact
+          temptation in <code>CanvasPanel.tsx</code> now.
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="live-enemy">Live enemy canvas while you drag</h2>
+        <p>
+          Half the magic of the swipe is what you see <em>during</em> it: as you drag your team’s canvas off-screen,
+          the enemy team’s canvas slides in behind it — and crucially, it’s <em>live</em>. Tiles are being placed
+          in real time on the enemy team’s mural, and you watch them happen.
+        </p>
+        <p>
+          To make that work, both teams’ canvas data needed to be subscribed simultaneously while CanvasPanel
+          was mounted. Two <code>useCanvasLiveSync</code> hooks (own + enemy) feed the same Supabase realtime
+          channel, and both canvases render through the same pipeline. The swipe is just visual; the data was
+          already there.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="rarity">Rarity colours, in sync</h2>
+        <p>
+          Same commit, separate system: rarity-coloured names and frames across the live feed, case-reveal modal,
+          inventory grid, and tile picker. Every colour palette in the game has a bucket — common / uncommon /
+          rare / epic / legendary — derived at runtime from <code>tier</code> + <code>dropWeightPct</code>.
+        </p>
+
+        <pre class="code"><code>// src/data/colors.ts
+export function colorRarity(palette, id) {
+  const c = palette[id];
+  if (c.tier === 'fine' &amp;&amp; c.dropWeightPct &lt; 15) return 'legendary';
+  if (c.tier === 'fine' || c.qualityPct &lt; 15)     return 'epic';
+  if (c.qualityPct >= 15)                          return 'rare';
+  if (c.tier === 'starter' &amp;&amp; c.dropWeightPct &lt; 15) return 'uncommon';
+  return 'common';
+}</code></pre>
+
+        <p>
+          A single <code>RARITY_COLOR</code> table is the source of truth for both text tint and frame border
+          tint. <code>&lt;RarityName&gt;</code> renders the colour name in the rarity hue; <code>&lt;RarityFrame&gt;</code>
+          wraps inventory cells with a coloured border. Same data, two surfaces.
+        </p>
+
+        <h3>The shared legendary blink</h3>
+        <p>
+          Legendary items pulse. The straightforward implementation is: each visible legendary runs its own
+          <code>Animated.loop</code>. The pulse phases would drift between cells. Not catastrophic, but visually
+          ugly — five legendaries blinking out of sync looks broken, not magical.
+        </p>
+        <p>
+          Solution: a module-level <code>Animated.Value</code> + refcounted <code>Animated.loop</code> inside a
+          <code>useLegendaryBlink</code> hook. Every visible legendary subscribes to the same singleton blink;
+          the loop only runs while at least one is mounted; the refcount unwinds and pauses the loop when the
+          last one unmounts. All legendaries blink in lockstep. Performance bonus: only one animation driver,
+          not N.
+        </p>
+
+        <div class="callout good">
+          <strong>UX note worth keeping:</strong> rarity-tint the FRAME, not the cell name, in the inventory.
+          Coloured text on the parchment inventory backing was illegible at small sizes. The frame border carries
+          all the rarity signal you need without sacrificing readability of the name itself.
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="takeaways">Takeaways</h2>
+        <p>
+          A swipe gesture is rarely just a swipe gesture. The fun part is the slide animation; the unfun parts
+          are the misfires you didn’t anticipate (taps on vertical scroll), the re-grab edge cases (snap-back
+          hijack), and the data dependencies you didn’t realise the visual needed (both teams subscribed live,
+          not just the active one).
+        </p>
+        <p>
+          The rarity system was a bonus from the same conversation. Once we had the gesture working,
+          “let me show you what an epic-tier tile looks like passing through the picker” became natural, then
+          it spread to four other surfaces in the app. Single source of truth, same data, four visual contracts.
+          The shape of the feature was obvious once we had the gesture as proof-of-concept.
+        </p>
+
+        <a class="btn" href="../">← Back to the blog</a>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="y"></span> Daniel Inverno. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const prog = document.getElementById('progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      prog.style.width = (scrolled * 100).toFixed(2) + '%';
+    };
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

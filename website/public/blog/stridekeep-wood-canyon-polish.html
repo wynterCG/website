@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>When the shipped UI beats the spec — Stridekeep dev log — Daniel Inverno</title>
+  <meta name="description" content="Locked mockups are useful — until you put the build on a real phone and 30% of the choices feel wrong. How I work with Claude when the shipped UI has diverged from the spec, and why I keep written memories for every divergence." />
+
+  <link rel="canonical" href="https://daninverno.com/blog/stridekeep-wood-canyon-polish.html" />
+  <link rel="alternate" type="application/feed+json" href="../feed.json" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="When the shipped UI beats the spec — Stridekeep dev log" />
+  <meta property="og:description" content="Locked mockups vs. real-device review: how to keep an AI pair from reverting your divergences when they look like 'fixes' against the older spec." />
+  <meta property="og:url" content="https://daninverno.com/blog/stridekeep-wood-canyon-polish.html" />
+  <meta property="og:image" content="https://daninverno.com/blog/stridekeep-wood-canyon-polish/thumbnail.png" />
+  <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="When the shipped UI beats the spec — Stridekeep dev log" />
+  <meta name="twitter:description" content="Locked mockups vs. real-device review, and the documentation discipline that keeps an AI pair from reverting your divergences." />
+  <meta name="twitter:image" content="https://daninverno.com/blog/stridekeep-wood-canyon-polish/thumbnail.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "When the shipped UI beats the spec — Stridekeep dev log",
+    "description": "Locked mockups vs. real-device review, and the documentation discipline that keeps an AI pair from reverting your divergences.",
+    "author": { "@type": "Person", "name": "Daniel Inverno", "url": "https://daninverno.com/" },
+    "datePublished": "2026-05-03T10:00:00Z",
+    "dateModified": "2026-05-03T10:00:00Z",
+    "image": ["https://daninverno.com/blog/stridekeep-wood-canyon-polish/thumbnail.png"],
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://daninverno.com/blog/stridekeep-wood-canyon-polish.html" },
+    "publisher": { "@type": "Person", "name": "Daniel Inverno" }
+  }
+  </script>
+
+  <style>
+    :root{
+      --bg1:#0b0f16; --bg2:#0e1219; --bg3:#11151c;
+      --card:#10141b; --paper:#13171f;
+      --text:#ffffff; --muted:#9aa3b2; --border:rgba(255,255,255,.08);
+      --accent:#c9a76c; --accent2:#d8bd8a;
+      --display:'Fraunces', ui-serif, Georgia, serif;
+      --body:'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.45);
+      --ok:#34d399; --warn:#fbbf24;
+      scroll-padding-top: 90px;
+    }
+    @media (max-width:1023px){ :root{ scroll-padding-top: 70px; } }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(201,167,108,.10), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(216,189,138,.07), transparent 55%),
+        linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
+      font:16px/1.7 var(--body);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+    header{position:sticky;top:0;z-index:50;background:rgba(11,15,22,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav > a{font-family:var(--display);font-weight:500;letter-spacing:-.01em;text-transform:lowercase;font-size:1.15rem}
+    .links{display:none;gap:1.1rem;color:#cbd5e1}
+    @media(min-width:768px){.links{display:flex}}
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;z-index:60}
+    main{padding:2.25rem 0 3.25rem}
+    .heroWrap{position:relative}
+    .hero{width:100%;height:360px;object-fit:cover;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow);background:linear-gradient(135deg,#13171f,#0b0f16)}
+    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(11,15,22,.7);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:var(--accent2);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}
+    h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4vw,2.9rem);line-height:1.05;letter-spacing:-.01em;margin:1.3rem 0 .65rem;font-optical-sizing:auto}
+    .meta{color:var(--muted);font-size:.85rem;margin-bottom:1rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.18em;text-transform:uppercase}
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.85rem 0 1.35rem}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.72rem;color:var(--accent2);background:rgba(255,255,255,.04);letter-spacing:.05em}
+    article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
+    @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
+    .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
+    .toc h3{margin:.2rem 0 .5rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6;font-size:.93rem;transition:color .2s, background .2s}
+    .toc a:hover{background:rgba(255,255,255,.04);color:var(--accent)}
+    @media (max-width:1023px){.toc{position:static;top:auto;max-height:none;overflow:visible;width:auto;margin:0 0 1rem 0;z-index:auto}}
+    .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
+    @media(min-width:768px){.content{padding:2rem}}
+    .content h2{font-family:var(--display);font-weight:600;margin:1.5rem 0 .5rem;font-size:1.6rem;letter-spacing:-.005em;font-optical-sizing:auto}
+    .content h3{font-family:var(--display);font-weight:500;margin:1.1rem 0 .35rem;font-size:1.15rem;color:var(--accent2);font-optical-sizing:auto}
+    .content p{margin:.6rem 0}
+    .lead{color:#d1d5db}
+    .callout{border:1px solid var(--border);background:var(--paper);border-radius:16px;padding:1rem;margin:.85rem 0}
+    .callout.good{border-color:rgba(52,211,153,.28)}
+    .callout.warn{border-color:rgba(251,191,36,.28)}
+    .checklist{display:grid;grid-template-columns:1fr;gap:.5rem}
+    @media(min-width:768px){.checklist{grid-template-columns:repeat(2,1fr)}}
+    .card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0));border-radius:14px;padding:.85rem}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
+    pre.code{background:#070a0f;border:1px solid var(--border);border-radius:12px;padding:1rem;overflow-x:auto;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.85rem;line-height:1.55;color:#e5e7eb}
+    code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.88em;background:rgba(255,255,255,.06);padding:.08em .35em;border-radius:5px;color:var(--accent2)}
+    pre.code code{background:transparent;padding:0;color:inherit}
+    footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af}
+    .btn{display:inline-block;padding:.55rem 1.1rem;border-radius:999px;background:var(--accent);color:#000;font-weight:500;font-size:.9rem;transition:background .2s}
+    .btn:hover{background:var(--accent2)}
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header>
+    <div class="container nav">
+      <a href="../" aria-label="Home">daninverno</a>
+      <nav class="links" aria-label="Primary"></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="heroWrap">
+      <img class="hero" src="./stridekeep-wood-canyon-polish/thumbnail.png" alt="Stridekeep wood-canyon UI on a Samsung A52 — shipped state" />
+      <span class="heroBadge">Stridekeep • Process</span>
+    </div>
+
+    <h1>When the shipped UI beats the spec</h1>
+    <div class="meta">May 3, 2026 · ~6 min read · with Claude Opus 4.7</div>
+
+    <div class="tags">
+      <span class="tag">Stridekeep</span>
+      <span class="tag">Process</span>
+      <span class="tag">AI memory</span>
+      <span class="tag">Vibe Coding</span>
+    </div>
+
+    <article>
+      <aside class="toc" aria-label="On this page">
+        <h3>On this page</h3>
+        <a href="#problem">The "fix-to-spec" failure mode</a>
+        <a href="#divergences">What I actually changed</a>
+        <a href="#memory">Writing it down for the AI</a>
+        <a href="#takeaways">Takeaways</a>
+      </aside>
+
+      <section class="content">
+        <p class="lead" id="problem">
+          Locked Option-D mockups for Stridekeep’s wood-canyon UI shipped on a Wednesday. I installed the release
+          APK on my Samsung A52 that evening, opened it on the couch, and almost immediately wanted to change
+          things. Not because the spec was bad — because <em>seeing it on a phone</em> changed what I thought
+          about it. By the end of the week I had eight intentional divergences from the locked spec, and a
+          problem: the AI agents I was pair-programming with didn’t know about any of them.
+        </p>
+
+        <div class="callout good">
+          <strong>TL;DR:</strong> When you diverge from a written spec mid-iteration, the AI keeps trying to “fix”
+          back to the spec. The cheap solution is a single written artefact, in the project, that lists every
+          divergence and <em>why</em>. Below: the actual divergences from Stridekeep’s wood-canyon mockups,
+          and the memory file I now maintain so I don’t spend the next month re-litigating them.
+        </p>
+
+        <h2 id="problem">The “fix-to-spec” failure mode</h2>
+        <p>
+          Imagine this conversation, two days after the divergence pass:
+        </p>
+
+        <div class="callout warn">
+          <strong>Me:</strong> “Move the case-pending indicator to the right of the sub-tab.”<br>
+          <strong>AI:</strong> “The mockup shows the indicator inside the active tab background; I’ll restore that
+          while I’m here.”
+        </div>
+
+        <p>
+          The AI isn’t wrong — it’s following the canonical spec it can see. The problem is the canonical spec
+          is no longer canonical. I rejected the “indicator inside the tab” version in real-device review;
+          we now have the indicator <em>floating to the side</em>. But the only place that information lives is
+          in the diff of one commit, which the AI doesn’t naturally re-read every session.
+        </p>
+        <p>
+          Once I noticed this happening twice in a row, I stopped working on features and wrote a memory file.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="divergences">What I actually changed</h2>
+        <p>
+          The full list, all shipped, all intentionally different from Option-D:
+        </p>
+
+        <div class="checklist">
+          <div class="card">
+            <strong>Canvas backing</strong><br>
+            Dark slate (<code>colors.bg.overlay</code>), not ocean-blue (<code>colors.canvas.mid</code>).
+            Unfilled tiles at <code>opacity: 0.35</code>. The major 5-cell maroon grid is gone — only the
+            minor per-cell grid remains. Blue + heavy grid felt busy on a small screen.
+          </div>
+          <div class="card">
+            <strong>Frame wood is team-coloured</strong><br>
+            Outer wood ring of <code>PixelFrame</code> now tracks the viewing team’s accent colour. The
+            mockup’s shared <code>frameWood</code> token was deleted as orphan. Both rings — outer wood
+            and inner hairline — recolour with the team.
+          </div>
+          <div class="card">
+            <strong>Sub-tab background</strong><br>
+            Inactive <code>#415266</code> with cream icon/text; active is parchment-hi cream face.
+            <code>marginHorizontal: 3</code> between tabs, not <code>-1</code> overlap. The mockup’s
+            overlap made tabs look like a misaligned strip on the A52.
+          </div>
+          <div class="card">
+            <strong>Cases sub-tab indicator</strong><br>
+            Brass dot pulse for any pending tier (“ready”); brass-rim dot + halo + tab-wide background
+            pulse for fine-tier pending (“rare”). Mounted via a new <code>TabIndicator = 'ready' | 'rare'</code>
+            prop on <code>TabSpec</code>, not the mockup’s in-tab badge.
+          </div>
+          <div class="card">
+            <strong>Bottom-nav active tint</strong><br>
+            <code>accent.activeGold</code> (<code>#f5c842</code>), not the pale <code>brassRim</code> the
+            mockup used. The pale version read as <em>less saturated than inactive</em> on real hardware
+            — exactly backwards. Cream/gold reads as “you’re here.”
+          </div>
+          <div class="card">
+            <strong>SeasonCard surround</strong><br>
+            Dark slate fill (<code>colors.bg.overlay</code>) wrapped in a parchment <code>#deaf79</code>
+            surround (<code>paddingHorizontal: 6, paddingBottom: 6</code>, no top). Mockup recoloured the
+            card itself parchment; cream text lost contrast at typical reading distance.
+          </div>
+          <div class="card">
+            <strong>TopHeader</strong><br>
+            Stack: shield · “STRIDEKEEP” (no colon, 20pt) + “Season N · MURAL NAME” (11pt) · share / globe /
+            Patreon / Discord (dimmed) / gear. The Buy Me a Coffee icon was dropped during this pass — its
+            two components were deleted as dead code. (Don’t add BMC back; it was rejected for spec reasons.)
+          </div>
+          <div class="card">
+            <strong>CanvasPanel layout</strong><br>
+            <code>maxCanvasPx = 230</code> (was 280), SeasonCard stat number 13pt (was 18pt),
+            <code>metaGroup.marginTop = -5</code> (user-tuned). All so the 3-row LIVE STRIDE FEED fits
+            without scrolling on a 6.5&Prime; phone in portrait.
+          </div>
+        </div>
+
+        <p>
+          Each one was decided in front of a real screen, not on a desktop monitor next to a Figma frame.
+          That distinction matters: the mockup is right in the abstract; the device is right in the concrete.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="memory">Writing it down for the AI</h2>
+        <p>
+          I now keep two parallel artefacts for any non-trivial UI work:
+        </p>
+
+        <div class="checklist">
+          <div class="card">
+            <strong>SKILL.md</strong><br>
+            The canonical project-level spec (in the repo). Updated whenever a decision becomes load-bearing.
+            §11 has the wood-canyon writeup now, including every divergence above with a sentence on why.
+          </div>
+          <div class="card">
+            <strong>Auto-memory file</strong><br>
+            A second copy of the same information lives in my Claude auto-memory under
+            <code>wood_canyon_polish_shifts.md</code>. The agent picks it up automatically when working on
+            <code>TopHeader</code>, <code>SeasonCard</code>, <code>SubTabs</code>,
+            <code>CanvasView</code>, <code>CanvasPanel</code>, <code>RootTabs</code>, <code>RarityName</code>,
+            or <code>ColorsPanel</code> — exactly the files the divergences touch.
+          </div>
+        </div>
+
+        <p>
+          The auto-memory is the more useful of the two, in practice. It’s pre-loaded into every session so the
+          agent <em>opens with</em> “here are the eight things you might be tempted to revert; don’t.” The
+          SKILL.md is the discoverable artefact for humans (and for future agents that don’t have my memory
+          dir).
+        </p>
+
+        <pre class="code"><code># wood_canyon_polish_shifts.md (excerpt)
+
+- Canvas backing = `colors.bg.overlay` dark slate, NOT
+  `colors.canvas.mid` ocean-blue. Unfilled tiles at `opacity: 0.35`.
+  Major (5-cell) maroon grid REMOVED — only minor per-cell grid
+  remains. Don't reintroduce blue canvas or major grid without
+  checking with the user; they explicitly rejected both.
+
+- Mural canvas gestures (single PanResponder). Snap-back hijack
+  on re-grab uses `stopAnimation` + `setOffset` so the new pan is
+  additive — DO NOT change to a naive `.stop()`.
+
+- Bottom-nav active tint = `colors.accent.activeGold` (#f5c842),
+  inactive = `colors.accent.brassLight`. NOT `brassRim` (too pale —
+  read as "less saturated than inactive" which the user explicitly
+  rejected). Green "Active" sublabel removed.</code></pre>
+
+        <p>
+          The pattern that works: every entry leads with the <em>shipped</em> rule, then a <em>why</em>, then
+          the explicit instruction to <em>not revert</em>. The “why” is the load-bearing part — without it,
+          a future agent (or future me) sees only “don’t do X” and starts to second-guess. With it, the
+          rejection makes sense and stays rejected.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="takeaways">Takeaways</h2>
+        <p>
+          Working with an AI pair makes the gap between “my spec” and “the shipped reality” more visible than
+          ever. The AI is constantly cross-referencing what it can see — repo state, mockups, prior commits,
+          memories — and reconciling them. If you let your divergences live only in your head, the AI will
+          quietly “fix” them every time you blink.
+        </p>
+        <p>
+          So: write them down. Not in a beautifully formatted change-log nobody reads, but in a short, scrappy,
+          opinionated memory file that the AI will pick up on its next session. That file is the cheapest
+          insurance you have against losing your real-device intuitions to a year-old Figma file.
+        </p>
+
+        <a class="btn" href="../">← Back to the blog</a>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="y"></span> Daniel Inverno. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const prog = document.getElementById('progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      prog.style.width = (scrolled * 100).toFixed(2) + '%';
+    };
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

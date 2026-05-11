@@ -10,6 +10,51 @@
   ],
   "items": [
     {
+      "id": "https://daninverno.com/blog/stridekeep-fly-to-animations.html",
+      "url": "/blog/stridekeep-fly-to-animations.html",
+      "title": "Place tiles that fly to the canvas",
+      "summary": "Vibe-coding the celebratory fly-to animation in Stridekeep, the Android measureInWindow Y-offset bug, and the zoom + halo polish on top.",
+      "image": "",
+      "date_published": "2026-05-04T10:00:00Z",
+      "tags": ["Stridekeep", "React Native", "Animation", "Vibe Coding"]
+    },
+    {
+      "id": "https://daninverno.com/blog/stridekeep-mural-gestures.html",
+      "url": "/blog/stridekeep-mural-gestures.html",
+      "title": "Tinder-swipe the canvas: building mural gestures",
+      "summary": "One PanResponder, three gesture states, one snap-back hijack fix. Plus the rarity-colour system layered on top.",
+      "image": "",
+      "date_published": "2026-05-04T11:00:00Z",
+      "tags": ["Stridekeep", "React Native", "Gestures", "Vibe Coding"]
+    },
+    {
+      "id": "https://daninverno.com/blog/stridekeep-wood-canyon-polish.html",
+      "url": "/blog/stridekeep-wood-canyon-polish.html",
+      "title": "When the shipped UI beats the spec",
+      "summary": "Locked mockups vs. real-device review, and the documentation discipline that keeps an AI pair from reverting your divergences.",
+      "image": "",
+      "date_published": "2026-05-03T10:00:00Z",
+      "tags": ["Stridekeep", "Process", "AI memory", "Vibe Coding"]
+    },
+    {
+      "id": "https://daninverno.com/blog/breakout-roguelike-token-economy.html",
+      "url": "/blog/breakout-roguelike-token-economy.html",
+      "title": "Tokens and a formation editor",
+      "summary": "A visual formation editor plugin for Godot, and a token economy where monsters drop golden diamonds that cost upgrade cards.",
+      "image": "",
+      "date_published": "2026-04-04T16:00:00Z",
+      "tags": ["BreakoutRoguelike", "Godot 4", "Editor plugin", "Vibe Coding"]
+    },
+    {
+      "id": "https://daninverno.com/blog/breakout-roguelike-phase-iteration.html",
+      "url": "/blog/breakout-roguelike-phase-iteration.html",
+      "title": "Phase-driven game design",
+      "summary": "Each phase is one focused conversation with the AI that ends in a single commit. The naming convention is the methodology, not the bookkeeping.",
+      "image": "",
+      "date_published": "2026-04-04T15:00:00Z",
+      "tags": ["BreakoutRoguelike", "Godot 4", "Game Design", "Vibe Coding"]
+    },
+    {
       "id": "https://daninverno.com/blog/catIddleGamePrototype.html",
       "url": "/blog/catIddleGamePrototype.html",
       "title": "Idle Cat Dev Game UE5",

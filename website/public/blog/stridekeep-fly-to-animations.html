@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Place tiles that fly to the canvas — Stridekeep dev log — Daniel Inverno</title>
+  <meta name="description" content="Vibe-coding the celebratory fly-to animation for every PLACE action in Stridekeep: building the pipeline with Claude, the Android measureInWindow Y-offset bug, and the zoom + halo polish on top." />
+
+  <link rel="canonical" href="https://daninverno.com/blog/stridekeep-fly-to-animations.html" />
+  <link rel="alternate" type="application/feed+json" href="../feed.json" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Place tiles that fly to the canvas — Stridekeep dev log" />
+  <meta property="og:description" content="Vibe-coding the celebratory fly-to animation in Stridekeep: building the pipeline with Claude, the Android measureInWindow Y-offset bug, and the zoom + halo polish on top." />
+  <meta property="og:url" content="https://daninverno.com/blog/stridekeep-fly-to-animations.html" />
+  <meta property="og:image" content="https://daninverno.com/blog/stridekeep-fly-to-animations/thumbnail.png" />
+  <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Place tiles that fly to the canvas — Stridekeep dev log" />
+  <meta name="twitter:description" content="Vibe-coding the place-tile fly-to animation in Stridekeep — and the Android Y-offset bug we hit." />
+  <meta name="twitter:image" content="https://daninverno.com/blog/stridekeep-fly-to-animations/thumbnail.png" />
+
+  <!-- Brand fonts: Fraunces (display serif) + Inter (body). -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- JSON-LD Article schema -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Place tiles that fly to the canvas — Stridekeep dev log",
+    "description": "Vibe-coding the celebratory fly-to animation for every PLACE action in Stridekeep: building the pipeline with Claude, the Android measureInWindow Y-offset bug, and the zoom + halo polish on top.",
+    "author": { "@type": "Person", "name": "Daniel Inverno", "url": "https://daninverno.com/" },
+    "datePublished": "2026-05-04T10:00:00Z",
+    "dateModified": "2026-05-04T10:00:00Z",
+    "image": ["https://daninverno.com/blog/stridekeep-fly-to-animations/thumbnail.png"],
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://daninverno.com/blog/stridekeep-fly-to-animations.html" },
+    "publisher": { "@type": "Person", "name": "Daniel Inverno" }
+  }
+  </script>
+
+  <style>
+    :root{
+      --bg1:#0b0f16; --bg2:#0e1219; --bg3:#11151c;
+      --card:#10141b; --paper:#13171f;
+      --text:#ffffff; --muted:#9aa3b2; --border:rgba(255,255,255,.08);
+      --accent:#c9a76c; --accent2:#d8bd8a;
+      --display:'Fraunces', ui-serif, Georgia, serif;
+      --body:'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.45);
+      --ok:#34d399; --warn:#fbbf24;
+      scroll-padding-top: 90px;
+    }
+    @media (max-width:1023px){ :root{ scroll-padding-top: 70px; } }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(201,167,108,.10), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(216,189,138,.07), transparent 55%),
+        linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
+      font:16px/1.7 var(--body);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+    header{position:sticky;top:0;z-index:50;background:rgba(11,15,22,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav > a{font-family:var(--display);font-weight:500;letter-spacing:-.01em;text-transform:lowercase;font-size:1.15rem}
+    .links{display:none;gap:1.1rem;color:#cbd5e1}
+    @media(min-width:768px){.links{display:flex}}
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;z-index:60}
+    main{padding:2.25rem 0 3.25rem}
+    .heroWrap{position:relative}
+    .hero{width:100%;height:360px;object-fit:cover;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow);background:linear-gradient(135deg,#13171f,#0b0f16)}
+    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(11,15,22,.7);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:var(--accent2);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}
+    h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4vw,2.9rem);line-height:1.05;letter-spacing:-.01em;margin:1.3rem 0 .65rem;font-optical-sizing:auto}
+    .meta{color:var(--muted);font-size:.85rem;margin-bottom:1rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.18em;text-transform:uppercase}
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.85rem 0 1.35rem}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.72rem;color:var(--accent2);background:rgba(255,255,255,.04);letter-spacing:.05em}
+    article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
+    @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
+    .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
+    .toc h3{margin:.2rem 0 .5rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6;font-size:.93rem;transition:color .2s, background .2s}
+    .toc a:hover{background:rgba(255,255,255,.04);color:var(--accent)}
+    @media (max-width:1023px){.toc{position:static;top:auto;max-height:none;overflow:visible;width:auto;margin:0 0 1rem 0;z-index:auto}}
+    .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
+    @media(min-width:768px){.content{padding:2rem}}
+    .content h2{font-family:var(--display);font-weight:600;margin:1.5rem 0 .5rem;font-size:1.6rem;letter-spacing:-.005em;font-optical-sizing:auto}
+    .content h3{font-family:var(--display);font-weight:500;margin:1.1rem 0 .35rem;font-size:1.15rem;color:var(--accent2);font-optical-sizing:auto}
+    .content p{margin:.6rem 0}
+    .lead{color:#d1d5db}
+    .callout{border:1px solid var(--border);background:var(--paper);border-radius:16px;padding:1rem;margin:.85rem 0}
+    .callout.good{border-color:rgba(52,211,153,.28)}
+    .callout.warn{border-color:rgba(251,191,36,.28)}
+    .checklist{display:grid;grid-template-columns:1fr;gap:.5rem}
+    @media(min-width:768px){.checklist{grid-template-columns:repeat(2,1fr)}}
+    .card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0));border-radius:14px;padding:.85rem}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
+    pre.code{background:#070a0f;border:1px solid var(--border);border-radius:12px;padding:1rem;overflow-x:auto;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.85rem;line-height:1.55;color:#e5e7eb}
+    code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.88em;background:rgba(255,255,255,.06);padding:.08em .35em;border-radius:5px;color:var(--accent2)}
+    pre.code code{background:transparent;padding:0;color:inherit}
+    footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af}
+    .btn{display:inline-block;padding:.55rem 1.1rem;border-radius:999px;background:var(--accent);color:#000;font-weight:500;font-size:.9rem;transition:background .2s}
+    .btn:hover{background:var(--accent2)}
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header>
+    <div class="container nav">
+      <a href="../" aria-label="Home">daninverno</a>
+      <nav class="links" aria-label="Primary"></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="heroWrap">
+      <img class="hero" src="./stridekeep-fly-to-animations/thumbnail.png" alt="Stridekeep — place-tile fly-to animation preview" />
+      <span class="heroBadge">Stridekeep • Vibe Coding</span>
+    </div>
+
+    <h1>Place tiles that fly to the canvas</h1>
+    <div class="meta">May 4, 2026 · ~8 min read · with Claude Opus 4.7</div>
+
+    <div class="tags">
+      <span class="tag">Stridekeep</span>
+      <span class="tag">React Native</span>
+      <span class="tag">Animation</span>
+      <span class="tag">Vibe Coding</span>
+    </div>
+
+    <article>
+      <aside class="toc" aria-label="On this page">
+        <h3>On this page</h3>
+        <a href="#problem">The boring beat</a>
+        <a href="#pipeline">Building the fly-to pipeline</a>
+        <a href="#android-bug">The Android Y-offset bug</a>
+        <a href="#race">Race conditions Claude caught</a>
+        <a href="#zoom-halo">Zoom + halo on top</a>
+        <a href="#takeaways">Takeaways</a>
+      </aside>
+
+      <section class="content">
+        <p class="lead" id="problem">
+          Every PLACE action in Stridekeep used to end with a 600&nbsp;ms <em>“PLACING… &rarr; Placed.”</em> modal hold.
+          Technically fine. Emotionally flat. The whole point of placing a tile is that <em>you did the thing</em> —
+          the moment deserved a beat.
+        </p>
+
+        <div class="callout good">
+          <strong>TL;DR:</strong> Replaced the placeholder modal with a single celebratory beat — a 140&nbsp;dp
+          tile of the placed colour appears at screen centre, flies to the destination cell in 380&nbsp;ms (inOut cubic),
+          and hands off to the existing self-pulse on landing. Took two reverted attempts before Claude and I
+          figured out why Android was off by a status-bar height.
+        </p>
+
+        <h2 id="problem">The boring beat</h2>
+        <p>
+          Stridekeep is a team-based idle walking game — real-world steps unlock tiles that you place on a shared
+          medieval canvas. The act of placing should feel like the small celebratory moment it is.
+        </p>
+        <p>
+          The first version showed a transient modal that read <code>PLACING…</code>, then flipped to
+          <code>Placed.</code> with a checkmark, held for 600&nbsp;ms, and dismissed. Functional, but the player’s
+          eye was glued to a popup while the actual canvas — the thing they were rewarding themselves on — sat ignored.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="pipeline">Building the fly-to pipeline</h2>
+        <p>
+          The brief I gave Claude: <em>kill the modal hold, replace it with the placed tile materialising at screen
+          centre and animating into its destination cell on the canvas</em>. Sounds easy. The interesting work was wiring
+          this from two completely different call-sites — the canvas <strong>TilePicker</strong> (you tap an empty cell
+          on the grid) and the inventory <strong>PLACE ON CANVAS</strong> button (you’re on a different screen entirely).
+        </p>
+
+        <div class="checklist">
+          <div class="card">
+            <strong>Transient store field</strong><br>
+            A <code>pendingTileFlight</code> field on the zustand game store, mirroring how <code>pendingCaseReveal</code> works.
+            Partialize-excluded so it doesn’t persist across reloads.
+          </div>
+          <div class="card">
+            <strong>Two entry points, one overlay</strong><br>
+            The canvas resolves the destination rect synchronously via a new forwardRef handle on <code>CanvasView</code>.
+            The inventory path hands off with <code>target=null</code> and the canvas resolves the rect once the user lands on Home.
+          </div>
+          <div class="card">
+            <strong>Animation envelope</strong><br>
+            380&nbsp;ms, easing <code>Easing.bezier(0.4, 0, 0.2, 1)</code>, animating both <code>translate</code> and
+            <code>scale</code> in lockstep. Native-driver-safe so it stays smooth even when the JS thread is busy.
+          </div>
+          <div class="card">
+            <strong>Hand-off on landing</strong><br>
+            The realtime echo + existing self-pulse take over the moment the flight completes. No extra coordination
+            needed — the overlay just unmounts.
+          </div>
+        </div>
+
+        <p>
+          The conversation with Claude on this was very <em>“you’re the systems architect, I’m the UX critic”</em>.
+          It proposed a clean pipeline; I pushed back on a few details (the original landing transition was too crisp;
+          I wanted a barely-perceptible squash on touchdown). Most of an afternoon, but the structure stuck on the
+          first real iteration.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="android-bug">The Android Y-offset bug</h2>
+        <p>
+          And then iOS worked perfectly. Android was off by exactly 31.7&nbsp;dp — the height of the status bar — every single time.
+        </p>
+        <p>
+          We’d already reverted two attempts on this. The third time, I asked Claude to just sit with the symptom for a
+          while before suggesting a fix. The clue was in the consistency: the offset was always the same, always positive,
+          always equal to the status bar inset. It wasn’t a race; it was a coordinate-system mismatch.
+        </p>
+
+        <div class="callout warn">
+          <strong>What was happening:</strong> on Android with edge-to-edge mode enabled (which Stridekeep uses),
+          <code>measureInWindow</code> on a view <em>inside</em> a <code>Modal</code> returns Y values offset by the
+          status bar height from where root-level absolute-positioned overlays render. Even with
+          <code>statusBarTranslucent</code> set, the two frames disagree.
+        </div>
+
+        <p>
+          The fix was anticlimactic — once we knew what we were looking at:
+        </p>
+
+        <pre class="code"><code>// TileFlightOverlay.tsx
+const insets = useSafeAreaInsets();
+
+// On Android, measureInWindow() inside a Modal reports Y values offset
+// by the status bar height vs. where the root-level overlay renders.
+// Compensate by adding the safe-area top/left to the resolved rect.
+const targetRect = {
+  x: rawTarget.x + insets.left,
+  y: rawTarget.y + insets.top,
+  width: rawTarget.width,
+  height: rawTarget.height,
+};</code></pre>
+
+        <p>
+          Two lines of compensation. Documented in a comment block in <code>TileFlightOverlay.tsx</code> so
+          neither I nor any future AI session re-discovers it as “mysterious 32-pixel drift on Android”. This memory
+          now also lives in my Claude auto-memory so it survives sessions — when a future agent tries to debug
+          the same symptom, the answer is one grep away.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="race">Race conditions Claude caught</h2>
+        <p>
+          Once the happy path worked, the <code>superpowers:code-reviewer</code> agent went through and flagged a
+          handful of race conditions I would absolutely have missed. The good ones:
+        </p>
+
+        <div class="checklist">
+          <div class="card">
+            <strong>Rapid double-place</strong><br>
+            If a user taps PLACE twice quickly, the second flight could mount on top of an in-flight first one
+            using the same React key. Fixed by deriving a stable per-flight key on FlightModal so each fresh mount
+            gets its own animated values.
+          </div>
+          <div class="card">
+            <strong>Orphan flights</strong><br>
+            Inventory hand-offs cleared themselves when the user landed on Home and the canvas resolved the rect — but
+            if the user never reached Home (e.g. backgrounded the app mid-PLACE), the flight could sit pending forever.
+            Added a 1500&nbsp;ms <code>ORPHAN_TIMEOUT_MS</code> safety net.
+          </div>
+          <div class="card">
+            <strong>RPC-failure cleanup</strong><br>
+            Canvas commits go through Supabase RPC. If the RPC failed AFTER the flight started, the error alert
+            would fire over a still-running animation. Now we clear the flight state before <code>Alert.alert</code>.
+          </div>
+          <div class="card">
+            <strong>Memoised onComplete</strong><br>
+            The flight overlay’s <code>onComplete</code> callback was being recreated each parent render, which
+            triggered <code>useEffect</code> resets inside the overlay. <code>useCallback</code> fixed it.
+          </div>
+        </div>
+
+        <p>
+          None of these were going to bite me in dev. All four would have shipped to a real player at some point.
+          This is the part of vibe coding that surprises people: the AI <em>writes faster</em>, but the bigger leverage
+          is that it also <em>reviews differently</em> — a second pair of eyes that doesn’t care about your ego or
+          your weekend.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="zoom-halo">Zoom + halo on top</h2>
+        <p>
+          Once the fly-to was solid, I layered two more effects on top of it for the celebratory beat:
+        </p>
+
+        <h3>Camera zoom anchored on the destination cell</h3>
+        <p>
+          <code>1.0 &rarr; ZOOM_PEAK 1.6 &rarr; 1.0</code> over 380&nbsp;ms in, 600&nbsp;ms hold, 400&nbsp;ms out.
+          The math reduces to <code>tx = dx * (1 - scale)</code> where <code>dx</code> is the cell-centre minus
+          canvas-centre in canvas-local coordinates — so the cell <em>stays at its same screen position</em> while
+          the surrounding canvas scales up around it. Camera leans in on the placed cell without yanking it elsewhere.
+        </p>
+
+        <h3>Self-placement glow halo</h3>
+        <p>
+          Two stacked semi-transparent rings (inner <code>cellPx&nbsp;×&nbsp;2.4</code> at 55% alpha, outer
+          <code>cellPx&nbsp;×&nbsp;4.2</code> at ~25% alpha) layered under the existing self-pulse. A single
+          <code>glowOpacity</code> Animated.Value drives both via interpolation. Peaks at 400&nbsp;ms, decays to 0
+          over the remaining 1600&nbsp;ms. Only fires for your own placements — teammate placements stay unchanged.
+        </p>
+
+        <div class="callout good">
+          <strong>Tiny visual gift:</strong> the canvas overflows the wooden frame at peak zoom — the matte
+          surround doesn’t <code>overflow:hidden</code>, so a hairline of canvas leans forward through the frame
+          on the celebratory beat. I didn’t plan it. Claude flagged it as a potential bug. I kept it.
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="takeaways">Takeaways</h2>
+        <p>
+          A celebratory micro-animation is rarely <em>just</em> a celebratory micro-animation. The fun part is
+          tile motion. The unfun parts — coordinate-system mismatches across native modals, race conditions in
+          concurrent transitions, cleanup when the network fails halfway — are where most of the time goes.
+        </p>
+        <p>
+          Working with Claude on this kept the unfun parts cheap. I described the symptom and we narrowed it
+          together; the code-review agent caught four things I would have shipped. The flight beat itself was
+          the easy part.
+        </p>
+
+        <a class="btn" href="../">← Back to the blog</a>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="y"></span> Daniel Inverno. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const prog = document.getElementById('progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      prog.style.width = (scrolled * 100).toFixed(2) + '%';
+    };
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
