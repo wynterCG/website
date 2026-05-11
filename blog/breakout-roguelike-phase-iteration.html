@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Phase-driven game design — Breakout Roguelike dev log — Daniel Inverno</title>
+  <meta name="description" content="Building a Breakout × Roguelike hybrid in Godot 4 with an AI pair. Every commit is a numbered phase — phase4, phase5a, phase6g — and each one is a single focused conversation. Why this naming convention is the methodology, not the bookkeeping." />
+
+  <link rel="canonical" href="https://daninverno.com/blog/breakout-roguelike-phase-iteration.html" />
+  <link rel="alternate" type="application/feed+json" href="../feed.json" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Phase-driven game design — Breakout Roguelike dev log" />
+  <meta property="og:description" content="One numbered phase = one focused conversation with the AI. Why this is the methodology, not the bookkeeping." />
+  <meta property="og:url" content="https://daninverno.com/blog/breakout-roguelike-phase-iteration.html" />
+  <meta property="og:image" content="https://daninverno.com/blog/breakout-roguelike-phase-iteration/thumbnail.png" />
+  <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Phase-driven game design — Breakout Roguelike dev log" />
+  <meta name="twitter:description" content="One numbered phase = one focused conversation with the AI. Why this is the methodology, not the bookkeeping." />
+  <meta name="twitter:image" content="https://daninverno.com/blog/breakout-roguelike-phase-iteration/thumbnail.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Phase-driven game design — Breakout Roguelike dev log",
+    "description": "Building a Breakout × Roguelike hybrid in Godot 4 with an AI pair. Each commit is a numbered phase. Why this is the methodology, not the bookkeeping.",
+    "author": { "@type": "Person", "name": "Daniel Inverno", "url": "https://daninverno.com/" },
+    "datePublished": "2026-04-04T15:00:00Z",
+    "dateModified": "2026-04-04T15:00:00Z",
+    "image": ["https://daninverno.com/blog/breakout-roguelike-phase-iteration/thumbnail.png"],
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://daninverno.com/blog/breakout-roguelike-phase-iteration.html" },
+    "publisher": { "@type": "Person", "name": "Daniel Inverno" }
+  }
+  </script>
+
+  <style>
+    :root{
+      --bg1:#0b0f16; --bg2:#0e1219; --bg3:#11151c;
+      --card:#10141b; --paper:#13171f;
+      --text:#ffffff; --muted:#9aa3b2; --border:rgba(255,255,255,.08);
+      --accent:#c9a76c; --accent2:#d8bd8a;
+      --display:'Fraunces', ui-serif, Georgia, serif;
+      --body:'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.45);
+      --ok:#34d399; --warn:#fbbf24;
+      scroll-padding-top: 90px;
+    }
+    @media (max-width:1023px){ :root{ scroll-padding-top: 70px; } }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(201,167,108,.10), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(216,189,138,.07), transparent 55%),
+        linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
+      font:16px/1.7 var(--body);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+    header{position:sticky;top:0;z-index:50;background:rgba(11,15,22,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav > a{font-family:var(--display);font-weight:500;letter-spacing:-.01em;text-transform:lowercase;font-size:1.15rem}
+    .links{display:none;gap:1.1rem;color:#cbd5e1}
+    @media(min-width:768px){.links{display:flex}}
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;z-index:60}
+    main{padding:2.25rem 0 3.25rem}
+    .heroWrap{position:relative}
+    .hero{width:100%;height:360px;object-fit:cover;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow);background:linear-gradient(135deg,#13171f,#0b0f16)}
+    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(11,15,22,.7);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:var(--accent2);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}
+    h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4vw,2.9rem);line-height:1.05;letter-spacing:-.01em;margin:1.3rem 0 .65rem;font-optical-sizing:auto}
+    .meta{color:var(--muted);font-size:.85rem;margin-bottom:1rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.18em;text-transform:uppercase}
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.85rem 0 1.35rem}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.72rem;color:var(--accent2);background:rgba(255,255,255,.04);letter-spacing:.05em}
+    article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
+    @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
+    .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
+    .toc h3{margin:.2rem 0 .5rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6;font-size:.93rem;transition:color .2s, background .2s}
+    .toc a:hover{background:rgba(255,255,255,.04);color:var(--accent)}
+    @media (max-width:1023px){.toc{position:static;top:auto;max-height:none;overflow:visible;width:auto;margin:0 0 1rem 0;z-index:auto}}
+    .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
+    @media(min-width:768px){.content{padding:2rem}}
+    .content h2{font-family:var(--display);font-weight:600;margin:1.5rem 0 .5rem;font-size:1.6rem;letter-spacing:-.005em;font-optical-sizing:auto}
+    .content h3{font-family:var(--display);font-weight:500;margin:1.1rem 0 .35rem;font-size:1.15rem;color:var(--accent2);font-optical-sizing:auto}
+    .content p{margin:.6rem 0}
+    .lead{color:#d1d5db}
+    .callout{border:1px solid var(--border);background:var(--paper);border-radius:16px;padding:1rem;margin:.85rem 0}
+    .callout.good{border-color:rgba(52,211,153,.28)}
+    .callout.warn{border-color:rgba(251,191,36,.28)}
+    .checklist{display:grid;grid-template-columns:1fr;gap:.5rem}
+    @media(min-width:768px){.checklist{grid-template-columns:repeat(2,1fr)}}
+    .card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0));border-radius:14px;padding:.85rem}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
+    pre.code{background:#070a0f;border:1px solid var(--border);border-radius:12px;padding:1rem;overflow-x:auto;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.85rem;line-height:1.55;color:#e5e7eb}
+    code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.88em;background:rgba(255,255,255,.06);padding:.08em .35em;border-radius:5px;color:var(--accent2)}
+    pre.code code{background:transparent;padding:0;color:inherit}
+    footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af}
+    .btn{display:inline-block;padding:.55rem 1.1rem;border-radius:999px;background:var(--accent);color:#000;font-weight:500;font-size:.9rem;transition:background .2s}
+    .btn:hover{background:var(--accent2)}
+    .phasetable{width:100%;border-collapse:collapse;margin:.85rem 0;font-size:.92rem}
+    .phasetable td, .phasetable th{padding:.55rem .8rem;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+    .phasetable th{color:var(--accent);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+    .phasetable td:first-child{color:var(--accent2);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.8rem;white-space:nowrap}
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header>
+    <div class="container nav">
+      <a href="../" aria-label="Home">daninverno</a>
+      <nav class="links" aria-label="Primary"></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="heroWrap">
+      <img class="hero" src="./breakout-roguelike-phase-iteration/thumbnail.png" alt="Breakout × Roguelike gameplay" />
+      <span class="heroBadge">Breakout Roguelike • Vibe Coding</span>
+    </div>
+
+    <h1>Phase-driven game design</h1>
+    <div class="meta">April 4, 2026 · ~7 min read · with Claude Opus 4.6</div>
+
+    <div class="tags">
+      <span class="tag">BreakoutRoguelike</span>
+      <span class="tag">Godot 4</span>
+      <span class="tag">Game Design</span>
+      <span class="tag">Vibe Coding</span>
+    </div>
+
+    <article>
+      <aside class="toc" aria-label="On this page">
+        <h3>On this page</h3>
+        <a href="#hybrid">A weird hybrid</a>
+        <a href="#phases">One phase, one commit, one conversation</a>
+        <a href="#log">The actual phase log</a>
+        <a href="#why-works">Why it works</a>
+        <a href="#takeaways">Takeaways</a>
+      </aside>
+
+      <section class="content">
+        <p class="lead" id="hybrid">
+          Breakout Roguelike is a Godot 4 game where the bricks are alive — monsters that move, shoot, and have HP
+          — and every level you pick from 3 upgrades. It’s been a sandbox for me to figure out how I want to work
+          with an AI pair on a long-lived game project. The methodology that emerged surprised me: every commit
+          starts with a phase number.
+        </p>
+
+        <div class="callout good">
+          <strong>TL;DR:</strong> Each phase is one focused conversation with Claude that ends in a single
+          commit. Phase numbers go <code>phase4_00</code>, <code>phase5a_00</code>, <code>phase5b_00</code>…
+          You can read the project history as a sequence of design questions and the AI’s implementation
+          answers. The naming convention is the methodology, not the bookkeeping.
+        </p>
+
+        <h2 id="hybrid">A weird hybrid</h2>
+        <p>
+          Imagine Breakout, except the bricks are 8 different monster types with movement patterns (drift,
+          zigzag, orbit, charge), shooting patterns (straight, aimed, spread, burst), and HP that scales 15%
+          per level. Now imagine that after each level you pick one of three random upgrades from a 20-card pool —
+          burn DOT, chain lightning, paddle laser, lifesteal, thorns. That’s the shape.
+        </p>
+        <p>
+          Designing a hybrid like this isn’t a single sit-down task. It’s a hundred small design decisions —
+          “does the paddle move freely in 2D or just left-right?”, “do upgrade cards cost tokens?”, “should
+          monsters drop physical pickups or just count down on death?” — each of which produces a chunk of code
+          plus a chunk of art plus a chunk of tuning.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="phases">One phase, one commit, one conversation</h2>
+        <p>
+          I had no plan to be this methodical. The phase names emerged because, sitting down to write commit
+          messages, I kept needing to label what kind of change this was. The label that stuck wasn’t feature-name
+          (too granular) or area-name (too vague) — it was the <em>iteration</em>:
+        </p>
+
+        <pre class="code"><code>phase4_00      Upgrade system + UpgradeManager autoload
+phase5a_00     Formation data system (Cell/Data/LevelPool)
+phase5b_00     Formation Editor plugin + axis-based bounce
+phase5c_00     Per-cell size scaling
+phase5d_00     30-level balance + 8 monsters
+phase6a_00     Monster movement (drift/zigzag/orbit/charge)
+phase6b_00     35 symmetric formation templates
+phase6c_00     Monster shooting + 15-col formations
+phase6d_00     Small arc paddle with 2D movement
+phase6e_00     20 upgrades + damage numbers + laser visual
+phase6f_00     Token economy
+phase6g_00     Balance pass + mixed formations</code></pre>
+
+        <p>
+          The <code>_00</code> suffix is there in case a phase ends up needing a hotfix follow-up
+          (<code>phase6e_01</code> for instance), but in practice almost every phase is one commit. The cadence
+          is: <em>start a conversation, decide the goal, build it, review it, commit it</em>. Repeat.
+        </p>
+
+        <div class="callout good">
+          <strong>One conversation rule:</strong> each phase lives entirely inside one chat session with Claude.
+          If a thread is getting too long or veering off into a different feature, I close it, commit what we
+          have, and start a fresh one for the next phase. Context-window discipline = scope discipline.
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="log">The actual phase log</h2>
+        <p>
+          Looking back, the phases group into design waves. Each wave is roughly a week and starts with an
+          architectural question:
+        </p>
+
+        <table class="phasetable">
+          <thead>
+            <tr><th>Wave</th><th>Question</th><th>Phases</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Phase 4</td>
+              <td>“How do upgrades work between levels?”</td>
+              <td>4_00 only — UpgradeManager singleton, 12 starter upgrades, pick-1-of-3 overlay.</td>
+            </tr>
+            <tr>
+              <td>Phase 5</td>
+              <td>“How do I author levels without hand-placing 30 layouts?”</td>
+              <td>5a (data model) → 5b (visual editor + axis-based bounce) → 5c (per-cell size scaling) → 5d (30-level balance).</td>
+            </tr>
+            <tr>
+              <td>Phase 6</td>
+              <td>“How do bricks become characters, not just HP sponges?”</td>
+              <td>6a (movement) → 6b (formations) → 6c (shooting) → 6d (paddle 2D) → 6e (20 upgrades) → 6f (tokens) → 6g (balance).</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p>
+          The question is the unit of work. The phases inside a wave are the architectural answer broken into
+          implementable pieces. Each phase commit body is its own small dev log — a list of bullets describing
+          what landed, including the Godot-specific gotchas that surfaced (private vars on Projectile,
+          read-only array issues with resource creation, font scaling for blocks with per-cell size, the
+          ball-below-paddle “bounces toward the paddle” bug fix).
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="why-works">Why it works</h2>
+
+        <h3>Phase numbers are a contract</h3>
+        <p>
+          When I open a fresh session with the AI, the conversation often starts with <em>“we’re in phase 6f.
+          Phase 6e shipped the laser upgrade and damage numbers; we’re moving to a token economy now.”</em>
+          That single sentence anchors the entire chat. The AI knows what level of polish is appropriate (phase
+          6 is feature-additive, not refactoring), what data structures already exist (UpgradeData, FormationData,
+          MonsterData), and what the prior phase decided.
+        </p>
+
+        <h3>Commit messages double as design notes</h3>
+        <p>
+          The commit body for phase6f reads like a feature spec, because it <em>is</em> the feature spec — every
+          decision the AI and I made during that conversation got captured by the time we committed:
+        </p>
+
+        <pre class="code"><code>phase6f_00: Token economy — physical pickups, upgrade costs, monster values
+
+- Monsters drop golden diamond tokens on death with gravity physics
+- Paddle collects tokens on contact, missed tokens disappear at bottom
+- Each monster has editable token_value (Slime=1, Demon=5, Dragon=8)
+- Single token per monster showing value number
+- Upgrade selection: 3 rounds per level, cards cost 1/2/3 tokens
+- Unaffordable cards greyed out + unclickable (mouse_filter=IGNORE)
+- Skip button to save tokens, tokens carry over between levels
+- Token counter in top-right during gameplay, hidden during upgrade picks
+- HP bar + token UI hidden during upgrade selection (clean overlay)</code></pre>
+
+        <p>
+          Six months from now, when I forget why <code>mouse_filter</code> is set to <code>IGNORE</code> on
+          unaffordable cards, the answer is in the phase that introduced them. The git history <em>is</em> the
+          documentation.
+        </p>
+
+        <h3>The code review is a phase ritual</h3>
+        <p>
+          Every phase ends with the <code>superpowers:code-reviewer</code> agent doing a pass. Phase 5b had
+          <em>11 fixes</em> in the code-review block alone — read-only array bugs, type mismatches (<code>thorns_damage</code>
+          float → int), a piercing-reset bug that fired every frame instead of only after a bounce, an upgrade-card
+          cleanup that should have run immediately instead of via <code>queue_free</code>. Without the review pass,
+          half of those would be live bugs people would only find by playtesting.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="takeaways">Takeaways</h2>
+        <p>
+          Vibe coding isn’t just chat-with-an-AI. It’s a workflow that scales with how you frame the work. Naming
+          phases gives the AI a shared frame; ending each phase with a commit gives it a clean handoff for the
+          next session; ending with a code-review pass keeps the bug debt low. None of these are new ideas — the
+          news is how cheaply you can implement them when the AI does most of the typing.
+        </p>
+        <p>
+          On Breakout Roguelike, six weeks of evenings produced 20 upgrades, 8 monsters with movement &amp;
+          shooting, 35 symmetric formation templates, a visual formation editor plugin, a token economy, and
+          30 hand-tuned levels. Phase numbers were the spine.
+        </p>
+
+        <a class="btn" href="../">← Back to the blog</a>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="y"></span> Daniel Inverno. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const prog = document.getElementById('progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      prog.style.width = (scrolled * 100).toFixed(2) + '%';
+    };
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

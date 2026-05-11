@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Tokens and a formation editor — Breakout Roguelike dev log — Daniel Inverno</title>
+  <meta name="description" content="Two phases of Breakout Roguelike built with an AI pair: a visual formation editor plugin for Godot (paint tools, level pools, draggable split view) and a token economy where monsters drop golden diamonds that cost upgrade cards." />
+
+  <link rel="canonical" href="https://daninverno.com/blog/breakout-roguelike-token-economy.html" />
+  <link rel="alternate" type="application/feed+json" href="../feed.json" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Tokens and a formation editor — Breakout Roguelike dev log" />
+  <meta property="og:description" content="A visual formation editor plugin for Godot, and a token economy where monsters drop golden diamonds that cost upgrade cards." />
+  <meta property="og:url" content="https://daninverno.com/blog/breakout-roguelike-token-economy.html" />
+  <meta property="og:image" content="https://daninverno.com/blog/breakout-roguelike-token-economy/thumbnail.png" />
+  <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tokens and a formation editor — Breakout Roguelike dev log" />
+  <meta name="twitter:description" content="A visual formation editor plugin for Godot, and a token economy where monsters drop golden diamonds that cost upgrade cards." />
+  <meta name="twitter:image" content="https://daninverno.com/blog/breakout-roguelike-token-economy/thumbnail.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Tokens and a formation editor — Breakout Roguelike dev log",
+    "description": "Two phases of Breakout Roguelike: a visual formation editor plugin for Godot, and a token economy where monsters drop golden diamonds that cost upgrade cards.",
+    "author": { "@type": "Person", "name": "Daniel Inverno", "url": "https://daninverno.com/" },
+    "datePublished": "2026-04-04T16:00:00Z",
+    "dateModified": "2026-04-04T16:00:00Z",
+    "image": ["https://daninverno.com/blog/breakout-roguelike-token-economy/thumbnail.png"],
+    "mainEntityOfPage": { "@type": "WebPage", "@id": "https://daninverno.com/blog/breakout-roguelike-token-economy.html" },
+    "publisher": { "@type": "Person", "name": "Daniel Inverno" }
+  }
+  </script>
+
+  <style>
+    :root{
+      --bg1:#0b0f16; --bg2:#0e1219; --bg3:#11151c;
+      --card:#10141b; --paper:#13171f;
+      --text:#ffffff; --muted:#9aa3b2; --border:rgba(255,255,255,.08);
+      --accent:#c9a76c; --accent2:#d8bd8a;
+      --display:'Fraunces', ui-serif, Georgia, serif;
+      --body:'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.45);
+      --ok:#34d399; --warn:#fbbf24;
+      scroll-padding-top: 90px;
+    }
+    @media (max-width:1023px){ :root{ scroll-padding-top: 70px; } }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(201,167,108,.10), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(216,189,138,.07), transparent 55%),
+        linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
+      font:16px/1.7 var(--body);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+    header{position:sticky;top:0;z-index:50;background:rgba(11,15,22,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav > a{font-family:var(--display);font-weight:500;letter-spacing:-.01em;text-transform:lowercase;font-size:1.15rem}
+    .links{display:none;gap:1.1rem;color:#cbd5e1}
+    @media(min-width:768px){.links{display:flex}}
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;z-index:60}
+    main{padding:2.25rem 0 3.25rem}
+    .heroWrap{position:relative}
+    .hero{width:100%;height:360px;object-fit:cover;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow);background:linear-gradient(135deg,#13171f,#0b0f16)}
+    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(11,15,22,.7);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:var(--accent2);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}
+    h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4vw,2.9rem);line-height:1.05;letter-spacing:-.01em;margin:1.3rem 0 .65rem;font-optical-sizing:auto}
+    .meta{color:var(--muted);font-size:.85rem;margin-bottom:1rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.18em;text-transform:uppercase}
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.85rem 0 1.35rem}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.72rem;color:var(--accent2);background:rgba(255,255,255,.04);letter-spacing:.05em}
+    article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
+    @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
+    .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
+    .toc h3{margin:.2rem 0 .5rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6;font-size:.93rem;transition:color .2s, background .2s}
+    .toc a:hover{background:rgba(255,255,255,.04);color:var(--accent)}
+    @media (max-width:1023px){.toc{position:static;top:auto;max-height:none;overflow:visible;width:auto;margin:0 0 1rem 0;z-index:auto}}
+    .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
+    @media(min-width:768px){.content{padding:2rem}}
+    .content h2{font-family:var(--display);font-weight:600;margin:1.5rem 0 .5rem;font-size:1.6rem;letter-spacing:-.005em;font-optical-sizing:auto}
+    .content h3{font-family:var(--display);font-weight:500;margin:1.1rem 0 .35rem;font-size:1.15rem;color:var(--accent2);font-optical-sizing:auto}
+    .content p{margin:.6rem 0}
+    .lead{color:#d1d5db}
+    .callout{border:1px solid var(--border);background:var(--paper);border-radius:16px;padding:1rem;margin:.85rem 0}
+    .callout.good{border-color:rgba(52,211,153,.28)}
+    .callout.warn{border-color:rgba(251,191,36,.28)}
+    .checklist{display:grid;grid-template-columns:1fr;gap:.5rem}
+    @media(min-width:768px){.checklist{grid-template-columns:repeat(2,1fr)}}
+    .card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0));border-radius:14px;padding:.85rem}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
+    pre.code{background:#070a0f;border:1px solid var(--border);border-radius:12px;padding:1rem;overflow-x:auto;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.85rem;line-height:1.55;color:#e5e7eb}
+    code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.88em;background:rgba(255,255,255,.06);padding:.08em .35em;border-radius:5px;color:var(--accent2)}
+    pre.code code{background:transparent;padding:0;color:inherit}
+    footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af}
+    .btn{display:inline-block;padding:.55rem 1.1rem;border-radius:999px;background:var(--accent);color:#000;font-weight:500;font-size:.9rem;transition:background .2s}
+    .btn:hover{background:var(--accent2)}
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header>
+    <div class="container nav">
+      <a href="../" aria-label="Home">daninverno</a>
+      <nav class="links" aria-label="Primary"></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="heroWrap">
+      <img class="hero" src="./breakout-roguelike-token-economy/thumbnail.png" alt="Token economy upgrade picker with cards costing 1/2/3 tokens" />
+      <span class="heroBadge">Breakout Roguelike • Phase 5b + 6f</span>
+    </div>
+
+    <h1>Tokens and a formation editor</h1>
+    <div class="meta">April 4, 2026 · ~8 min read · with Claude Opus 4.6</div>
+
+    <div class="tags">
+      <span class="tag">BreakoutRoguelike</span>
+      <span class="tag">Godot 4</span>
+      <span class="tag">Editor plugin</span>
+      <span class="tag">Vibe Coding</span>
+    </div>
+
+    <article>
+      <aside class="toc" aria-label="On this page">
+        <h3>On this page</h3>
+        <a href="#editor">The formation editor</a>
+        <a href="#axis-bounce">Axis-based bounce</a>
+        <a href="#tokens">The token economy</a>
+        <a href="#card-cost">Cost discipline on upgrade cards</a>
+        <a href="#takeaways">Takeaways</a>
+      </aside>
+
+      <section class="content">
+        <p class="lead" id="editor">
+          Two phases I want to put side-by-side: <strong>5b</strong> built a visual editor plugin for Godot so I could
+          author boss formations without touching code, and <strong>6f</strong> built a token economy where killing
+          monsters drops golden diamonds you spend on upgrades. Different surfaces, same vibe-coding pattern: describe
+          the system in plain English, let the AI sketch a structure, iterate from there.
+        </p>
+
+        <div class="callout good">
+          <strong>TL;DR:</strong> The formation editor is an in-Godot plugin with paint tools, a level-pool manager,
+          a cell inspector, and a draggable split view. The token economy gives each monster a <code>token_value</code>,
+          drops physical pickups with gravity, and gates upgrade cards at 1/2/3 tokens each. Both phases ended with a
+          code-review pass that caught a bunch of subtle Godot pattern bugs.
+        </p>
+
+        <h2 id="editor">The formation editor</h2>
+        <p>
+          Phase 5a introduced the data model: <code>FormationCell</code>, <code>FormationData</code>, and
+          <code>LevelPool</code> resources. A formation is a grid of cells, each cell points at a monster role
+          (front/tank/support/elite). A level pool references several formations and picks one when the level loads.
+          Clean. Authoring it by editing <code>.tres</code> files by hand was painful.
+        </p>
+        <p>
+          So phase 5b built the editor. The brief I gave Claude was four bullets:
+        </p>
+
+        <div class="checklist">
+          <div class="card"><strong>Visual grid</strong><br>Click a cell to place / clear / change a monster role. Paint tools so I can drag a brush.</div>
+          <div class="card"><strong>Template dropdown</strong><br>100 starter patterns (T-shapes, walls, V-formations) to begin from, then customise.</div>
+          <div class="card"><strong>Arena preview</strong><br>A second panel showing the blocks at their real in-game positions, not the editor grid coords.</div>
+          <div class="card"><strong>Level pool manager</strong><br>Add / remove / reorder formations across the 30 level pools without leaving the editor.</div>
+        </div>
+
+        <p>
+          What came out was a docked Godot plugin with two split panes — grid editor on the left, arena preview
+          on the right — joined by a draggable divider. Cells got their own inspector for fine tuning (width/height
+          scale 0.5x–3x, monster role enum, per-cell size scaling). Saving rewrites the underlying
+          <code>FormationData.tres</code>.
+        </p>
+        <p>
+          The non-obvious lesson from this phase came from the code-review pass: <em>read-only array issues</em>
+          when modifying nested resources. Godot’s <code>Resource</code> arrays are shared by reference until you
+          duplicate them, so the “add cell” button was occasionally mutating the template formation instead of the
+          current edit. The fix was to always create a fresh <code>FormationData</code> on edit, never mutate the
+          template. Claude caught this one; I’d have shipped it.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="axis-bounce">Axis-based bounce</h2>
+        <p>
+          Same phase, separate problem: ball bounces. Godot’s built-in <code>Vector2.bounce(normal)</code>
+          works fine until the ball clips a block corner — the surface normal is ambiguous, and the ball
+          reverses direction in a way that doesn’t feel right (sometimes it bounces backwards into the player,
+          sometimes through the next block).
+        </p>
+        <p>
+          Replaced it with axis-based reflection: compare the ball’s position to the block’s centre, force the
+          direction away on whichever axis is dominant. The diff for walls and paddles followed the same shape:
+        </p>
+
+        <pre class="code"><code># Blocks: bounce away on dominant axis
+var diff = ball.global_position - block.global_position
+if abs(diff.x) > abs(diff.y):
+    ball.velocity.x = sign(diff.x) * abs(ball.velocity.x)
+else:
+    ball.velocity.y = sign(diff.y) * abs(ball.velocity.y)
+
+# Walls: normal axis only, force away
+if normal.x != 0:
+    ball.velocity.x = sign(normal.x) * abs(ball.velocity.x)
+else:
+    ball.velocity.y = sign(normal.y) * abs(ball.velocity.y)
+
+# Paddle: ball below = force up; ball above = arc-angle math
+if ball.global_position.y > paddle.global_position.y:
+    ball.velocity.y = -abs(ball.velocity.y)
+else:
+    apply_arc_angle()</code></pre>
+
+        <p>
+          Plain. Predictable. Removes the corner/edge bounce reversal bug. The “ball below paddle bounces toward
+          paddle” class of bug — a beloved Breakout footgun — goes away by construction. Looking up the original
+          bounce maths was a thing Claude was much faster at than me, but the value-add was actually framing the
+          problem as “same shape on three surfaces” so we wrote it once and reused it.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="tokens">The token economy</h2>
+        <p>
+          Two months later, phase 6f gave the game an economy. Killing a monster now drops a golden diamond
+          token with gravity physics. The paddle catches the diamond by walking under it. Miss it, it falls off
+          the bottom of the screen. Tokens accumulate, and you spend them on upgrades between levels.
+        </p>
+
+        <div class="checklist">
+          <div class="card">
+            <strong>Per-monster value</strong><br>
+            Each monster type has an editable <code>token_value</code> export — Slime = 1, Goblin = 2,
+            Knight = 3, Demon = 5, Dragon = 8. The number floats on the token sprite so the player can see at a
+            glance which kills are worth chasing.
+          </div>
+          <div class="card">
+            <strong>Physical pickup</strong><br>
+            On death, the monster instantiates a <code>Token</code> CharacterBody2D with downward velocity and
+            standard gravity. The paddle has a pickup area; entering it grants the value and queues the token
+            for free. Missed tokens despawn at screen bottom.
+          </div>
+          <div class="card">
+            <strong>UI choreography</strong><br>
+            Token counter top-right during gameplay. Hidden during the upgrade-selection overlay so the picker
+            reads clean. HP bar also hidden — the only thing visible during a pick is the three upgrade cards.
+          </div>
+          <div class="card">
+            <strong>Skip + carry-over</strong><br>
+            Skip button on the upgrade picker saves all your tokens for next level. Lets the player save up for
+            a 3-cost epic instead of being forced to buy something every round.
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="card-cost">Cost discipline on upgrade cards</h2>
+        <p>
+          The interesting design question wasn’t <em>how</em> to do tokens — it’s <em>what</em> they should gate.
+          The answer that landed: each upgrade card costs 1, 2, or 3 tokens, and there are three picks per level.
+          If you’re flush with tokens, you can grab three cards a level; if you’re skint, you can skip-skip-skip
+          and bank for an epic next time.
+        </p>
+        <p>
+          The technical detail that took the most iteration: <em>how does the player know a card is too expensive
+          to afford?</em> The version that shipped:
+        </p>
+
+        <div class="checklist">
+          <div class="card">
+            <strong>Visual: greyed out</strong><br>
+            Unaffordable cards desaturate and dim. Hover state doesn’t fire. The price tag is still legible so
+            the player understands “I need one more token to afford this”.
+          </div>
+          <div class="card">
+            <strong>Behavioural: unclickable</strong><br>
+            Setting <code>mouse_filter = MOUSE_FILTER_IGNORE</code> means the card eats no input — clicks pass
+            through to whatever’s underneath (which is nothing, so they just bounce off). No “you can’t afford
+            this” error popup. The card simply doesn’t respond.
+          </div>
+        </div>
+
+        <p>
+          Two-line implementation, half an hour of conversation to get there. Most of that half-hour was Claude
+          and me discussing what to do when the player runs out of tokens entirely — auto-skip? auto-end-level?
+          force a free common? The answer we settled on: <strong>show the picker anyway, with all cards greyed,
+          and an emphasised Skip button</strong>. It’s rare but it happens, and the affordance for it is the
+          existing Skip button, just visually highlighted.
+        </p>
+
+        <div class="callout good">
+          <strong>Design rule that stuck:</strong> never lock the player out of the picker UI. Even when they
+          can’t afford anything, show the cards so they can read what they <em>could</em> have bought, and
+          decide whether to chase tokens harder next level.
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="takeaways">Takeaways</h2>
+        <p>
+          The formation editor was a tool I built for myself; the token economy was a feature I built for the
+          player. Both came out of single phase-conversations with the AI: describe the goal, sketch the shape,
+          iterate until it lands, run the code-review pass, commit.
+        </p>
+        <p>
+          The thing I’d tell my past self about vibe coding: <em>build the editor before the content</em>. Phase 5b’s
+          editor unblocked phases 5c, 5d, 6b, 6c, and 6g — every formation-tuning pass after it was 5×
+          faster because I could see what I was authoring. Three hours building a tool saved fifteen hours
+          editing <code>.tres</code> files by hand.
+        </p>
+
+        <a class="btn" href="../">← Back to the blog</a>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="y"></span> Daniel Inverno. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const prog = document.getElementById('progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      prog.style.width = (scrolled * 100).toFixed(2) + '%';
+    };
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

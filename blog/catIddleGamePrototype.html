@@ -27,6 +27,12 @@
   <meta name="twitter:description" content="A clear, visual walkthrough of the Cat Idle project and the new battle slice." />
   <meta name="twitter:image" content="https://daninverno.com/blog/cat_game/thumbnail.png" />
 
+  <!-- Brand fonts: Fraunces (display serif) + Inter (body) — matches the
+       main site's typography after the 2026-05 brand pass. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
   <!-- JSON-LD Article schema -->
   <script type="application/ld+json">
   {
@@ -44,15 +50,17 @@
   </script>
 
   <style>
-    /* ---- modern, self-contained dark theme ---- */
+    /* ---- brand-aligned theme: brass accent + Fraunces serif + Inter body
+         + #0b0f16 bg (matches the main site after the 2026-05 brand pass). ---- */
     :root{
-      --bg1:#07090e; --bg2:#0d1322; --bg3:#0e172a;
-      --card:#0b1220; --paper:#0f1422;
-      --text:#e5e7eb; --muted:#9aa3b2; --border:rgba(255,255,255,.12);
-      --accent:#a78bfa; --accent2:#60a5fa;
-      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.35);
+      --bg1:#0b0f16; --bg2:#0e1219; --bg3:#11151c;
+      --card:#10141b; --paper:#13171f;
+      --text:#ffffff; --muted:#9aa3b2; --border:rgba(255,255,255,.08);
+      --accent:#c9a76c; --accent2:#d8bd8a;
+      --display:'Fraunces', ui-serif, Georgia, serif;
+      --body:'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.45);
       --ok:#34d399; --warn:#fbbf24;
-      /* NEW: keep anchor targets visible below sticky header */
       scroll-padding-top: 90px;
     }
     @media (max-width:1023px){
@@ -63,17 +71,18 @@
     body{
       color:var(--text);
       background:
-        radial-gradient(1200px 500px at 20% -10%, rgba(96,165,250,.18), transparent 55%),
-        radial-gradient(900px 500px at 80% -20%, rgba(167,139,250,.16), transparent 55%),
+        radial-gradient(1200px 500px at 20% -10%, rgba(201,167,108,.10), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(216,189,138,.07), transparent 55%),
         linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
-      font:16px/1.7 system-ui,-apple-system,Segoe UI,Inter,Roboto,Arial;
+      font:16px/1.7 var(--body);
       -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
     }
     a{color:inherit;text-decoration:none}
     .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
 
-    header{position:sticky;top:0;z-index:50;background:rgba(7,9,14,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    header{position:sticky;top:0;z-index:50;background:rgba(11,15,22,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
     .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav > a{font-family:var(--display);font-weight:500;letter-spacing:-.01em;text-transform:lowercase;font-size:1.15rem}
     .links{display:none;gap:1.1rem;color:#cbd5e1}
     @media(min-width:768px){.links{display:flex}}
 
@@ -82,23 +91,22 @@
     main{padding:2.25rem 0 3.25rem}
     .heroWrap{position:relative}
     .hero{width:100%;height:360px;object-fit:cover;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow)}
-    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(6,10,20,.6);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:#dbeafe}
+    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(11,15,22,.7);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:var(--accent2);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}
 
-    h1{font-size:clamp(2rem,4vw,2.9rem);line-height:1.1;margin:1.3rem 0 .65rem}
-    .meta{color:var(--muted);font-size:.92rem;margin-bottom:1rem}
+    h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4vw,2.9rem);line-height:1.05;letter-spacing:-.01em;margin:1.3rem 0 .65rem;font-optical-sizing:auto}
+    .meta{color:var(--muted);font-size:.85rem;margin-bottom:1rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.18em;text-transform:uppercase}
 
     .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.85rem 0 1.35rem}
-    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.75rem;color:#d1d5db;background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0))}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.72rem;color:var(--accent2);background:rgba(255,255,255,.04);letter-spacing:.05em}
 
     article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
     @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
 
     /* TOC */
     .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
-    .toc h3{margin:.2rem 0 .5rem;font-size:1rem;color:#cbd5e1}
-    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6}
-    .toc a:hover{background:rgba(255,255,255,.05);color:#fff}
-    /* NEW: on mobile/tablet, don't float the TOC; let it flow above content */
+    .toc h3{margin:.2rem 0 .5rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6;font-size:.93rem;transition:color .2s, background .2s}
+    .toc a:hover{background:rgba(255,255,255,.04);color:var(--accent)}
     @media (max-width:1023px){
       .toc{
         position: static;
@@ -114,10 +122,10 @@
     /* Content */
     .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
     @media(min-width:768px){.content{padding:2rem}}
-    .content h2{margin:1.25rem 0 .5rem;font-size:1.35rem}
-    .content h3{margin:1rem 0 .35rem;font-size:1.05rem;color:#dbeafe}
+    .content h2{font-family:var(--display);font-weight:600;margin:1.5rem 0 .5rem;font-size:1.6rem;letter-spacing:-.005em;font-optical-sizing:auto}
+    .content h3{font-family:var(--display);font-weight:500;margin:1.1rem 0 .35rem;font-size:1.15rem;color:var(--accent2);font-optical-sizing:auto}
     .content p{margin:.6rem 0}
-    .lead{color:#dbeafe}
+    .lead{color:#d1d5db}
 
     .callout{border:1px solid var(--border);background:var(--paper);border-radius:16px;padding:1rem;margin:.85rem 0}
     .callout.good{border-color:rgba(52,211,153,.28)}
