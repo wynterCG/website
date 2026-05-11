@@ -14,7 +14,7 @@
       "url": "/blog/stridekeep-fly-to-animations.html",
       "title": "Place tiles that fly to the canvas",
       "summary": "Vibe-coding the celebratory fly-to animation in Stridekeep, the Android measureInWindow Y-offset bug, and the zoom + halo polish on top.",
-      "image": "",
+      "image": "stridekeep/thumbnail.png",
       "date_published": "2026-05-04T10:00:00Z",
       "tags": ["Stridekeep", "React Native", "Animation", "Vibe Coding"]
     },
@@ -23,7 +23,7 @@
       "url": "/blog/stridekeep-mural-gestures.html",
       "title": "Tinder-swipe the canvas: building mural gestures",
       "summary": "One PanResponder, three gesture states, one snap-back hijack fix. Plus the rarity-colour system layered on top.",
-      "image": "",
+      "image": "stridekeep/thumbnail.png",
       "date_published": "2026-05-04T11:00:00Z",
       "tags": ["Stridekeep", "React Native", "Gestures", "Vibe Coding"]
     },
@@ -32,7 +32,7 @@
       "url": "/blog/stridekeep-wood-canyon-polish.html",
       "title": "When the shipped UI beats the spec",
       "summary": "Locked mockups vs. real-device review, and the documentation discipline that keeps an AI pair from reverting your divergences.",
-      "image": "",
+      "image": "stridekeep/thumbnail.png",
       "date_published": "2026-05-03T10:00:00Z",
       "tags": ["Stridekeep", "Process", "AI memory", "Vibe Coding"]
     },
