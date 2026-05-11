@@ -41,7 +41,7 @@
       "url": "/blog/breakout-roguelike-token-economy.html",
       "title": "Tokens and a formation editor",
       "summary": "A visual formation editor plugin for Godot, and a token economy where monsters drop golden diamonds that cost upgrade cards.",
-      "image": "",
+      "image": "breakout-roguelike/thumbnail.png",
       "date_published": "2026-04-04T16:00:00Z",
       "tags": ["BreakoutRoguelike", "Godot 4", "Editor plugin", "Vibe Coding"]
     },
@@ -50,7 +50,7 @@
       "url": "/blog/breakout-roguelike-phase-iteration.html",
       "title": "Phase-driven game design",
       "summary": "Each phase is one focused conversation with the AI that ends in a single commit. The naming convention is the methodology, not the bookkeeping.",
-      "image": "",
+      "image": "breakout-roguelike/thumbnail.png",
       "date_published": "2026-04-04T15:00:00Z",
       "tags": ["BreakoutRoguelike", "Godot 4", "Game Design", "Vibe Coding"]
     },
