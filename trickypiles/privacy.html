@@ -76,8 +76,10 @@
 
       <h2>What stays on your phone</h2>
       <p>
-        Your progress, best times, stars and settings are saved on your phone only. Uninstalling the
-        game or clearing its data deletes them.
+        Your progress, best times, stars and settings are saved on your phone. Uninstalling the game
+        or clearing its data deletes them, but Android's own backup may have copied them (with the
+        player id below) to your Google account and restore them when you reinstall the game or move
+        to a new phone. You manage that backup in your phone's settings (Google → Backup).
       </p>
 
       <h2>What is sent, and why</h2>
@@ -89,16 +91,19 @@
         </tr>
         <tr>
           <td>
-            <b>An anonymous player id.</b> A random id created by the game the first time it goes
-            online. It is not linked to your name, email or Google account.
+            <b>A random player id.</b> Created by the game the first time it goes online. It is not
+            linked to your name, email or Google account, but it does link your results together, so
+            it is pseudonymous rather than anonymous.
           </td>
           <td>To rank your times and to avoid counting the same result twice.</td>
-          <td>Ends when you uninstall the game or clear its data.</td>
+          <td>
+            Ends when you uninstall the game or clear its data (unless Android restores it from a
+            backup, see above).
+          </td>
         </tr>
         <tr>
           <td>
-            <b>Your best time per level</b> (level number, time, game version), with the anonymous
-            id.
+            <b>Your best time per level</b> (level number, time, game version), with the player id.
           </td>
           <td>
             To show how your time compares with other players ("Faster than 80% of players"). Other
@@ -108,9 +113,10 @@
         </tr>
         <tr>
           <td>
-            <b>Level results:</b> for each attempt, the level, whether you cleared it, failed or
-            left it, the mistakes by type, the time, the number of hands, and whether you used the
-            continue.
+            <b>Level results:</b> for each attempt, the level, whether it was the daily level,
+            whether you cleared it, failed or left it, the mistakes by type, the time, the number of
+            hands, whether you played in zen mode or used the continue, when the attempt ended, and
+            the game and app versions.
           </td>
           <td>To find levels that are too hard or too easy and improve the game.</td>
           <td>
@@ -120,16 +126,25 @@
         </tr>
         <tr>
           <td>
+            <b>Connection data:</b> the IP address and device or browser type of each session,
+            recorded by the sign-in service that issues the player id.
+          </td>
+          <td>Security and abuse prevention of the service.</td>
+          <td>Comes with going online; nothing is sent when you play offline.</td>
+        </tr>
+        <tr>
+          <td>
             <b>Crash reports:</b> the error, device model, Android and app versions, and an install
             id added by the crash reporting tool.
           </td>
           <td>To find and fix crashes.</td>
-          <td>Sent only when the game crashes or hits an error.</td>
+          <td>
+            Sent only when the game crashes or hits an error. The crash service is set not to store
+            IP addresses.
+          </td>
         </tr>
       </table>
-      <p>
-        We do not collect your location, contacts, photos, messages or any personal identifiers.
-      </p>
+      <p>We do not collect your name, email, precise location, contacts, photos or messages.</p>
 
       <h2>Ads</h2>
       <p>
@@ -156,22 +171,23 @@
       <h2>Who processes the data</h2>
       <ul>
         <li>
-          <b>Supabase</b> stores the anonymous id, best times and level results (servers in the EU,
-          Ireland).
+          <b>Supabase</b> stores the player id, connection data, best times and level results
+          (servers in the EU, Ireland).
         </li>
         <li><b>Sentry</b> receives crash reports (servers in the EU, Germany).</li>
-        <li><b>Google</b> (AdMob and Google Play) for ads and purchases.</li>
       </ul>
       <p>
-        These services process the data on our behalf under their own data protection terms. We do
-        not sell data. All data is encrypted in transit (HTTPS).
+        Both process the data on our behalf under their data processing terms.
+        <b>Google</b> shows the ads (AdMob) and handles purchases (Google Play) as an independent
+        controller, under <a href="https://policies.google.com/privacy">Google's privacy policy</a>.
+        We do not sell data. All data is encrypted in transit (HTTPS).
       </p>
 
       <h2>Legal basis (EU and UK)</h2>
       <p>
-        Rankings, level results and crash reports rely on our legitimate interest in running and
-        improving the game; you can opt out of level results in Settings. Personalised ads rely on
-        your consent, given in Google's consent form.
+        Rankings, level results, connection data and crash reports rely on our legitimate interest
+        in running and improving the game; you can opt out of level results in Settings.
+        Personalised ads rely on your consent, given in Google's consent form.
       </p>
 
       <h2>How long data is kept</h2>
@@ -184,10 +200,11 @@
       <h2>Your rights</h2>
       <p>
         You can ask us about the data we hold, or ask us to delete it, at
-        <a href="mailto:Inverno3darte@gmail.com">Inverno3darte@gmail.com</a>. Because the data is
-        anonymous, we may need you to describe when and which levels you played to find it.
-        Uninstalling the game removes the anonymous id from your phone, and new data can no longer
-        be linked to the old id. You can also complain to your data protection authority.
+        <a href="mailto:Inverno3darte@gmail.com">Inverno3darte@gmail.com</a>. Because we do not know
+        who you are, we may need you to describe when and which levels you played to find your data.
+        Uninstalling the game and removing it from your Android backup removes the player id from
+        your phone, and new data can no longer be linked to the old id. You can also complain to
+        your data protection authority.
       </p>
 
       <h2>Children</h2>
