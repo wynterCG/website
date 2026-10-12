@@ -1,0 +1,203 @@
+<!doctype html>
+<!--
+  Tricky Piles privacy policy. Source of truth: this file (tricky-piles repo, site/trickypiles/);
+  published at https://daninverno.com/trickypiles/privacy.html by copying it into the website repo
+  (website/public/trickypiles/) and deploying. Facts follow docs/release/data-safety.md.
+-->
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tricky Piles: Privacy policy</title>
+    <meta name="description" content="How the Tricky Piles game handles data." />
+    <style>
+      :root {
+        color-scheme: light;
+      }
+      body {
+        margin: 0;
+        background: #f6f1ea;
+        color: #2b2433;
+        font:
+          17px/1.6 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 32px 20px 64px;
+      }
+      h1 {
+        font-size: 30px;
+        line-height: 1.2;
+        margin: 0 0 4px;
+      }
+      h2 {
+        font-size: 21px;
+        margin: 32px 0 8px;
+      }
+      .updated {
+        color: #625a6b;
+        margin: 0 0 24px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 15px;
+      }
+      th,
+      td {
+        text-align: left;
+        vertical-align: top;
+        padding: 8px;
+        border-bottom: 1px solid #ddd3c7;
+      }
+      a {
+        color: #3a1d8f;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Tricky Piles: Privacy policy</h1>
+      <p class="updated">Last updated: 13 October 2026</p>
+
+      <p>
+        Tricky Piles is a puzzle game for Android. You play without an account: we never ask for
+        your name, email or any other personal details. This page explains what data the game
+        handles, why, and the choices you have.
+      </p>
+
+      <h2>Who is responsible</h2>
+      <p>
+        Daniel Inverno, the developer of Tricky Piles. Contact:
+        <a href="mailto:Inverno3darte@gmail.com">Inverno3darte@gmail.com</a>.
+      </p>
+
+      <h2>What stays on your phone</h2>
+      <p>
+        Your progress, best times, stars and settings are saved on your phone only. Uninstalling the
+        game or clearing its data deletes them.
+      </p>
+
+      <h2>What is sent, and why</h2>
+      <table>
+        <tr>
+          <th>Data</th>
+          <th>Why</th>
+          <th>Your choice</th>
+        </tr>
+        <tr>
+          <td>
+            <b>An anonymous player id.</b> A random id created by the game the first time it goes
+            online. It is not linked to your name, email or Google account.
+          </td>
+          <td>To rank your times and to avoid counting the same result twice.</td>
+          <td>Ends when you uninstall the game or clear its data.</td>
+        </tr>
+        <tr>
+          <td>
+            <b>Your best time per level</b> (level number, time, game version), with the anonymous
+            id.
+          </td>
+          <td>
+            To show how your time compares with other players ("Faster than 80% of players"). Other
+            players never see your times.
+          </td>
+          <td>Zen mode times are never sent.</td>
+        </tr>
+        <tr>
+          <td>
+            <b>Level results:</b> for each attempt, the level, whether you cleared it, failed or
+            left it, the mistakes by type, the time, the number of hands, and whether you used the
+            continue.
+          </td>
+          <td>To find levels that are too hard or too easy and improve the game.</td>
+          <td>
+            Optional: turn off <b>Share play stats</b> in Settings. Results not yet sent are deleted
+            on the phone.
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <b>Crash reports:</b> the error, device model, Android and app versions, and an install
+            id added by the crash reporting tool.
+          </td>
+          <td>To find and fix crashes.</td>
+          <td>Sent only when the game crashes or hits an error.</td>
+        </tr>
+      </table>
+      <p>
+        We do not collect your location, contacts, photos, messages or any personal identifiers.
+      </p>
+
+      <h2>Ads</h2>
+      <p>
+        When you lose a level, you can choose to watch a rewarded ad to continue. Ads are shown by
+        Google AdMob. When an ad is requested or shown, Google may collect your device's advertising
+        id, an approximate location derived from your IP address, device information, diagnostics,
+        and how you interact with the ad, to show and measure ads and to prevent fraud. See
+        <a href="https://policies.google.com/technologies/partner-sites">how Google uses data</a>.
+      </p>
+      <p>
+        In the European Economic Area, the UK and Switzerland, Google's consent form asks for your
+        choice the first time you choose to watch an ad (never before you play). You can change it
+        any time under <b>Settings → Ad privacy choices</b>. You can also reset or delete your
+        advertising id in your phone's settings (Google → Ads).
+      </p>
+      <p>The <b>Remove ads</b> purchase makes the continue free without ads.</p>
+
+      <h2>Purchases</h2>
+      <p>
+        The Remove ads purchase is handled by Google Play. We never see your payment details; the
+        game only stores on your phone whether the purchase is owned.
+      </p>
+
+      <h2>Who processes the data</h2>
+      <ul>
+        <li>
+          <b>Supabase</b> stores the anonymous id, best times and level results (servers in the EU,
+          Ireland).
+        </li>
+        <li><b>Sentry</b> receives crash reports (servers in the EU, Germany).</li>
+        <li><b>Google</b> (AdMob and Google Play) for ads and purchases.</li>
+      </ul>
+      <p>
+        These services process the data on our behalf under their own data protection terms. We do
+        not sell data. All data is encrypted in transit (HTTPS).
+      </p>
+
+      <h2>Legal basis (EU and UK)</h2>
+      <p>
+        Rankings, level results and crash reports rely on our legitimate interest in running and
+        improving the game; you can opt out of level results in Settings. Personalised ads rely on
+        your consent, given in Google's consent form.
+      </p>
+
+      <h2>How long data is kept</h2>
+      <p>
+        Best times and level results are kept while the game is available, and are used only in
+        totals (no profiles of individual players). Crash reports are deleted by Sentry after at
+        most 90 days.
+      </p>
+
+      <h2>Your rights</h2>
+      <p>
+        You can ask us about the data we hold, or ask us to delete it, at
+        <a href="mailto:Inverno3darte@gmail.com">Inverno3darte@gmail.com</a>. Because the data is
+        anonymous, we may need you to describe when and which levels you played to find it.
+        Uninstalling the game removes the anonymous id from your phone, and new data can no longer
+        be linked to the old id. You can also complain to your data protection authority.
+      </p>
+
+      <h2>Children</h2>
+      <p>
+        Tricky Piles is meant for players aged 13 and older. It does not knowingly collect data from
+        children under 13.
+      </p>
+
+      <h2>Changes</h2>
+      <p>If this policy changes, the new version is published on this page with a new date.</p>
+    </main>
+  </body>
+</html>
