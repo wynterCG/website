@@ -6,35 +6,97 @@
   "description": "Latest dev notes, experiments, and breakdowns.",
   "language": "en",
   "authors": [
-    { "name": "Daniel Inverno", "url": "https://daninverno.com/" }
+    {
+      "name": "Daniel Inverno",
+      "url": "https://daninverno.com/"
+    }
   ],
   "items": [
+    {
+      "id": "https://daninverno.com/blog/jigsaw-act-one.html",
+      "url": "/blog/jigsaw-act-one.html",
+      "title": "Jigsaw: designing Act One for a Steam demo",
+      "summary": "A first-person 3D jigsaw game in Godot. How a jigsaw toy became a game with Act One: earned Fits, tools, charms and progress you can see in the room.",
+      "image": "jigsaw/thumbnail.jpg",
+      "date_published": "2026-10-21T09:00:00Z",
+      "tags": [
+        "Jigsaw",
+        "Godot 4",
+        "3D",
+        "Game Design",
+        "Steam"
+      ]
+    },
+    {
+      "id": "https://daninverno.com/blog/grip-up-directing-a-physics-prototype.html",
+      "url": "/blog/grip-up-directing-a-physics-prototype.html",
+      "title": "GRIP UP: directing a physics climbing prototype",
+      "summary": "Sixteen versions of a physics climbing lab, built by AI agents under my direction. The design pillars, the experiments and the calls that kept it on course.",
+      "image": "grip-up/thumbnail.jpg",
+      "date_published": "2026-10-21T10:00:00Z",
+      "tags": [
+        "GRIP UP",
+        "Godot 4",
+        "Physics",
+        "Game Design",
+        "Claude Code"
+      ]
+    },
+    {
+      "id": "https://daninverno.com/blog/tricky-piles-launch.html",
+      "url": "/blog/tricky-piles-launch.html",
+      "title": "Tricky Piles is live: eight decisions that shipped a game",
+      "summary": "My first released game is on Google Play. The AI agents wrote the code; these eight written decisions are the parts I owned, and why I made them.",
+      "image": "trickypiles/thumbnail.png",
+      "date_published": "2026-10-21T11:00:00Z",
+      "tags": [
+        "Tricky Piles",
+        "Android",
+        "Game Design",
+        "Claude Code"
+      ]
+    },
     {
       "id": "https://daninverno.com/blog/stridekeep-fly-to-animations.html",
       "url": "/blog/stridekeep-fly-to-animations.html",
       "title": "Place tiles that fly to the canvas",
       "summary": "Vibe-coding the celebratory fly-to animation in Stridekeep, the Android measureInWindow Y-offset bug, and the zoom + halo polish on top.",
-      "image": "stridekeep/thumbnail.png",
+      "image": "stridekeep/thumb-flyto.jpg",
       "date_published": "2026-05-04T10:00:00Z",
-      "tags": ["Stridekeep", "React Native", "Animation", "Vibe Coding"]
+      "tags": [
+        "Stridekeep",
+        "React Native",
+        "Animation",
+        "Vibe Coding"
+      ]
     },
     {
       "id": "https://daninverno.com/blog/stridekeep-mural-gestures.html",
       "url": "/blog/stridekeep-mural-gestures.html",
       "title": "Tinder-swipe the canvas: building mural gestures",
       "summary": "One PanResponder, three gesture states, one snap-back hijack fix. Plus the rarity-colour system layered on top.",
-      "image": "stridekeep/thumbnail.png",
+      "image": "stridekeep/thumb-gestures.jpg",
       "date_published": "2026-05-04T11:00:00Z",
-      "tags": ["Stridekeep", "React Native", "Gestures", "Vibe Coding"]
+      "tags": [
+        "Stridekeep",
+        "React Native",
+        "Gestures",
+        "Vibe Coding"
+      ]
     },
     {
       "id": "https://daninverno.com/blog/stridekeep-wood-canyon-polish.html",
       "url": "/blog/stridekeep-wood-canyon-polish.html",
       "title": "When the shipped UI beats the spec",
       "summary": "Locked mockups vs. real-device review, and the documentation discipline that keeps an AI pair from reverting your divergences.",
-      "image": "stridekeep/thumbnail.png",
+      "image": "stridekeep/thumb-polish.jpg",
       "date_published": "2026-05-03T10:00:00Z",
-      "tags": ["Stridekeep", "Process", "AI memory", "Vibe Coding"]
+      "tags": [
+        "Stridekeep",
+        "Process",
+        "AI memory",
+        "Vibe Coding"
+      ]
     },
     {
       "id": "https://daninverno.com/blog/breakout-roguelike-token-economy.html",
@@ -43,7 +105,12 @@
       "summary": "A visual formation editor plugin for Godot, and a token economy where monsters drop golden diamonds that cost upgrade cards.",
       "image": "breakout-roguelike/thumbnail.png",
       "date_published": "2026-04-04T16:00:00Z",
-      "tags": ["BreakoutRoguelike", "Godot 4", "Editor plugin", "Vibe Coding"]
+      "tags": [
+        "BreakoutRoguelike",
+        "Godot 4",
+        "Editor plugin",
+        "Vibe Coding"
+      ]
     },
     {
       "id": "https://daninverno.com/blog/breakout-roguelike-phase-iteration.html",
@@ -52,7 +119,12 @@
       "summary": "Each phase is one focused conversation with the AI that ends in a single commit. The naming convention is the methodology, not the bookkeeping.",
       "image": "breakout-roguelike/thumbnail.png",
       "date_published": "2026-04-04T15:00:00Z",
-      "tags": ["BreakoutRoguelike", "Godot 4", "Game Design", "Vibe Coding"]
+      "tags": [
+        "BreakoutRoguelike",
+        "Godot 4",
+        "Game Design",
+        "Vibe Coding"
+      ]
     },
     {
       "id": "https://daninverno.com/blog/catIddleGamePrototype.html",
@@ -61,7 +133,10 @@
       "summary": "Implementing battle system",
       "image": "cat_game/thumbnail.png",
       "date_published": "2025-08-05T10:00:00Z",
-      "tags": ["UE5", "GameDev"]
+      "tags": [
+        "UE5",
+        "GameDev"
+      ]
     },
     {
       "id": "https://daninverno.com/blog/phyllotaxisGenerator.html",
@@ -70,7 +145,10 @@
       "summary": "Playing with parameters to get realistic and natural forms",
       "image": "phyllo/devlog00.png",
       "date_published": "2025-08-05T10:00:00Z",
-      "tags": ["UE5", "TechArt"]
+      "tags": [
+        "UE5",
+        "TechArt"
+      ]
     }
   ]
 }

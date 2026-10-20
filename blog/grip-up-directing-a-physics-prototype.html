@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>GRIP UP: directing a physics climbing prototype — Daniel Inverno</title>
+  <meta name="description" content="Sixteen versions of a physics climbing lab, built by AI agents under my direction. The design pillars, the experiments and the calls that kept it on course." />
+
+  <link rel="canonical" href="https://daninverno.com/blog/grip-up-directing-a-physics-prototype.html" />
+  <link rel="alternate" type="application/feed+json" href="../feed.json" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="GRIP UP: directing a physics climbing prototype" />
+  <meta property="og:description" content="Sixteen versions of a physics climbing lab, built by AI agents under my direction. The design pillars, the experiments and the calls that kept it on course." />
+  <meta property="og:url" content="https://daninverno.com/blog/grip-up-directing-a-physics-prototype.html" />
+  <meta property="og:image" content="https://daninverno.com/blog/grip-up/thumbnail.jpg" />
+  <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GRIP UP: directing a physics climbing prototype" />
+  <meta name="twitter:description" content="Sixteen versions of a physics climbing lab, built by AI agents under my direction. The design pillars, the experiments and the calls that kept it on course." />
+  <meta name="twitter:image" content="https://daninverno.com/blog/grip-up/thumbnail.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "GRIP UP: directing a physics climbing prototype",
+  "description": "Sixteen versions of a physics climbing lab, built by AI agents under my direction. The design pillars, the experiments and the calls that kept it on course.",
+  "author": {
+    "@type": "Person",
+    "name": "Daniel Inverno",
+    "url": "https://daninverno.com/"
+  },
+  "datePublished": "2026-10-21T10:00:00Z",
+  "dateModified": "2026-10-21T10:00:00Z",
+  "image": [
+    "https://daninverno.com/blog/grip-up/thumbnail.jpg"
+  ],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://daninverno.com/blog/grip-up-directing-a-physics-prototype.html"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Daniel Inverno"
+  }
+}
+  </script>
+
+  <style>
+    :root{
+      --bg1:#0b0f16; --bg2:#0e1219; --bg3:#11151c;
+      --card:#10141b; --paper:#13171f;
+      --text:#ffffff; --muted:#9aa3b2; --border:rgba(255,255,255,.08);
+      --accent:#c9a76c; --accent2:#d8bd8a;
+      --display:'Fraunces', ui-serif, Georgia, serif;
+      --body:'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.45);
+      --ok:#34d399; --warn:#fbbf24;
+      scroll-padding-top: 90px;
+    }
+    @media (max-width:1023px){ :root{ scroll-padding-top: 70px; } }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(201,167,108,.10), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(216,189,138,.07), transparent 55%),
+        linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
+      font:16px/1.7 var(--body);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+    header{position:sticky;top:0;z-index:50;background:rgba(11,15,22,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav > a{font-family:var(--display);font-weight:500;letter-spacing:-.01em;text-transform:lowercase;font-size:1.15rem}
+    .links{display:none;gap:1.1rem;color:#cbd5e1}
+    @media(min-width:768px){.links{display:flex}}
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;z-index:60}
+    main{padding:2.25rem 0 3.25rem}
+    .heroWrap{position:relative}
+    .hero{width:100%;height:360px;object-fit:cover;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow);background:linear-gradient(135deg,#13171f,#0b0f16)}
+    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(11,15,22,.7);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:var(--accent2);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}
+    h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4vw,2.9rem);line-height:1.05;letter-spacing:-.01em;margin:1.3rem 0 .65rem;font-optical-sizing:auto}
+    .meta{color:var(--muted);font-size:.85rem;margin-bottom:1rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.18em;text-transform:uppercase}
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.85rem 0 1.35rem}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.72rem;color:var(--accent2);background:rgba(255,255,255,.04);letter-spacing:.05em}
+    article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
+    @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
+    .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
+    .toc h3{margin:.2rem 0 .5rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6;font-size:.93rem;transition:color .2s, background .2s}
+    .toc a:hover{background:rgba(255,255,255,.04);color:var(--accent)}
+    @media (max-width:1023px){.toc{position:static;top:auto;max-height:none;overflow:visible;width:auto;margin:0 0 1rem 0;z-index:auto}}
+    .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
+    @media(min-width:768px){.content{padding:2rem}}
+    .content h2{font-family:var(--display);font-weight:600;margin:1.5rem 0 .5rem;font-size:1.6rem;letter-spacing:-.005em;font-optical-sizing:auto}
+    .content h3{font-family:var(--display);font-weight:500;margin:1.1rem 0 .35rem;font-size:1.15rem;color:var(--accent2);font-optical-sizing:auto}
+    .content p{margin:.6rem 0}
+    .lead{color:#d1d5db}
+    .callout{border:1px solid var(--border);background:var(--paper);border-radius:16px;padding:1rem;margin:.85rem 0}
+    .callout.good{border-color:rgba(52,211,153,.28)}
+    .callout.warn{border-color:rgba(251,191,36,.28)}
+    .checklist{display:grid;grid-template-columns:1fr;gap:.5rem}
+    @media(min-width:768px){.checklist{grid-template-columns:repeat(2,1fr)}}
+    .card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0));border-radius:14px;padding:.85rem}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
+    pre.code{background:#070a0f;border:1px solid var(--border);border-radius:12px;padding:1rem;overflow-x:auto;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.85rem;line-height:1.55;color:#e5e7eb}
+    code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.88em;background:rgba(255,255,255,.06);padding:.08em .35em;border-radius:5px;color:var(--accent2)}
+    pre.code code{background:transparent;padding:0;color:inherit}
+    footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af}
+    .btn{display:inline-block;padding:.55rem 1.1rem;border-radius:999px;background:var(--accent);color:#000;font-weight:500;font-size:.9rem;transition:background .2s}
+    .btn:hover{background:var(--accent2)}
+  </style>
+  <style>
+    .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1rem 0}
+    .shots img,.media video{width:100%;border-radius:12px;border:1px solid var(--border)}
+    .media{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1rem 0}
+    @media(max-width:600px){.media{grid-template-columns:1fr}}
+    table.t{width:100%;border-collapse:collapse;font-size:.9rem;margin:.75rem 0}
+    table.t td,table.t th{border-bottom:1px solid var(--border);padding:.45rem .5rem;text-align:left;vertical-align:top}
+    table.t th{color:var(--accent2);font-weight:500}
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header>
+    <div class="container nav">
+      <a href="../" aria-label="Home">daninverno</a>
+      <nav class="links" aria-label="Primary"></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="heroWrap">
+      <img class="hero" src="./grip-up/thumbnail.jpg" alt="GRIP UP static climb course" />
+      <span class="heroBadge">GRIP UP • Design</span>
+    </div>
+
+    <h1>GRIP UP: directing a physics climbing prototype</h1>
+    <div class="meta">Oct 21, 2026 · ~6 min read</div>
+
+    <div class="tags">
+      <span class="tag">GRIP UP</span>
+      <span class="tag">Godot 4</span>
+      <span class="tag">Physics</span>
+      <span class="tag">Game Design</span>
+      <span class="tag">Claude Code</span>
+    </div>
+
+    <article>
+      <aside class="toc" aria-label="On this page">
+        <h3>On this page</h3>
+        <a href="#idea">The idea</a>
+        <a href="#pillars">Design pillars</a>
+        <a href="#calls">Calls I made</a>
+        <a href="#experiments">Experiments, not opinions</a>
+        <a href="#next">What's next</a>
+      </aside>
+
+      <section class="content">
+        <p class="lead" id="idea">
+          GRIP UP is a climbing prototype in Godot 4.7 where each mouse button is one hand. Hold to grip, let go to
+          release. The climber is a real physics body on Jolt, and the arms pull with limited strength, so swings,
+          catches and launches come out of the simulation instead of canned animations.
+        </p>
+        <p>
+          AI agents built it. My job was deciding what it should be, and stopping it from turning into something
+          else. Over sixteen versioned specs, that turned out to be most of the work.
+        </p>
+        <p><a class="btn" href="https://github.com/wynterCG/grip_up" target="_blank" rel="noopener">Source on GitHub</a></p>
+
+        <div class="divider"></div>
+
+        <h2 id="pillars">Design pillars</h2>
+        <p>Every version is judged against the same six rules:</p>
+        <div class="checklist">
+          <div class="card"><strong>Physics produces motion.</strong><br>Never teleport the climber or inject speed to fake a move.</div>
+          <div class="card"><strong>Player intent is simple.</strong><br>Mouse and keyboard, no control over every joint.</div>
+          <div class="card"><strong>Failure is legible.</strong><br>You should know if a catch failed because of reach, speed or load.</div>
+          <div class="card"><strong>Predictable, not trivial.</strong><br>Small tolerances fix input ambiguity, never physics.</div>
+          <div class="card"><strong>The world pushes back.</strong><br>Moving structures feel your weight.</div>
+          <div class="card"><strong>Preserve feel.</strong><br>Every change is testable, measurable and reversible.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="calls">Calls I made</h2>
+        <p>The pillars only matter if you act on them. A few of the turning points:</p>
+        <table class="t">
+          <tr><th>Situation</th><th>Call</th></tr>
+          <tr><td>The physical ledge climb kept failing</td><td>Stop tuning the motor and add the missing physics instead: palm support and leg clearance.</td></tr>
+          <tr><td>The working top-out looked like a vault</td><td>Refine it, don't build a second system. One transition framework, one safety check.</td></tr>
+          <tr><td>The original design had no walking body</td><td>Add a biped, hold-to-grip and ground walking. I changed the scope on purpose.</td></tr>
+          <tr><td>The tuning lab could train an AI to climb</td><td>Don't. Tune a few safe parameters and let people judge the feel.</td></tr>
+        </table>
+
+        <div class="divider"></div>
+
+        <h2 id="experiments">Experiments, not opinions</h2>
+        <p>
+          Every new control idea ships behind a switch so it can be compared with the old one. Playtest sessions
+          follow a written protocol: same route, same settings, three runs per variant, then ratings from 1 to 5
+          for precision, comfort, agency, fairness and the urge to retry. Failed runs count too.
+        </p>
+        <p>
+          Some ideas lost. One movement variant made uneven and twisting moves worse and was marked "revise", not
+          shipped. That's the point of measuring: a good-sounding idea doesn't get in because it sounds good.
+        </p>
+        <div class="callout warn">
+          <strong>A lesson I'm applying now:</strong> automated checks can prove the physics is safe. They can't
+          prove it's fun. Only people playing can do that.
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="next">What's next</h2>
+        <p>
+          The newest course, <em>First Ascent</em>, joins walking, wall climbing, hanging traverses and the top-out
+          into one 30 to 90 second climb. Next step: real players on it, with the rating form, before any more
+          tuning.
+        </p>
+
+        <a class="btn" href="./">← Back to the blog</a>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="y"></span> Daniel Inverno. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const prog = document.getElementById('progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      prog.style.width = (scrolled * 100).toFixed(2) + '%';
+    };
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
