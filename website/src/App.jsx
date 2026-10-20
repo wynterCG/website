@@ -5,7 +5,8 @@ import { Card, CardContent } from "@/components/ui/Card.jsx";
 import {
   Mail, Sparkles, Menu as MenuIcon,
   Play as PlayIcon, X as XIcon, ChevronLeft, ChevronRight as CaretRight,
-  Image as ImageIcon, Video as VideoIcon, Youtube as YoutubeIcon
+  Image as ImageIcon, Video as VideoIcon, Youtube as YoutubeIcon,
+  ArrowUpRight
 } from "lucide-react";
 
 /* ---------- helpers ---------- */
@@ -146,6 +147,40 @@ const projectsData = [
       { type: "youtube", src: "https://youtu.be/ZfSN77J8tL4", ratio: "16 / 9" },
       { type: "image", src: "https://i.ytimg.com/vi/ZfSN77J8tL4/maxresdefault.jpg" },
     ],
+  },
+];
+
+/* ---------- games ---------- */
+const PLAY_URL = "https://play.google.com/store/apps/details?id=com.daninverno.trickypiles";
+
+const prototypes = [
+  {
+    title: "Elsewhere",
+    stack: "Godot 4.7",
+    blurb: "First-person architectural puzzle adventure. Gravity follows authored paths around walls and undersides, and you reshape each monument from an isometric view.",
+    image: "/games/elsewhere.jpg",
+    link: "https://github.com/wynterCG/spatial-puzzle-adventure",
+  },
+  {
+    title: "GRIP UP",
+    stack: "Godot 4.7 · Jolt",
+    blurb: "Physics climbing lab. Each mouse button is a hand, with finite arm tension, swings and charged launches, plus an offline auto-tuning lab in Python.",
+    image: "/games/grip-up.jpg",
+    link: "https://github.com/wynterCG/grip_up",
+  },
+  {
+    title: "Stridekeep",
+    stack: "React Native · Supabase",
+    blurb: "Team walking game for Android. Real steps from Health Connect unlock tiles, and two teams race to paint a shared pixel-art mural.",
+    image: "/games/stridekeep.jpg",
+    link: "https://github.com/wynterCG/stridekeep-legacy",
+  },
+  {
+    title: "MarbleKeep",
+    stack: "Godot 4.6",
+    blurb: "Always-on-top desktop toy with a physics marble, plus a procedural marble generator and curation tool built for it.",
+    video: "/games/marble.mp4",
+    image: "/games/marble.jpg",
   },
 ];
 
@@ -684,7 +719,7 @@ const ContactFormCard = memo(function ContactFormCard() {
       </div>
 
       <div>
-        <label htmlFor="cf-message" className={labelClass}>Project brief</label>
+        <label htmlFor="cf-message" className={labelClass}>Message</label>
         <textarea
           id="cf-message"
           name="message"
@@ -945,7 +980,8 @@ export default function App() {
         <div className={`${container} h-16 flex items-center justify-between gap-3`}>
           <a href="#top" className="display-serif font-medium tracking-tight text-xl md:text-2xl lowercase">daninverno</a>
           <nav className="hidden md:flex items-center gap-6 text-sm">
-            <a href="#work" className="hover:opacity-80">Work</a>
+            <a href="#games" className="hover:opacity-80">Games</a>
+            <a href="#work" className="hover:opacity-80">3D Work</a>
             <a href="#blog" className="hover:opacity-80">Blog</a>
             <a href="#about" className="hover:opacity-80">About</a>
             <a href="#contact" className="hover:opacity-80">Contact</a>
@@ -973,7 +1009,8 @@ export default function App() {
           >
             <div className={`${container} py-3 flex flex-col`}>
               {[
-                ["Work", "#work"],
+                ["Games", "#games"],
+                ["3D Work", "#work"],
                 ["Blog", "#blog"],
                 ["About", "#about"],
                 ["Contact", "#contact"],
@@ -1018,11 +1055,23 @@ export default function App() {
               <div className="max-w-3xl text-white">
                 <span className="eyebrow">00 — Daniel Inverno</span>
                 <h1 className="display-serif mt-3 text-5xl sm:text-7xl md:text-[5.5rem] font-medium leading-[0.96] tracking-tight">
-                  3D Artist &amp; Indie Game Dev
+                  3D artist who ships games
                 </h1>
-                <p className="mt-6 inline-flex items-center gap-2 text-sm text-white/70">
+                <p className="mt-6 max-w-xl text-base sm:text-lg text-white/80 leading-relaxed">
+                  Former Lead 3D Artist, now building my own games from prototype to store page.
+                  Tricky Piles is live on Google Play, and Jigsaw is coming to Steam.
+                </p>
+                <div className="mt-8 flex flex-wrap items-center gap-3">
+                  <a href="#games" className="rounded-full bg-[var(--accent)] hover:bg-[var(--accent-soft)] text-black px-6 py-2.5 text-sm font-medium transition-colors">
+                    See my games
+                  </a>
+                  <a href="#contact" className="rounded-full border border-white/40 hover:border-white text-white px-6 py-2.5 text-sm font-medium transition-colors">
+                    Get in touch
+                  </a>
+                </div>
+                <p className="mt-8 inline-flex items-center gap-2 text-sm text-white/70">
                   <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)]" />
-                  Available for new projects
+                  Open to 3D, technical art and game roles · Rotterdam area or remote
                 </p>
               </div>
             </div>
@@ -1036,7 +1085,7 @@ export default function App() {
           items={[
             "Blender", "Maya", "3ds Max", "ZBrush",
             "Substance Designer", "Substance Painter",
-            "Unreal Engine", "Blueprints", "Python",
+            "Godot", "Unreal Engine", "Blueprints", "TypeScript", "React", "Python",
             "Photoshop", "Illustrator", "DaVinci Resolve",
             "Inventor", "Corona Renderer",
             "Texturing", "Retopology", "UV Mapping", "PBR", "Rendering",
@@ -1065,13 +1114,109 @@ export default function App() {
         />
       </section>
 
-      {/* Work */}
-      <section id="work" className="theme-work section-surface py-24 md:py-32 text-gray-100">
+      {/* Games — released, in development, then prototypes. */}
+      <section id="games" className="theme-work section-surface py-24 md:py-32 text-gray-100">
         <div className={container}>
           <div className="text-center">
-            <span className="eyebrow">01 — Work</span>
+            <span className="eyebrow">01 — Games</span>
             <h2 className="section-title mt-3 text-3xl sm:text-5xl tracking-tight">
-              Portfolio Projects
+              Games I build and ship
+            </h2>
+          </div>
+
+          {/* Tricky Piles */}
+          <div className="mt-14 md:mt-20 mx-auto max-w-5xl grid md:grid-cols-12 gap-8 md:gap-12 items-center">
+            <div className="md:col-span-7">
+              <img src="/trickypiles/feature.png" alt="Tricky Piles: a calm sequence puzzle" className="w-full rounded-lg" />
+              <div className="mt-4 grid grid-cols-3 gap-3">
+                {[1, 3, 5].map((n) => (
+                  <img key={n} src={`/games/tricky-${n}.jpg`} alt={`Tricky Piles screenshot ${n}`} loading="lazy" className="w-full rounded-md" />
+                ))}
+              </div>
+            </div>
+            <div className="md:col-span-5">
+              <span className="eyebrow">Released · Android</span>
+              <h3 className="display-serif mt-3 text-3xl md:text-4xl font-medium tracking-tight">Tricky Piles</h3>
+              <p className="mt-4 text-gray-300 leading-relaxed">
+                A calm card-sequence puzzle that I designed, built and released solo, from the first prototype to a live store page.
+              </p>
+              <ul className="mt-5 space-y-2 text-sm text-gray-300">
+                <li><span className="text-white">Stack:</span> TypeScript, Vite, Capacitor and PixiJS</li>
+                <li><span className="text-white">Product:</span> rewarded ads, a Remove Ads purchase, online rankings, daily streaks and boss levels</li>
+                <li><span className="text-white">Reach:</span> English, Portuguese, Dutch, Korean and Simplified Chinese</li>
+                <li><span className="text-white">Quality:</span> thousands of automated tests guard the level generator</li>
+              </ul>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <a href={PLAY_URL} target="_blank" rel="noreferrer noopener" className="inline-flex items-center gap-2 rounded-full bg-[var(--accent)] hover:bg-[var(--accent-soft)] text-black px-5 py-2.5 text-sm font-medium transition-colors">
+                  Get it on Google Play <ArrowUpRight className="h-4 w-4" />
+                </a>
+                <a href="/trickypiles/" className="inline-flex items-center gap-2 rounded-full border border-white/30 hover:border-white px-5 py-2.5 text-sm font-medium transition-colors">
+                  Game page
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Jigsaw */}
+          <div className="mt-20 md:mt-28 mx-auto max-w-5xl grid md:grid-cols-12 gap-8 md:gap-12 items-center">
+            <div className="md:col-span-5 md:order-2">
+              <span className="eyebrow">In development · Steam</span>
+              <h3 className="display-serif mt-3 text-3xl md:text-4xl font-medium tracking-tight">Jigsaw</h3>
+              <p className="mt-4 text-gray-300 leading-relaxed">
+                A first-person 3D jigsaw game in Godot 4.7. You solve puzzles of up to 2,000 pieces in a celestial atelier that I modelled in Blender and textured in Substance Designer.
+              </p>
+              <p className="mt-3 text-gray-300 leading-relaxed">
+                Progress lives in the room: unplayed puzzles wait as boxes, finished ones hang framed on the walls, and you can replay your whole build afterwards.
+              </p>
+              <p className="mt-5 text-sm text-[var(--accent)]">Steam demo coming soon</p>
+            </div>
+            <div className="md:col-span-7 md:order-1 grid grid-cols-2 gap-3">
+              {["jigsaw-replay", "jigsaw-perspective"].map((v) => (
+                <video key={v} src={`/games/${v}.mp4`} poster={`/games/${v}.jpg`} autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover rounded-lg" />
+              ))}
+            </div>
+          </div>
+
+          {/* Prototypes */}
+          <div className="mt-20 md:mt-28 mx-auto max-w-5xl">
+            <h3 className="display-serif text-2xl md:text-3xl font-medium tracking-tight">Prototypes</h3>
+            <p className="mt-2 text-gray-300">I prototype fast to find the fun, then keep only what earns its place.</p>
+            <div className="mt-8 grid sm:grid-cols-2 gap-6">
+              {prototypes.map((p) => (
+                <div key={p.title} className="rounded-lg border border-white/10 bg-white/[0.02] overflow-hidden flex flex-col">
+                  <div className="aspect-[16/10] bg-black/40 overflow-hidden">
+                    {p.video ? (
+                      <video src={p.video} poster={p.image} autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-contain" />
+                    ) : (
+                      <img src={p.image} alt={p.title} loading="lazy" className="w-full h-full object-cover object-top" />
+                    )}
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <h4 className="display-serif text-xl font-medium">{p.title}</h4>
+                      <span className="text-xs text-white/50 whitespace-nowrap">{p.stack}</span>
+                    </div>
+                    <p className="mt-2 text-sm text-gray-300 leading-relaxed flex-1">{p.blurb}</p>
+                    {p.link && (
+                      <a href={p.link} target="_blank" rel="noreferrer noopener" className="mt-4 inline-flex items-center gap-1 text-sm text-[var(--accent)] hover:text-[var(--accent-soft)]">
+                        Source on GitHub <ArrowUpRight className="h-4 w-4" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Work */}
+      <section id="work" className="theme-work section-surface py-24 md:py-32 border-t border-white/5 text-gray-100">
+        <div className={container}>
+          <div className="text-center">
+            <span className="eyebrow">02 — 3D Work</span>
+            <h2 className="section-title mt-3 text-3xl sm:text-5xl tracking-tight">
+              3D &amp; Visualization
             </h2>
           </div>
 
@@ -1307,7 +1452,7 @@ export default function App() {
       <section id="blog" className="theme-blog section-surface py-24 md:py-32 border-t border-white/5 text-gray-100">
         <div className={container}>
           <div className="text-center">
-            <span className="eyebrow">02 — Journal</span>
+            <span className="eyebrow">03 — Journal</span>
             <h2 className="section-title mt-3 text-3xl sm:text-5xl tracking-tight">
               Notes from the studio
             </h2>
@@ -1427,15 +1572,37 @@ export default function App() {
       <section id="about" className="theme-about section-surface py-24 md:py-32 border-t border-white/5 text-gray-100">
         <div className={container}>
           <div className="text-center">
-            <span className="eyebrow">03 — About</span>
+            <span className="eyebrow">04 — About</span>
             <h2 className="section-title mt-3 text-3xl sm:text-5xl tracking-tight">
               About
             </h2>
           </div>
 
-          <div className="mt-14 md:mt-16 lg:mt-20 grid">
-            <div className="mx-auto max-w-3xl text-gray-100/90 leading-relaxed space-y-6 text-center">
-              <p>I’m Daniel Inverno, a 3D artist, game tinkerer, and pipeline nerd. Born in Portugal and now based in the Netherlands, I have contributed to luxury brand projects with Platforme. Today I focus on indie game art direction, creating efficient pipelines and playful interactive design. I keep things fast, clean, and always fun to explore.</p>
+          <div className="mt-14 md:mt-16 lg:mt-20 mx-auto max-w-5xl grid md:grid-cols-2 gap-12">
+            <div className="text-gray-100/90 leading-relaxed space-y-5">
+              <p>I’m Daniel Inverno, a 3D artist and game developer from Portugal, based near Rotterdam.</p>
+              <p>I trained in digital multimedia and then mechatronics, and spent years in professional 3D production. My favourite work is building systems that let a team make good things reliably: at Ad-pulse I set up the 3D department from nothing, with its workflow, documentation and quality checks.</p>
+              <p>Today I design, build and release my own games. I work with Godot, TypeScript and AI coding agents, and I keep every project grounded in written specs, tests and code review.</p>
+              <p className="text-sm text-white/60">Portuguese (native) · English (professional) · Dutch (learning)</p>
+            </div>
+            <div>
+              <ul className="space-y-6">
+                {[
+                  ["2025 – now", "Indie game developer", "Released Tricky Piles on Google Play; Jigsaw in development for Steam"],
+                  ["2025", "Best Overall Art Direction", "Clocktergeist, Itch.io Boss Rush Jam"],
+                  ["2022 – 2023", "Lead 3D Artist · Ad-pulse", "Built the company’s first 3D production department"],
+                  ["2019 – 2020", "3D Artist · Platforme", "3D content for Gucci, Hermès and Dior"],
+                  ["2018 – 2019", "3D Artist · Razor Edge Games", "UV mapping, texturing and creature work (freelance)"],
+                ].map(([when, role, detail]) => (
+                  <li key={role} className="grid grid-cols-[6.5rem_1fr] gap-4">
+                    <span className="text-xs uppercase tracking-[0.15em] text-white/50 pt-1">{when}</span>
+                    <div>
+                      <p className="text-white font-medium">{role}</p>
+                      <p className="text-sm text-gray-300">{detail}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
@@ -1445,7 +1612,7 @@ export default function App() {
       <section id="contact" className="theme-contact section-surface py-24 md:py-32 text-gray-100 border-t border-white/5">
         <div className={container}>
           <div className="text-center">
-            <span className="eyebrow">04 — Contact</span>
+            <span className="eyebrow">05 — Contact</span>
             <h2 className="section-title mt-3 text-3xl sm:text-5xl tracking-tight">
               Let&apos;s build something
             </h2>
@@ -1455,7 +1622,7 @@ export default function App() {
               left column — keeps the section warm without the splitting
               layout the user didn't like. */}
           <p className="mt-6 text-center text-base text-white/70 max-w-2xl mx-auto">
-            Send a brief, an idea, or just say hi. I usually reply within 48 hours.
+            Hiring for 3D, technical art or game work, or have a project in mind? Send a message. I usually reply within 48 hours.
           </p>
 
           <div className="mt-12 md:mt-14 mx-auto w-full max-w-3xl">
@@ -1473,7 +1640,8 @@ export default function App() {
             <span>© {new Date().getFullYear()}</span>
           </div>
           <nav className="flex items-center gap-6">
-            <a href="#work" className="hover:text-white transition-colors">Work</a>
+            <a href="#games" className="hover:text-white transition-colors">Games</a>
+            <a href="#work" className="hover:text-white transition-colors">3D Work</a>
             <a href="#blog" className="hover:text-white transition-colors">Blog</a>
             <a href="#about" className="hover:text-white transition-colors">About</a>
             <a href="#contact" className="hover:text-white transition-colors">Contact</a>
