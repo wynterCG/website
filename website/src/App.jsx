@@ -1583,7 +1583,7 @@ export default function App() {
               <p>I’m Daniel Inverno, a 3D artist and game developer from Portugal, based near Rotterdam.</p>
               <p>I trained in digital multimedia and then mechatronics, and spent years in professional 3D production. My favourite work is building systems that let a team make good things reliably: at Ad-pulse I set up the 3D department from nothing, with its workflow, documentation and quality checks.</p>
               <p>Today I design, build and release my own games. I build in Godot and direct AI coding agents for the code: I design the systems, write the specs, review what the agents produce and test on real devices.</p>
-              <p className="text-sm text-white/60">Portuguese (native) · English (professional) · Dutch (learning)</p>
+              <p className="text-sm text-white/60">Portuguese (native) · English (fluent) · Dutch (learning)</p>
             </div>
             <div>
               <ul className="space-y-6">
