@@ -1625,6 +1625,15 @@ export default function App() {
             Hiring for 3D, technical art or game work, or have a project in mind? Send a message. I usually reply within 48 hours.
           </p>
 
+          <p className="mt-3 text-center text-sm text-white/60">
+            Or find me on{" "}
+            <a href="https://www.linkedin.com/in/daninverno/" target="_blank" rel="noreferrer noopener" className="text-[var(--accent)] hover:text-[var(--accent-soft)]">LinkedIn</a>
+            {" · "}
+            <a href="https://github.com/wynterCG" target="_blank" rel="noreferrer noopener" className="text-[var(--accent)] hover:text-[var(--accent-soft)]">GitHub</a>
+            {" · "}
+            <a href="https://www.tiktok.com/@wyntercg_" target="_blank" rel="noreferrer noopener" className="text-[var(--accent)] hover:text-[var(--accent-soft)]">TikTok</a>
+          </p>
+
           <div className="mt-12 md:mt-14 mx-auto w-full max-w-3xl">
             <ContactFormCard />
           </div>
@@ -1645,6 +1654,8 @@ export default function App() {
             <a href="#blog" className="hover:text-white transition-colors">Blog</a>
             <a href="#about" className="hover:text-white transition-colors">About</a>
             <a href="#contact" className="hover:text-white transition-colors">Contact</a>
+            <a href="https://github.com/wynterCG" target="_blank" rel="noreferrer noopener" className="hover:text-white transition-colors">GitHub</a>
+            <a href="https://www.tiktok.com/@wyntercg_" target="_blank" rel="noreferrer noopener" className="hover:text-white transition-colors">TikTok</a>
           </nav>
         </div>
       </footer>
