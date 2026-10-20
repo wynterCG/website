@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Tricky Piles is live: eight decisions that shipped a game — Daniel Inverno</title>
+  <meta name="description" content="My first released game is on Google Play. The AI agents wrote the code; these eight written decisions are the parts I owned, and why I made them." />
+
+  <link rel="canonical" href="https://daninverno.com/blog/tricky-piles-launch.html" />
+  <link rel="alternate" type="application/feed+json" href="../feed.json" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Tricky Piles is live: eight decisions that shipped a game" />
+  <meta property="og:description" content="My first released game is on Google Play. The AI agents wrote the code; these eight written decisions are the parts I owned, and why I made them." />
+  <meta property="og:url" content="https://daninverno.com/blog/tricky-piles-launch.html" />
+  <meta property="og:image" content="https://daninverno.com/blog/trickypiles/thumbnail.png" />
+  <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Tricky Piles is live: eight decisions that shipped a game" />
+  <meta name="twitter:description" content="My first released game is on Google Play. The AI agents wrote the code; these eight written decisions are the parts I owned, and why I made them." />
+  <meta name="twitter:image" content="https://daninverno.com/blog/trickypiles/thumbnail.png" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Tricky Piles is live: eight decisions that shipped a game",
+  "description": "My first released game is on Google Play. The AI agents wrote the code; these eight written decisions are the parts I owned, and why I made them.",
+  "author": {
+    "@type": "Person",
+    "name": "Daniel Inverno",
+    "url": "https://daninverno.com/"
+  },
+  "datePublished": "2026-10-21T11:00:00Z",
+  "dateModified": "2026-10-21T11:00:00Z",
+  "image": [
+    "https://daninverno.com/blog/trickypiles/thumbnail.png"
+  ],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://daninverno.com/blog/tricky-piles-launch.html"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Daniel Inverno"
+  }
+}
+  </script>
+
+  <style>
+    :root{
+      --bg1:#0b0f16; --bg2:#0e1219; --bg3:#11151c;
+      --card:#10141b; --paper:#13171f;
+      --text:#ffffff; --muted:#9aa3b2; --border:rgba(255,255,255,.08);
+      --accent:#c9a76c; --accent2:#d8bd8a;
+      --display:'Fraunces', ui-serif, Georgia, serif;
+      --body:'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.45);
+      --ok:#34d399; --warn:#fbbf24;
+      scroll-padding-top: 90px;
+    }
+    @media (max-width:1023px){ :root{ scroll-padding-top: 70px; } }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(201,167,108,.10), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(216,189,138,.07), transparent 55%),
+        linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
+      font:16px/1.7 var(--body);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+    header{position:sticky;top:0;z-index:50;background:rgba(11,15,22,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav > a{font-family:var(--display);font-weight:500;letter-spacing:-.01em;text-transform:lowercase;font-size:1.15rem}
+    .links{display:none;gap:1.1rem;color:#cbd5e1}
+    @media(min-width:768px){.links{display:flex}}
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;z-index:60}
+    main{padding:2.25rem 0 3.25rem}
+    .heroWrap{position:relative}
+    .hero{width:100%;height:360px;object-fit:cover;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow);background:linear-gradient(135deg,#13171f,#0b0f16)}
+    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(11,15,22,.7);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:var(--accent2);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}
+    h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4vw,2.9rem);line-height:1.05;letter-spacing:-.01em;margin:1.3rem 0 .65rem;font-optical-sizing:auto}
+    .meta{color:var(--muted);font-size:.85rem;margin-bottom:1rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.18em;text-transform:uppercase}
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.85rem 0 1.35rem}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.72rem;color:var(--accent2);background:rgba(255,255,255,.04);letter-spacing:.05em}
+    article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
+    @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
+    .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
+    .toc h3{margin:.2rem 0 .5rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6;font-size:.93rem;transition:color .2s, background .2s}
+    .toc a:hover{background:rgba(255,255,255,.04);color:var(--accent)}
+    @media (max-width:1023px){.toc{position:static;top:auto;max-height:none;overflow:visible;width:auto;margin:0 0 1rem 0;z-index:auto}}
+    .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
+    @media(min-width:768px){.content{padding:2rem}}
+    .content h2{font-family:var(--display);font-weight:600;margin:1.5rem 0 .5rem;font-size:1.6rem;letter-spacing:-.005em;font-optical-sizing:auto}
+    .content h3{font-family:var(--display);font-weight:500;margin:1.1rem 0 .35rem;font-size:1.15rem;color:var(--accent2);font-optical-sizing:auto}
+    .content p{margin:.6rem 0}
+    .lead{color:#d1d5db}
+    .callout{border:1px solid var(--border);background:var(--paper);border-radius:16px;padding:1rem;margin:.85rem 0}
+    .callout.good{border-color:rgba(52,211,153,.28)}
+    .callout.warn{border-color:rgba(251,191,36,.28)}
+    .checklist{display:grid;grid-template-columns:1fr;gap:.5rem}
+    @media(min-width:768px){.checklist{grid-template-columns:repeat(2,1fr)}}
+    .card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0));border-radius:14px;padding:.85rem}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
+    pre.code{background:#070a0f;border:1px solid var(--border);border-radius:12px;padding:1rem;overflow-x:auto;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.85rem;line-height:1.55;color:#e5e7eb}
+    code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.88em;background:rgba(255,255,255,.06);padding:.08em .35em;border-radius:5px;color:var(--accent2)}
+    pre.code code{background:transparent;padding:0;color:inherit}
+    footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af}
+    .btn{display:inline-block;padding:.55rem 1.1rem;border-radius:999px;background:var(--accent);color:#000;font-weight:500;font-size:.9rem;transition:background .2s}
+    .btn:hover{background:var(--accent2)}
+  </style>
+  <style>
+    .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1rem 0}
+    .shots img,.media video{width:100%;border-radius:12px;border:1px solid var(--border)}
+    .media{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1rem 0}
+    @media(max-width:600px){.media{grid-template-columns:1fr}}
+    table.t{width:100%;border-collapse:collapse;font-size:.9rem;margin:.75rem 0}
+    table.t td,table.t th{border-bottom:1px solid var(--border);padding:.45rem .5rem;text-align:left;vertical-align:top}
+    table.t th{color:var(--accent2);font-weight:500}
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header>
+    <div class="container nav">
+      <a href="../" aria-label="Home">daninverno</a>
+      <nav class="links" aria-label="Primary"></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="heroWrap">
+      <img class="hero" src="./trickypiles/thumbnail.png" alt="Tricky Piles feature graphic" />
+      <span class="heroBadge">Tricky Piles • Launch</span>
+    </div>
+
+    <h1>Tricky Piles is live: eight decisions that shipped a game</h1>
+    <div class="meta">Oct 21, 2026 · ~7 min read</div>
+
+    <div class="tags">
+      <span class="tag">Tricky Piles</span>
+      <span class="tag">Android</span>
+      <span class="tag">Game Design</span>
+      <span class="tag">Claude Code</span>
+    </div>
+
+    <article>
+      <aside class="toc" aria-label="On this page">
+        <h3>On this page</h3>
+        <a href="#intro">Shipped</a>
+        <a href="#roles">Who did what</a>
+        <a href="#decisions">The eight decisions</a>
+        <a href="#process">How I kept control</a>
+        <a href="#takeaways">Takeaways</a>
+      </aside>
+
+      <section class="content">
+        <p class="lead" id="intro">
+          Tricky Piles is live on Google Play. It's a calm card puzzle: play the next number onto the right pile
+          before the move clock runs out, and new rules arrive chapter by chapter. It's free, with one optional
+          purchase, and it's in five languages. It's the first game I've taken all the way from a prototype to a
+          store page.
+        </p>
+
+        <div class="shots">
+          <img src="./trickypiles/tricky-1.jpg" alt="Tricky Piles gameplay" loading="lazy" />
+          <img src="./trickypiles/tricky-3.jpg" alt="Tricky Piles new rules screen" loading="lazy" />
+          <img src="./trickypiles/tricky-5.jpg" alt="Tricky Piles result screen" loading="lazy" />
+        </div>
+
+        <p><a class="btn" href="https://play.google.com/store/apps/details?id=com.daninverno.trickypiles" target="_blank" rel="noopener">Get it on Google Play</a></p>
+
+        <div class="divider"></div>
+
+        <h2 id="roles">Who did what</h2>
+        <p>
+          I'll be direct about this, because it's the part people ask about. AI coding agents, mostly Claude Code,
+          wrote the code. I designed the game, wrote the specs, reviewed what the agents produced, tested every build
+          on my own phone, and made the calls. Every call that mattered is written down as a short decision record
+          in the repository: the context, the decision, and what it costs us.
+        </p>
+        <p>
+          There are eight of them. Here they are, in plain words.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="decisions">The eight decisions</h2>
+        <div class="checklist">
+          <div class="card"><strong>1. Port the prototype, don't rebuild it</strong><br>
+            The HTML prototype had been played and tuned, and it came with 3,279 automated checks. Rewriting the
+            engine from the spec would have produced different levels and thrown that tuning away. So the engine
+            was ported module by module, same algorithms, same random-number order, checked against recorded
+            "golden" levels.</div>
+          <div class="card"><strong>2. One look, built once</strong><br>
+            Menus are plain web pages; the board is drawn with PixiJS for smooth effects on a mid-range phone. The
+            prototype's second visual theme was dropped: one look halves the art work and the testing.</div>
+          <div class="card"><strong>3. Same seed, same level, always</strong><br>
+            Retries replay the same deal, everyone gets the same daily, and rankings compare identical levels.
+            That only works if the game logic has no hidden randomness, so the rule is enforced automatically.
+            After launch, the level generator is frozen: new content goes into new levels.</div>
+          <div class="card"><strong>4. The daily follows your local day</strong><br>
+            The spec said UTC. The prototype's players were used to their own midnight, so the daily changes at
+            local midnight.</div>
+          <div class="card"><strong>5. Lock the content, then make it denser</strong><br>
+            Without playtest data yet, the hand-built learning ramp was locked. After that, the endless "remix" gets harder by
+            becoming denser with special rules every 20 levels, not longer or faster.</div>
+          <div class="card"><strong>6. Fair monetization</strong><br>
+            No ads between levels and no consent wall before play. After a loss you can watch one optional ad to
+            continue once; a single purchase removes the ads. Continues are free until level 15.</div>
+          <div class="card"><strong>7. A home screen instead of a level map</strong><br>
+            The levels never end, and a long map made the game feel like a finite list. Now one big "Level N"
+            button, a daily card and a streak are all you see.</div>
+          <div class="card"><strong>8. Five languages</strong><br>
+            English, Portuguese, Dutch, Korean and Simplified Chinese. A test fails the build if any language is
+            missing a line of text.</div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="process">How I kept control</h2>
+        <p>
+          The build happened in numbered slices, each with its own plan, so every change had a clear scope and a
+          clear way to check it. Before locking content I set up a playtest script for people who had never seen the
+          game: what to say, what not to explain, and which levels to watch for hesitation.
+        </p>
+        <div class="callout good">
+          <strong>The rule that mattered most:</strong> the agents can propose anything, but a decision only
+          becomes real when it's written down with its reason. Otherwise the next session "fixes" it back.
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="takeaways">Takeaways</h2>
+        <p>
+          Directing AI agents doesn't remove the work; it moves it. Less typing, more deciding, more reviewing and a
+          lot more testing on a real phone. The decision records are what made that manageable, and they're the
+          part of this project I'm proudest of.
+        </p>
+
+        <a class="btn" href="./">← Back to the blog</a>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="y"></span> Daniel Inverno. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const prog = document.getElementById('progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      prog.style.width = (scrolled * 100).toFixed(2) + '%';
+    };
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

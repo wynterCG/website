@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Jigsaw: designing Act One for a Steam demo — Daniel Inverno</title>
+  <meta name="description" content="A first-person 3D jigsaw game in Godot. How a jigsaw toy became a game with Act One: earned Fits, tools, charms and progress you can see in the room." />
+
+  <link rel="canonical" href="https://daninverno.com/blog/jigsaw-act-one.html" />
+  <link rel="alternate" type="application/feed+json" href="../feed.json" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Jigsaw: designing Act One for a Steam demo" />
+  <meta property="og:description" content="A first-person 3D jigsaw game in Godot. How a jigsaw toy became a game with Act One: earned Fits, tools, charms and progress you can see in the room." />
+  <meta property="og:url" content="https://daninverno.com/blog/jigsaw-act-one.html" />
+  <meta property="og:image" content="https://daninverno.com/blog/jigsaw/thumbnail.jpg" />
+  <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Jigsaw: designing Act One for a Steam demo" />
+  <meta name="twitter:description" content="A first-person 3D jigsaw game in Godot. How a jigsaw toy became a game with Act One: earned Fits, tools, charms and progress you can see in the room." />
+  <meta name="twitter:image" content="https://daninverno.com/blog/jigsaw/thumbnail.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Jigsaw: designing Act One for a Steam demo",
+  "description": "A first-person 3D jigsaw game in Godot. How a jigsaw toy became a game with Act One: earned Fits, tools, charms and progress you can see in the room.",
+  "author": {
+    "@type": "Person",
+    "name": "Daniel Inverno",
+    "url": "https://daninverno.com/"
+  },
+  "datePublished": "2026-10-21T09:00:00Z",
+  "dateModified": "2026-10-21T09:00:00Z",
+  "image": [
+    "https://daninverno.com/blog/jigsaw/thumbnail.jpg"
+  ],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://daninverno.com/blog/jigsaw-act-one.html"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Daniel Inverno"
+  }
+}
+  </script>
+
+  <style>
+    :root{
+      --bg1:#0b0f16; --bg2:#0e1219; --bg3:#11151c;
+      --card:#10141b; --paper:#13171f;
+      --text:#ffffff; --muted:#9aa3b2; --border:rgba(255,255,255,.08);
+      --accent:#c9a76c; --accent2:#d8bd8a;
+      --display:'Fraunces', ui-serif, Georgia, serif;
+      --body:'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.45);
+      --ok:#34d399; --warn:#fbbf24;
+      scroll-padding-top: 90px;
+    }
+    @media (max-width:1023px){ :root{ scroll-padding-top: 70px; } }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(201,167,108,.10), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(216,189,138,.07), transparent 55%),
+        linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
+      font:16px/1.7 var(--body);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+    header{position:sticky;top:0;z-index:50;background:rgba(11,15,22,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav > a{font-family:var(--display);font-weight:500;letter-spacing:-.01em;text-transform:lowercase;font-size:1.15rem}
+    .links{display:none;gap:1.1rem;color:#cbd5e1}
+    @media(min-width:768px){.links{display:flex}}
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;z-index:60}
+    main{padding:2.25rem 0 3.25rem}
+    .heroWrap{position:relative}
+    .hero{width:100%;height:360px;object-fit:cover;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow);background:linear-gradient(135deg,#13171f,#0b0f16)}
+    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(11,15,22,.7);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:var(--accent2);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}
+    h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4vw,2.9rem);line-height:1.05;letter-spacing:-.01em;margin:1.3rem 0 .65rem;font-optical-sizing:auto}
+    .meta{color:var(--muted);font-size:.85rem;margin-bottom:1rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.18em;text-transform:uppercase}
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.85rem 0 1.35rem}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.72rem;color:var(--accent2);background:rgba(255,255,255,.04);letter-spacing:.05em}
+    article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
+    @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
+    .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
+    .toc h3{margin:.2rem 0 .5rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6;font-size:.93rem;transition:color .2s, background .2s}
+    .toc a:hover{background:rgba(255,255,255,.04);color:var(--accent)}
+    @media (max-width:1023px){.toc{position:static;top:auto;max-height:none;overflow:visible;width:auto;margin:0 0 1rem 0;z-index:auto}}
+    .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
+    @media(min-width:768px){.content{padding:2rem}}
+    .content h2{font-family:var(--display);font-weight:600;margin:1.5rem 0 .5rem;font-size:1.6rem;letter-spacing:-.005em;font-optical-sizing:auto}
+    .content h3{font-family:var(--display);font-weight:500;margin:1.1rem 0 .35rem;font-size:1.15rem;color:var(--accent2);font-optical-sizing:auto}
+    .content p{margin:.6rem 0}
+    .lead{color:#d1d5db}
+    .callout{border:1px solid var(--border);background:var(--paper);border-radius:16px;padding:1rem;margin:.85rem 0}
+    .callout.good{border-color:rgba(52,211,153,.28)}
+    .callout.warn{border-color:rgba(251,191,36,.28)}
+    .checklist{display:grid;grid-template-columns:1fr;gap:.5rem}
+    @media(min-width:768px){.checklist{grid-template-columns:repeat(2,1fr)}}
+    .card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0));border-radius:14px;padding:.85rem}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
+    pre.code{background:#070a0f;border:1px solid var(--border);border-radius:12px;padding:1rem;overflow-x:auto;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.85rem;line-height:1.55;color:#e5e7eb}
+    code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.88em;background:rgba(255,255,255,.06);padding:.08em .35em;border-radius:5px;color:var(--accent2)}
+    pre.code code{background:transparent;padding:0;color:inherit}
+    footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af}
+    .btn{display:inline-block;padding:.55rem 1.1rem;border-radius:999px;background:var(--accent);color:#000;font-weight:500;font-size:.9rem;transition:background .2s}
+    .btn:hover{background:var(--accent2)}
+  </style>
+  <style>
+    .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1rem 0}
+    .shots img,.media video{width:100%;border-radius:12px;border:1px solid var(--border)}
+    .media{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1rem 0}
+    @media(max-width:600px){.media{grid-template-columns:1fr}}
+    table.t{width:100%;border-collapse:collapse;font-size:.9rem;margin:.75rem 0}
+    table.t td,table.t th{border-bottom:1px solid var(--border);padding:.45rem .5rem;text-align:left;vertical-align:top}
+    table.t th{color:var(--accent2);font-weight:500}
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header>
+    <div class="container nav">
+      <a href="../" aria-label="Home">daninverno</a>
+      <nav class="links" aria-label="Primary"></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="heroWrap">
+      <img class="hero" src="./jigsaw/thumbnail.jpg" alt="Jigsaw build replay" />
+      <span class="heroBadge">Jigsaw • Devlog</span>
+    </div>
+
+    <h1>Jigsaw: designing Act One for a Steam demo</h1>
+    <div class="meta">Oct 21, 2026 · ~5 min read</div>
+
+    <div class="tags">
+      <span class="tag">Jigsaw</span>
+      <span class="tag">Godot 4</span>
+      <span class="tag">3D</span>
+      <span class="tag">Game Design</span>
+      <span class="tag">Steam</span>
+    </div>
+
+    <article>
+      <aside class="toc" aria-label="On this page">
+        <h3>On this page</h3>
+        <a href="#toy">From toy to game</a>
+        <a href="#loop">The Act One loop</a>
+        <a href="#charms">Charms, not consumables</a>
+        <a href="#room">Progress lives in the room</a>
+        <a href="#art">The atelier</a>
+      </aside>
+
+      <section class="content">
+        <p class="lead" id="toy">
+          Jigsaw is a first-person 3D jigsaw game in Godot 4.7. You solve real puzzles, up to 2,000 pieces, on a
+          big table in a celestial atelier. The first versions were a lovely toy. The question for the Steam demo
+          was how to make it a game without breaking the calm.
+        </p>
+
+        <div class="media">
+          <video src="./jigsaw/jigsaw-replay.mp4" poster="./jigsaw/thumbnail.jpg" autoplay muted loop playsinline></video>
+          <video src="./jigsaw/jigsaw-perspective.mp4" poster="./jigsaw/jigsaw-perspective.jpg" autoplay muted loop playsinline></video>
+        </div>
+
+        <div class="divider"></div>
+
+        <h2 id="loop">The Act One loop</h2>
+        <p>
+          Act One is the demo and the build target. Puzzles are grouped into acts. Playing earns <strong>Fits</strong>,
+          and Fits buy upgrades. Objectives on each puzzle give stars. One rule above all: <strong>nothing in an act
+          can be failed.</strong> You can only do it better.
+        </p>
+        <p>
+          The economy is tuned with a headless simulation rather than by guessing. The target: a typical run, one or
+          two stars per puzzle, owns about 70 to 80% of the shop by the end of the demo. Full stars own nearly all of
+          it. Prices change; earnings don't.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="charms">Charms, not consumables</h2>
+        <p>
+          The first version had consumable boosts on an upgrade tree. Playing it, I found it "not intuitive, and hard
+          to understand what's going on", so it went. Now there are two kinds of upgrade:
+        </p>
+        <div class="checklist">
+          <div class="card"><strong>Tools</strong><br>A short tree, bought once and always on: sorting trays, the wall display, deeper pockets, tweezers.</div>
+          <div class="card"><strong>Charms</strong><br>Bought once, worn in a limited frame, a bit like Moonlighter. The charms are themselves jigsaw pieces.</div>
+        </div>
+        <p>
+          The design rule for charms: a charm changes <em>how</em> you play, never what the answer is. Hints are rare
+          and limited. Glowing pieces are not an upgrade.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="room">Progress lives in the room</h2>
+        <p>
+          I didn't want progress in a menu. So the atelier is the hub: puzzles you haven't played wait as boxes in the
+          wall niches, and finished ones hang framed. The upgrade tree is a constellation you open at the armillary
+          sphere. After a puzzle, you can watch a replay of your whole build, piece by piece.
+        </p>
+
+        <div class="divider"></div>
+
+        <h2 id="art">The atelier</h2>
+        <p>
+          This is the part where my 3D background does the work. The atelier is a modular room built in Blender from
+          six reusable wall pieces across 18 bays, with a dome, arched doors and a navy-and-brass finish made in
+          Substance Designer. The big 10 by 6 metre worktable is a deliberate choice: on a 2,000-piece puzzle, space
+          to sort is part of the fun.
+        </p>
+        <div class="callout good">
+          <strong>Status:</strong> I'm waiting on Steam for the store page. The Act One demo comes next.
+        </div>
+
+        <a class="btn" href="./">← Back to the blog</a>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="y"></span> Daniel Inverno. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const prog = document.getElementById('progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      prog.style.width = (scrolled * 100).toFixed(2) + '%';
+    };
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
