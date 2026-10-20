@@ -1648,7 +1648,7 @@ export default function App() {
             <span className="h-px w-8 bg-[var(--accent)]" />
             <span>© {new Date().getFullYear()}</span>
           </div>
-          <nav className="flex items-center gap-6">
+          <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <a href="#games" className="hover:text-white transition-colors">Games</a>
             <a href="#work" className="hover:text-white transition-colors">3D Work</a>
             <a href="#blog" className="hover:text-white transition-colors">Blog</a>
