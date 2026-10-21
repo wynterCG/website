@@ -1592,7 +1592,7 @@ export default function App() {
                   ["2025 – now", "Indie game developer", "Released Tricky Piles on Google Play; Jigsaw in development for Steam"],
                   ["2025", "Best Overall Art Direction", "Clocktergeist, Itch.io Boss Rush Jam"],
                   ["2022 – 2023", "Lead 3D Artist · Ad-pulse", "Built the company’s first 3D production department"],
-                  ["2019 – 2020", "3D Artist · Platforme", "3D content for Gucci, Hermès and Dior"],
+                  ["2019 – 2020", "3D Artist · Platforme", "Main 3D artist for SWEAR London; contributed to Gucci, Hermès and Juicy Couture"],
                   ["2018 – 2019", "3D Artist · Razor Edge Games", "UV mapping, texturing and creature work (freelance)"],
                 ].map(([when, role, detail]) => (
                   <li key={role} className="grid grid-cols-[6.5rem_1fr] gap-4">
