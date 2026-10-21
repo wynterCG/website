@@ -59,7 +59,7 @@ const projectsData = [
   {
     title: "Modern House — Archviz",
     tags: ["Archviz", "UE5", "Environment"],
-    blurb: "Archviz study based on a real ArchDaily project.",
+    blurb: "Photorealistic Unreal Engine 5 recreation of a real ArchDaily house.",
     link: "#",
     poster: "posters/Archviz.png",
     media: [{ type: "youtube", src: "https://www.youtube.com/watch?v=B7W1erPk05c", ratio: "16 / 9" }],
