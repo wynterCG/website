@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <title>CAD Portfolio — Daniel Inverno</title>
+  <meta name="description" content="Technical CAD and 3D modeling work by Daniel Inverno: a SolidWorks enclosure drawing set, engineering CAD data in production, and Mechatronics coursework." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg1:#0b0f16; --bg2:#0e1219; --bg3:#11151c;
+      --card:#10141b; --paper:#13171f;
+      --text:#ffffff; --muted:#9aa3b2; --soft:#cbd5e1; --border:rgba(255,255,255,.08);
+      --accent:#c9a76c; --accent2:#d8bd8a;
+      --sheet:#fbfaf7; --sheetEdge:#d9d3c7;
+      --display:'Fraunces', ui-serif, Georgia, serif;
+      --body:'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.45);
+      scroll-padding-top: 84px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(201,167,108,.10), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(216,189,138,.07), transparent 55%),
+        linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
+      font:16px/1.7 var(--body);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+      overflow-wrap:break-word;
+    }
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;height:auto;display:block}
+    :focus-visible{outline:2px solid var(--accent2);outline-offset:3px;border-radius:6px}
+    .skip{position:absolute;left:-9999px;top:0}
+    .skip:focus{left:1rem;top:.75rem;z-index:100;background:var(--accent);color:#000;padding:.4rem .8rem;border-radius:999px}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+
+    /* Header: same as the blog */
+    header{position:sticky;top:0;z-index:50;background:rgba(11,15,22,.7);backdrop-filter:saturate(120%) blur(8px);-webkit-backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .brand{font-family:var(--display);font-weight:500;letter-spacing:-.01em;font-size:1.15rem;white-space:nowrap}
+    .hcta{display:flex;gap:.5rem}
+    .btn.sm{padding:.4rem .85rem;font-size:.82rem}
+    @media(max-width:400px){.hcta .ghost{display:none}} /* hero and closing CTA still offer email */
+
+    main.container{padding-top:2.5rem;padding-bottom:3.5rem}
+
+    /* Shared technical labels */
+    .label{font-family:var(--mono);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+    .muted{color:var(--muted)}
+
+    /* Hero */
+    .hero{position:relative;border:1px solid var(--border);border-radius:var(--rad);background:var(--card);padding:1.5rem 1.25rem;overflow:hidden;box-shadow:var(--shadow)}
+    .hero::before{ /* faint drafting grid */
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background-image:
+        linear-gradient(rgba(216,189,138,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(216,189,138,.06) 1px, transparent 1px);
+      background-size:24px 24px;
+      -webkit-mask-image:linear-gradient(115deg, transparent 35%, #000 100%);
+              mask-image:linear-gradient(115deg, transparent 35%, #000 100%);
+    }
+    .heroGrid{position:relative;display:grid;gap:1.5rem;grid-template-columns:1fr}
+    @media(min-width:960px){.hero{padding:2.5rem}.heroGrid{grid-template-columns:1.35fr 1fr;gap:2.5rem;align-items:end}}
+    h1{font-family:var(--display);font-weight:600;font-size:clamp(2.2rem,5.5vw,3.6rem);line-height:1.02;letter-spacing:-.015em;margin:.6rem 0 .5rem;font-optical-sizing:auto}
+    .role{font-family:var(--display);font-weight:500;font-size:clamp(1.15rem,2.4vw,1.45rem);color:var(--accent2);margin:0 0 1rem;line-height:1.3}
+    .intro{color:#d1d5db;max-width:40rem;margin:0 0 1.35rem}
+    .actions{display:flex;flex-wrap:wrap;gap:.6rem}
+    .btn{display:inline-flex;align-items:center;gap:.45rem;padding:.6rem 1.15rem;border-radius:999px;background:var(--accent);color:#000;font-weight:500;font-size:.9rem;line-height:1.3;transition:background .2s}
+    .btn:hover{background:var(--accent2)}
+    .btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.16)}
+    .btn.ghost:hover{border-color:var(--accent);color:var(--accent2);background:rgba(201,167,108,.06)}
+    .btn svg{width:16px;height:16px;flex:none}
+
+    /* Title block, styled after a drawing title block */
+    .titleblock{border:1px solid rgba(216,189,138,.28);border-radius:14px;overflow:hidden;background:rgba(11,15,22,.55);font-size:.92rem}
+    .titleblock dl{margin:0;display:grid;grid-template-columns:auto 1fr}
+    .titleblock dt,.titleblock dd{margin:0;padding:.6rem .85rem;border-bottom:1px solid var(--border)}
+    .titleblock dt{font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);border-right:1px solid var(--border);display:flex;align-items:center}
+    .titleblock dl > :nth-last-child(-n+2){border-bottom:0}
+    .titleblock .tbHead{display:flex;justify-content:space-between;gap:.5rem;padding:.55rem .85rem;border-bottom:1px solid rgba(216,189,138,.28);font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+
+    /* Section heads: index number + rule with tick marks */
+    section.block{margin-top:3.25rem}
+    .shead{display:grid;grid-template-columns:auto 1fr;gap:.25rem 1rem;align-items:baseline;margin-bottom:1.1rem}
+    .shead .idx{font-family:var(--mono);font-size:.8rem;color:var(--accent);letter-spacing:.1em;border:1px solid rgba(201,167,108,.4);border-radius:6px;padding:.05rem .45rem;align-self:center}
+    .shead h2{font-family:var(--display);font-weight:600;font-size:clamp(1.5rem,3vw,2rem);line-height:1.15;letter-spacing:-.005em;margin:0;font-optical-sizing:auto}
+    .shead .sub{grid-column:2;margin:0;font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+    .rule{height:9px;margin:0 0 1.5rem;border-bottom:1px solid var(--border);
+      background-image:linear-gradient(90deg, rgba(255,255,255,.14) 1px, transparent 1px);
+      background-size:48px 9px;background-position:left bottom;background-repeat:repeat-x}
+
+    .card{border:1px solid var(--border);background:var(--card);border-radius:var(--rad);padding:1.25rem}
+    @media(min-width:768px){.card{padding:1.75rem}}
+    .card h3{font-family:var(--display);font-weight:500;font-size:1.2rem;color:var(--accent2);margin:0 0 .4rem;font-optical-sizing:auto}
+    .card p{margin:.5rem 0}
+    .split{display:grid;gap:1.5rem;grid-template-columns:1fr}
+    @media(min-width:960px){.split{grid-template-columns:1.5fr 1fr;gap:2.25rem}}
+    ul.ticks{list-style:none;margin:.25rem 0;padding:0;display:grid;gap:.55rem}
+    ul.ticks li{position:relative;padding-left:1.35rem}
+    ul.ticks li::before{content:"";position:absolute;left:0;top:.72em;width:.6rem;height:1px;background:var(--accent)}
+    ul.ticks li::after{content:"";position:absolute;left:.6rem;top:calc(.72em - 3px);width:1px;height:7px;background:var(--accent)}
+
+    /* Spec table (key/value) */
+    .spec{margin:0;display:grid;grid-template-columns:auto 1fr;align-content:start;border-top:1px solid var(--border);font-size:.92rem}
+    .spec dt,.spec dd{margin:0;padding:.55rem 0;border-bottom:1px solid var(--border)}
+    .spec dt{font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding-right:1rem;padding-top:.75rem}
+    .spec dd{color:#e5e7eb}
+
+    /* Drawing sheets on paper */
+    .sheets{display:grid;gap:2rem;margin-top:1.75rem}
+    figure{margin:0}
+    .sheetLink{display:block;position:relative;background:var(--sheet);border:1px solid var(--sheetEdge);border-radius:14px;padding:clamp(.4rem,1.4vw,1rem);box-shadow:0 18px 40px rgba(0,0,0,.5), 0 0 0 6px rgba(255,255,255,.025);transition:transform .25s ease, box-shadow .25s ease}
+    .sheetLink img{width:100%;border-radius:4px;background:#fff}
+    .sheetLink:hover{transform:translateY(-2px);box-shadow:0 22px 48px rgba(0,0,0,.55), 0 0 0 6px rgba(201,167,108,.18)}
+    .open{position:absolute;right:clamp(.6rem,1.8vw,1.4rem);top:clamp(.6rem,1.8vw,1.4rem);font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;background:#0b0f16;color:var(--accent2);padding:.3rem .6rem;border-radius:999px;opacity:.92}
+    figcaption{display:grid;grid-template-columns:auto 1fr;gap:.2rem 1rem;align-items:baseline;margin-top:.85rem;padding:0 .25rem;font-size:.95rem;color:var(--soft)}
+    figcaption .label{white-space:nowrap}
+    figcaption strong{color:var(--text);font-weight:600}
+    @media(max-width:560px){figcaption{grid-template-columns:1fr}}
+    .note{display:flex;flex-wrap:wrap;gap:.75rem 1.25rem;align-items:center;justify-content:space-between;margin-top:2rem;padding:1rem 1.25rem;border:1px dashed rgba(255,255,255,.14);border-radius:14px;background:var(--paper);font-size:.9rem;color:var(--muted)}
+
+    /* Coursework */
+    .modules{display:grid;gap:.75rem;grid-template-columns:1fr}
+    @media(min-width:600px){.modules{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:1024px){.modules{grid-template-columns:repeat(3,1fr)}}
+    .module{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0));border-radius:14px;padding:1rem 1.1rem}
+    .module .label{font-size:.64rem;color:var(--muted)}
+    .module h3{font-family:var(--display);font-weight:500;font-size:1.12rem;margin:.2rem 0 .25rem;color:var(--text)}
+    .module p{margin:0;color:var(--soft);font-size:.93rem}
+    .module.feat{border-color:rgba(201,167,108,.35)}
+    .module.feat .label{color:var(--accent)}
+
+    .feature{margin-top:1.25rem}
+    .exgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-top:1rem}
+    @media(max-width:900px){.exgrid{grid-template-columns:repeat(2,1fr)}}
+    .exgrid .sheetLink img{width:100%;height:300px;object-fit:contain}
+    .photos{display:grid;gap:.75rem;grid-template-columns:1fr;margin:1.25rem 0 0}
+    @media(min-width:700px){.photos{grid-template-columns:1fr 1fr}}
+    .photos a{display:block;border-radius:14px;overflow:hidden;border:1px solid var(--border);background:#0b0f16}
+    .photos img{width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform .35s ease}
+    .photos a:hover img{transform:scale(1.02)}
+    .photos figcaption{grid-template-columns:1fr;font-size:.88rem;color:var(--muted);margin-top:.5rem}
+
+    /* In progress */
+    .wip{border:1px dashed rgba(201,167,108,.4);background:
+      repeating-linear-gradient(135deg, rgba(201,167,108,.035) 0 10px, transparent 10px 20px), var(--card)}
+    .badge{display:inline-block;font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:#000;background:var(--accent);border-radius:999px;padding:.2rem .6rem;vertical-align:middle}
+    .chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0 0;padding:0;list-style:none}
+    .chips li{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.76rem;color:var(--accent2);background:rgba(255,255,255,.04);letter-spacing:.03em}
+
+    /* Closing CTA */
+    .closing{margin-top:3.5rem;text-align:center;padding:2.25rem 1.25rem;border:1px solid rgba(201,167,108,.3);border-radius:var(--rad);background:
+      radial-gradient(600px 220px at 50% 0%, rgba(201,167,108,.12), transparent 70%), var(--card)}
+    .closing h2{font-family:var(--display);font-weight:600;font-size:clamp(1.6rem,3.4vw,2.3rem);line-height:1.15;margin:.4rem 0 .5rem;font-optical-sizing:auto}
+    .closing p{color:var(--soft);max-width:34rem;margin:0 auto 1.35rem}
+    .closing .actions{justify-content:center}
+
+    footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af;font-size:.92rem}
+
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none !important}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>
+    <div class="container nav">
+      <span class="brand">Daniel Inverno</span>
+      <div class="hcta">
+        <a class="btn sm ghost" href="mailto:inverno3darte@gmail.com">Contact</a>
+        <a class="btn sm" href="Daniel_Inverno_CV_Technical.pdf" download>Download CV</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <section class="hero" aria-labelledby="name">
+      <div class="heroGrid">
+        <div>
+          <p class="label" style="margin:0">CAD Portfolio</p>
+          <h1 id="name">Daniel Inverno</h1>
+          <p class="role">Technical CAD &amp; 3D Modeling · Mechatronics Training</p>
+          <p class="intro">
+            A Mechatronics-trained 3D professional who turns 2D drawings and reference views into accurate 3D
+            models, assemblies and drawing sets. I completed all the technical modules of Mechatronics (hydraulics,
+            pneumatics, electrical control circuits, electronics and 3D CAD), and I have 5+ years of professional 3D
+            modeling, including work from engineering CAD files.
+          </p>
+          <div class="actions">
+            <a class="btn" href="Daniel_Inverno_CV_Technical.pdf" download>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/></svg>
+              Download CV <span class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">(PDF)</span>
+            </a>
+            <a class="btn ghost" href="mailto:inverno3darte@gmail.com">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              inverno3darte@gmail.com
+            </a>
+            <a class="btn ghost" href="https://www.linkedin.com/in/daninverno/" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.75h4v11H3zM9.5 9.75h3.8v1.5h.06c.53-1 1.83-1.75 3.4-1.75 3.6 0 4.24 2.2 4.24 5.05v6.2h-4v-5.5c0-1.31-.02-3-1.83-3s-2.1 1.42-2.1 2.9v5.6h-3.57z"/></svg>
+              LinkedIn
+            </a>
+          </div>
+        </div>
+
+        <div class="titleblock" aria-label="Profile summary">
+          <div class="tbHead"><span>Profile</span></div>
+          <dl>
+            <dt>Name</dt><dd>Daniel Inverno</dd>
+            <dt>Discipline</dt><dd>Technical CAD &amp; 3D Modeling</dd>
+            <dt>Training</dt><dd>Mechatronics</dd>
+            <dt>Tools</dt><dd>SolidWorks · Autodesk Inventor · AutoCAD · 3ds Max</dd>
+            <dt>Based in</dt><dd>Hendrik-Ido-Ambacht, Netherlands (EU citizen)</dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01 -->
+    <section class="block" id="enclosure" aria-labelledby="h-enclosure">
+      <div class="shead">
+        <span class="idx" aria-hidden="true">01</span>
+        <h2 id="h-enclosure">Electrical enclosure</h2>
+        <p class="sub">SolidWorks · 2016 · Final project of the 3D CAD module</p>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+
+      <div class="card split">
+        <div>
+          <ul class="ticks">
+            <li>Modeled a sheet-metal electrical enclosure (housing, door and mounting plate) in 3D from supplied 2D drawings.</li>
+            <li>Assembled it with supplied vendor components: EMKA hinges and lock, a Pfannenberg filter fan, 17 PG7 cable glands for cable entry, DIN fasteners, weld studs, and earthing studs with a ground wire.</li>
+            <li>From my own model, produced a 7-sheet drawing set: views, details, a section, tolerances, weld symbols, sheet-metal flat patterns with bend notes, and a 24-item bill of materials.</li>
+          </ul>
+        </div>
+        <dl class="spec">
+          <dt>Software</dt><dd>SolidWorks</dd>
+          <dt>Model</dt><dd>Sheet-metal parts and assembly</dd>
+          <dt>Input</dt><dd>Supplied 2D drawings and vendor components</dd>
+          <dt>Output</dt><dd>7-sheet drawing set, 24-item BOM</dd>
+        </dl>
+      </div>
+
+      <div class="sheets">
+        <figure>
+          <a class="sheetLink" href="enclosure-sheet-7.png" aria-label="Open sheet 7, assembly with bill of materials, full size">
+            <img src="enclosure-sheet-7.png" width="1760" height="1360" loading="lazy" decoding="async"
+                 alt="SolidWorks drawing sheet 7 of 7: isometric view of the enclosure assembly with the door open, showing the filter fan, cable glands, hinges and ground wire, next to a 24-item bill of materials table." />
+            <span class="open" aria-hidden="true">Full size ↗</span>
+          </a>
+          <figcaption><span class="label">Sheet 7 / 7</span><span><strong>Assembly.</strong> Isometric view of the assembled enclosure and the 24-item bill of materials.</span></figcaption>
+        </figure>
+
+        <figure>
+          <a class="sheetLink" href="enclosure-sheet-2.png" aria-label="Open sheet 2, enclosure body, full size">
+            <img src="enclosure-sheet-2.png" width="1760" height="1360" loading="lazy" decoding="async"
+                 alt="SolidWorks drawing sheet 2 of 7: enclosure body in orthographic and isometric views, with toleranced overall dimensions, the cable-gland hole pattern, a detail view and a weld symbol." />
+            <span class="open" aria-hidden="true">Full size ↗</span>
+          </a>
+          <figcaption><span class="label">Sheet 2 / 7</span><span><strong>Enclosure body.</strong> Views, tolerances, the cable-gland hole pattern and a weld symbol.</span></figcaption>
+        </figure>
+
+        <figure>
+          <a class="sheetLink" href="enclosure-sheet-1.png" aria-label="Open sheet 1, mounting plate, full size">
+            <img src="enclosure-sheet-1.png" width="1760" height="1360" loading="lazy" decoding="async"
+                 alt="SolidWorks drawing sheet 1 of 7: mounting plate in front, side and isometric views with toleranced dimensions and two enlarged details, A and B." />
+            <span class="open" aria-hidden="true">Full size ↗</span>
+          </a>
+          <figcaption><span class="label">Sheet 1 / 7</span><span><strong>Mounting plate.</strong> Toleranced dimensions with details A and B.</span></figcaption>
+        </figure>
+      </div>
+
+      <div class="note">
+        <span>Original 2016 coursework sheets, shown unedited (course title-block template).</span>
+        <a class="btn ghost" href="Daniel_Inverno_Drawing_Sample_2016.pdf">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/></svg>
+          Drawing sample (PDF)
+        </a>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section class="block" id="production" aria-labelledby="h-production">
+      <div class="shead">
+        <span class="idx" aria-hidden="true">02</span>
+        <h2 id="h-production">Engineering CAD data in paid work</h2>
+        <p class="sub">Ad-pulse · Lead 3D Artist · 2022–2023</p>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+
+      <div class="card split">
+        <div>
+          <h3>From engineering files to real-time assets</h3>
+          <p>
+            Worked from a furniture manufacturer's engineering CAD files (STEP, IGES and SolidWorks parts): imported
+            them into 3ds Max, then retopologized and remodeled them into real-time assets for a Babylon.js product
+            configurator.
+          </p>
+          <h3 style="margin-top:1.1rem">Inventor in production</h3>
+          <p>Used Autodesk Inventor in production to model a glasses frame from front, side and top reference views.</p>
+        </div>
+        <dl class="spec">
+          <dt>Formats</dt><dd>STEP · IGES · SolidWorks parts</dd>
+          <dt>Tools</dt><dd>3ds Max · Autodesk Inventor</dd>
+          <dt>Target</dt><dd>Babylon.js product configurator</dd>
+        </dl>
+      </div>
+    </section>
+
+    <!-- 03 -->
+    <section class="block" id="coursework" aria-labelledby="h-coursework">
+      <div class="shead">
+        <span class="idx" aria-hidden="true">03</span>
+        <h2 id="h-coursework">Mechatronics coursework</h2>
+        <p class="sub">Cenfim · 2014–2016</p>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+
+      <div class="modules">
+        <div class="module"><span class="label">Module</span><h3>Hydraulics</h3><p>Circuit exercises and cylinder sequences in FluidSIM.</p></div>
+        <div class="module"><span class="label">Module</span><h3>Pneumatics</h3><p>Final pneumatics project.</p></div>
+        <div class="module"><span class="label">Module</span><h3>Electrical control circuits</h3><p>Control circuits in CADe SIMU.</p></div>
+        <div class="module feat"><span class="label">Module · Featured below</span><h3>Electronics</h3><p>Final project: an Arduino line-follower robot.</p></div>
+        <div class="module"><span class="label">Course</span><h3>AutoCAD</h3><p>A 25-hour course with certificate.</p></div>
+        <div class="module"><span class="label">Program</span><h3>Autodesk Inventor</h3><p>Learned in the program.</p></div>
+      </div>
+
+      <article class="card feature" aria-labelledby="h-autocad">
+        <p class="label">AutoCAD course · 2014–2015</p>
+        <h3 id="h-autocad">AutoCAD 2D exercises</h3>
+        <p>Mechanical parts drawn in 2D: orthographic views, sections with hatching, radii and dimensioning. Course exercises, cropped from the original drawing file.</p>
+        <div class="exgrid">
+          <figure>
+            <a class="sheetLink" href="autocad-exercise-1.png" aria-label="Open AutoCAD exercise 1 full size">
+              <img src="autocad-exercise-1.png" width="1085" height="1400" loading="lazy" decoding="async" alt="AutoCAD 2D exercise: Bearing housing in front and top views, with a half section, hatching and dimensions." />
+            </a>
+          </figure>
+          <figure>
+            <a class="sheetLink" href="autocad-exercise-2.png" aria-label="Open AutoCAD exercise 2 full size">
+              <img src="autocad-exercise-2.png" width="995" height="1400" loading="lazy" decoding="async" alt="AutoCAD 2D exercise: Lever part in two views with sectioned web, radii and dimensions." />
+            </a>
+          </figure>
+          <figure>
+            <a class="sheetLink" href="autocad-exercise-3.png" aria-label="Open AutoCAD exercise 3 full size">
+              <img src="autocad-exercise-3.png" width="1205" height="1400" loading="lazy" decoding="async" alt="AutoCAD 2D exercise: Bracket and hook parts in multiple views with sections, hatching, radii and dimensions." />
+            </a>
+          </figure>
+          <figure>
+            <a class="sheetLink" href="autocad-exercise-4.png" aria-label="Open AutoCAD exercise 4 full size">
+              <img src="autocad-exercise-4.png" width="1046" height="1229" loading="lazy" decoding="async" alt="AutoCAD 2D exercise: Pillow-block style part in front and top views with a section, chamfer note and dimensions." />
+            </a>
+          </figure>
+        </div>
+      </article>
+
+      <article class="card feature" aria-labelledby="h-robot">
+        <div class="split">
+          <div>
+            <p class="label" style="margin:0 0 .35rem">Electronics module · Final project</p>
+            <h3 id="h-robot" style="font-size:1.45rem;color:var(--text)">Arduino line-follower robot</h3>
+            <p class="muted" style="margin-top:0">Built in a team of two.</p>
+            <ul class="ticks">
+              <li>Two 9 V DC motors on an acrylic chassis.</li>
+              <li>TCRT5000 infrared sensors.</li>
+              <li>TIP122 NPN transistors driving the motors.</li>
+              <li>Arduino code for the sensor and motor logic.</li>
+              <li>A sensor bracket bent from aluminum sheet, center-punched and drilled.</li>
+              <li>A power-supply PCB designed in KiCad, etched and soldered.</li>
+              <li>Bench-tested on a lab supply, and completed.</li>
+            </ul>
+          </div>
+          <dl class="spec">
+            <dt>Controller</dt><dd>Arduino</dd>
+            <dt>Sensing</dt><dd>TCRT5000 infrared</dd>
+            <dt>Drive</dt><dd>TIP122 NPN, 9 V DC motors</dd>
+            <dt>PCB</dt><dd>KiCad, etched and soldered</dd>
+            <dt>Team</dt><dd>Two people</dd>
+          </dl>
+        </div>
+
+        <div class="photos">
+          <figure>
+            <a href="robot-top.jpg" aria-label="Open robot top view full size">
+              <img src="robot-top.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+                   alt="Top view of the line-follower robot: an Arduino Uno and a breadboard on a clear acrylic chassis, with two yellow gear motors, black wheels, a 9 V battery and many jumper wires." />
+            </a>
+            <figcaption>Top view: Arduino, breadboard and motors on the acrylic chassis.</figcaption>
+          </figure>
+          <figure>
+            <a href="robot-breadboard.jpg" aria-label="Open breadboard close-up full size">
+              <img src="robot-breadboard.jpg" width="1400" height="1050" loading="lazy" decoding="async"
+                   alt="Close-up of the breadboard wiring, with jumper wires, resistors and a transistor, next to the Arduino and a yellow gear motor." />
+            </a>
+            <figcaption>Breadboard wiring close-up.</figcaption>
+          </figure>
+        </div>
+      </article>
+    </section>
+
+    <!-- 04 -->
+    <section class="block" id="in-progress" aria-labelledby="h-wip">
+      <div class="shead">
+        <span class="idx" aria-hidden="true">04</span>
+        <h2 id="h-wip">In progress</h2>
+        <p class="sub">Autodesk Inventor</p>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+
+      <div class="card wip">
+        <h3 style="color:var(--text);font-size:1.35rem">HPU-01 <span class="badge">Coming soon</span></h3>
+        <p>
+          A hydraulic power unit on a skid, modeled in Autodesk Inventor: Frame Generator base, sheet-metal tank,
+          motor-pump group, CETOP 3 valve block, steel piping (Tube &amp; Pipe) and cable routing (Cable &amp; Harness),
+          with a GA drawing, a piping isometric and a frame cut list.
+        </p>
+        <ul class="chips" aria-label="Planned deliverables">
+          <li>GA drawing</li>
+          <li>Piping isometric</li>
+          <li>Frame cut list</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="closing" id="contact" aria-labelledby="h-contact">
+      <p class="label" style="margin:0 auto">Contact</p>
+      <h2 id="h-contact">Let's talk about your CAD work</h2>
+      <p>Based in Hendrik-Ido-Ambacht, Netherlands (EU citizen). The full CV and the 2016 drawing sample are available as PDFs.</p>
+      <div class="actions">
+        <a class="btn" href="mailto:inverno3darte@gmail.com">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          inverno3darte@gmail.com
+        </a>
+        <a class="btn ghost" href="Daniel_Inverno_CV_Technical.pdf" download>Download CV</a>
+        <a class="btn ghost" href="https://www.linkedin.com/in/daninverno/" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">© 2026 Daniel Inverno</div>
+  </footer>
+</body>
+</html>
