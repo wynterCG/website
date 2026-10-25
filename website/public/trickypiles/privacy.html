@@ -60,12 +60,12 @@
   <body>
     <main>
       <h1>Tricky Piles: Privacy policy</h1>
-      <p class="updated">Last updated: 13 October 2026</p>
+      <p class="updated">Last updated: 25 October 2026</p>
 
       <p>
-        Tricky Piles is a puzzle game for Android. You play without an account: we never ask for
-        your name, email or any other personal details. This page explains what data the game
-        handles, why, and the choices you have.
+        Tricky Piles is a puzzle game for Android. You can play as a guest. Where Google sign-in is
+        available, you can optionally connect an account to back up your progress. This page
+        explains what data the game handles, why, and the choices you have.
       </p>
 
       <h2>Who is responsible</h2>
@@ -82,6 +82,90 @@
         to a new phone. You manage that backup in your phone's settings (Google → Backup).
       </p>
 
+      <h2>Optional Google account and cloud progress</h2>
+      <p>
+        Google sign-in uses Android's own Google account sheet. If that sheet is not available, the
+        game opens Google's sign-in page in the browser instead. You never give the game a Google
+        password. Google sends a sign-in token for the account you pick; the game passes it to
+        Supabase and does not keep it. From that token, the sign-in service (Supabase) stores your
+        Google account id, email address, name and profile picture link with your game account. The
+        game does not show them, and your Google name and email are never published to other
+        players. You may choose a separate nickname.
+      </p>
+      <p>
+        If you sign in while playing as a guest, you keep the same player id and your progress. If
+        the Google account you pick already has Tricky Piles progress from another installation, the
+        game switches to that account; before it does, the guest's campaign and weekly leaderboard
+        results are deleted and it is no longer shown; its daily records and best times are kept
+        (see below).
+      </p>
+      <p>
+        The connected account stores your unlocked level, completed levels, stars, best times, best
+        scores and tutorial checkpoints in Supabase so the same Google account can recover them on
+        another installation. Settings, the current attempt and purchase ownership are not included.
+        Offline changes stay on the device until a cloud save is confirmed.
+      </p>
+      <p>
+        Signing out keeps a private local checkpoint for that account on this installation. Signing
+        out or uninstalling does not delete the account or its cloud copy. Reset progress while
+        connected resets the cloud checkpoint across devices, but does not delete the account or
+        nickname. Cloud progress is private. Your nickname is shown on the leaderboards only if you
+        turn on <b>Show my nickname publicly</b>.
+      </p>
+
+      <h2>Public leaderboards</h2>
+      <p>
+        You join the leaderboards automatically with your first win, whether you play as a guest or
+        with a Google account. You appear under a generated player name (two words and a number).
+        Your chosen nickname is shown instead only if you turn on
+        <b>Show my nickname publicly</b>. Other players can see that name with your rank and
+        results. Your Google name, email and internal account id are never included in the public
+        lists. When you join, your saved campaign scores and stars are sent so the campaign board
+        reflects the levels you have already won.
+      </p>
+      <p>Leaderboards include practice opponents.</p>
+      <p>
+        There are three boards. The <b>campaign</b> board ranks total stars across all campaign
+        levels, then the total of your best score per level; it never resets. The
+        <b>weekly league</b> adds up your best score for each level won this week and resets every
+        Monday at 00:00 UTC. On each <b>daily challenge</b>, only your first attempt counts, from
+        your first move: restarting or leaving it ends that attempt, and later attempts are
+        practice. The server accepts a daily result only within one day of that daily's date (UTC).
+        Offline results stay on the device until they can be sent.
+      </p>
+      <p>
+        For each campaign win the game sends the level, score, time, lives lost and whether you used
+        the continue. For a daily's first attempt it sends the level, score, time, whether you used
+        the continue and whether you won or lost, but not lives lost. The server stores your board
+        results, your private daily records (the first attempt of each daily, won or lost, with its
+        score and time), and a daily count of submissions to limit abuse. We may hide a player name,
+        for example after a report.
+      </p>
+      <p>
+        To report a player name, tap the name on the Leaderboard screen and choose
+        <b>Report name</b>. This opens an email to us with the name, board and rank. Your email app
+        sends it from your own address.
+      </p>
+      <p>
+        You can leave from the Leaderboard screen or from Settings. Leaving deletes your results
+        from the boards (campaign, weekly and daily places) and stops new submissions. If you leave
+        offline, the removal waits until the device reconnects. The server remembers that you left,
+        so a later win with the same player id or account does not add you again; only
+        <b>Join again</b> on the Leaderboard screen does, and then you start from your saved
+        progress. To remember the choice, the server keeps your player record (player name, public
+        nickname if you turned it on, a hide mark if one was set, and the daily submission count).
+      </p>
+      <p>
+        Leaving does not delete your private daily records or your private best times. The daily
+        records keep the daily ranking fair: they stop a player from leaving and rejoining to play a
+        daily's first attempt again. The best times are used for the private "Beat X% of players"
+        comparison. Neither is shown to other players. To have them deleted too, delete your
+        connected account (see Your rights) or contact us. If you left the leaderboards in version
+        1.5 or earlier, the results you had then are kept hidden; they are deleted if you join again
+        and leave, or on request. Resetting gameplay progress does not delete accepted leaderboard
+        results.
+      </p>
+
       <h2>What is sent, and why</h2>
       <table>
         <tr>
@@ -92,8 +176,9 @@
         <tr>
           <td>
             <b>A random player id.</b> Created by the game the first time it goes online. It is not
-            linked to your name, email or Google account, but it does link your results together, so
-            it is pseudonymous rather than anonymous.
+            linked to your name, email or Google account while playing as a guest. After optional
+            Google sign-in, new results use your connected account. The id links results together,
+            so it is pseudonymous rather than anonymous.
           </td>
           <td>To rank your times and to avoid counting the same result twice.</td>
           <td>
@@ -106,10 +191,24 @@
             <b>Your best time per level</b> (level number, time, game version), with the player id.
           </td>
           <td>
-            To show how your time compares with other players ("Faster than 80% of players"). Other
-            players never see your times.
+            To show how your time compares with other players ("Beat 80% of players"). Other players
+            never see these private percentile records. Your leaderboard results are separate and
+            are public as described above.
           </td>
-          <td>Zen mode times are never sent.</td>
+          <td>Zen mode times are never sent. Leaving the leaderboards does not delete them.</td>
+        </tr>
+        <tr>
+          <td>
+            <b>Leaderboard results:</b> for each campaign win, the level, score, time, lives lost
+            and whether you used the continue; for a daily's first attempt, the level, score, time,
+            whether you used the continue and whether you won. When you join, your saved campaign
+            scores and stars.
+          </td>
+          <td>To rank players on the public leaderboards and keep the daily ranking fair.</td>
+          <td>
+            Leave the leaderboards on the Leaderboard screen or in Settings (see above for what is
+            kept).
+          </td>
         </tr>
         <tr>
           <td>
@@ -144,7 +243,7 @@
           </td>
         </tr>
       </table>
-      <p>We do not collect your name, email, precise location, contacts, photos or messages.</p>
+      <p>We do not collect precise location, contacts, photos or messages.</p>
 
       <h2>Ads</h2>
       <p>
@@ -153,6 +252,8 @@
         id, an approximate location derived from your IP address, device information, diagnostics,
         and how you interact with the ad, to show and measure ads and to prevent fraud. See
         <a href="https://policies.google.com/technologies/partner-sites">how Google uses data</a>.
+        The game asks AdMob for ads rated no higher than "Parental guidance" (AdMob's PG content
+        rating).
       </p>
       <p>
         In the European Economic Area, the UK and Switzerland, Google's consent form asks for your
@@ -160,7 +261,10 @@
         any time under <b>Settings → Ad privacy choices</b>. You can also reset or delete your
         advertising id in your phone's settings (Google → Ads).
       </p>
-      <p>The <b>Remove ads</b> purchase makes the continue free without ads.</p>
+      <p>
+        The <b>Remove ads</b> purchase, made through Google Play, makes the continue free without
+        ads.
+      </p>
 
       <h2>Purchases</h2>
       <p>
@@ -171,40 +275,67 @@
       <h2>Who processes the data</h2>
       <ul>
         <li>
-          <b>Supabase</b> stores the player id, connection data, best times and level results
-          (servers in the EU, Ireland).
+          <b>Supabase</b> stores the player id, connection data, best times, level results and
+          leaderboard records, and optional account identity, nickname and cloud progress (servers
+          in the EU, Ireland).
         </li>
         <li><b>Sentry</b> receives crash reports (servers in the EU, Germany).</li>
       </ul>
       <p>
         Both process the data on our behalf under their data processing terms.
         <b>Google</b> shows the ads (AdMob) and handles purchases (Google Play) as an independent
-        controller, under <a href="https://policies.google.com/privacy">Google's privacy policy</a>.
-        We do not sell data. All data is encrypted in transit (HTTPS).
+        controller, and authenticates optional Google sign-in, under
+        <a href="https://policies.google.com/privacy">Google's privacy policy</a>. We do not sell
+        data. All data is encrypted in transit (HTTPS).
       </p>
 
       <h2>Legal basis (EU and UK)</h2>
       <p>
-        Rankings, level results, connection data and crash reports rely on our legitimate interest
-        in running and improving the game; you can opt out of level results in Settings.
-        Personalised ads rely on your consent, given in Google's consent form.
+        Rankings and leaderboards, level results, connection data and crash reports rely on our
+        legitimate interest in running and improving the game; you can opt out of level results in
+        Settings and leave the leaderboards at any time. Personalised ads rely on your consent,
+        given in Google's consent form.
       </p>
 
       <h2>How long data is kept</h2>
       <p>
-        Best times and level results are kept while the game is available, and are used only in
-        totals (no profiles of individual players). Crash reports are deleted by Sentry after at
-        most 90 days.
+        Private best times and level results are kept while the game is available for private
+        comparisons and game tuning. Leaderboard results are kept until you leave the leaderboards,
+        delete your connected account, or we process a deletion request; results of past weeks are
+        kept but no longer shown. Private daily records and the record that you left are kept until
+        account deletion or a deletion request. If you sign in to a Google account that belongs to
+        another player, the old guest's best times and level results stay under the guest's player
+        id until you request deletion by email, quoting the guest's player name. Optional account
+        identity, nickname and cloud progress remain until account deletion; progress reset replaces
+        the checkpoint while retaining a reset marker to prevent an older device restoring it. Crash
+        reports are deleted by Sentry after at most 90 days.
       </p>
 
       <h2>Your rights</h2>
       <p>
+        To delete a connected game account, open <b>Settings → Manage account → Delete account</b>
+        and confirm twice while online. This removes the account identity, nickname, cloud progress,
+        and linked private times, level results, private daily records and leaderboard records. It
+        also clears that account's local checkpoint on the device used for deletion. It leaves your
+        Google account and Google Play purchases intact. Updating the game and signing in do not
+        delete progress.
+      </p>
+      <p>
+        You can also
+        <a href="delete-account.html"
+          >request account deletion by email without reinstalling the game</a
+        >. Server deletion cannot erase copies on offline devices or Android-managed backups; clear
+        local game data and remove unwanted backups separately.
+      </p>
+      <p>
         You can ask us about the data we hold, or ask us to delete it, at
         <a href="mailto:Inverno3darte@gmail.com">Inverno3darte@gmail.com</a>. Because we do not know
-        who you are, we may need you to describe when and which levels you played to find your data.
-        Uninstalling the game and removing it from your Android backup removes the player id from
-        your phone, and new data can no longer be linked to the old id. You can also complain to
-        your data protection authority.
+        who a guest player is, we may need you to describe when and which levels you played, or give
+        your player name from the Leaderboard screen, to find your data. For a connected account,
+        identify the Google email used to sign in; we may verify ownership before processing a
+        request. Uninstalling the game and removing it from your Android backup removes the player
+        id from your phone, and new data can no longer be linked to the old id. You can also
+        complain to your data protection authority.
       </p>
 
       <h2>Children</h2>
