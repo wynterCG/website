@@ -155,15 +155,6 @@ const PLAY_URL = "https://play.google.com/store/apps/details?id=com.daninverno.t
 
 const prototypes = [
   {
-    title: "RC Time Attack",
-    stack: "Godot 4.7 · Jolt",
-    blurb: "RC buggy time attack between Trackmania and real RC racing. One 30-second lap, instant restarts, drifts and air control from simple inputs, and setup sliders that each change how you drive.",
-    video: "/games/rc-time-attack.mp4",
-    image: "/games/rc-time-attack.jpg",
-    link: "/blog/rc-time-attack-feel-before-features.html",
-    linkLabel: "Read the devlog",
-  },
-  {
     title: "Elsewhere",
     stack: "Godot 4.7",
     blurb: "First-person architectural puzzle adventure. Gravity follows authored paths around walls and undersides, and you reshape each monument from an isometric view.",
@@ -1183,6 +1174,26 @@ export default function App() {
               {["jigsaw-replay", "jigsaw-perspective"].map((v) => (
                 <video key={v} src={`/games/${v}.mp4`} poster={`/games/${v}.jpg`} autoPlay muted loop playsInline preload="metadata" className="w-full h-full object-cover rounded-lg" />
               ))}
+            </div>
+          </div>
+
+          {/* RC Time Attack */}
+          <div className="mt-20 md:mt-28 mx-auto max-w-5xl grid md:grid-cols-12 gap-8 md:gap-12 items-center">
+            <div className="md:col-span-5">
+              <span className="eyebrow">In development · PC</span>
+              <h3 className="display-serif mt-3 text-3xl md:text-4xl font-medium tracking-tight">RC Time Attack</h3>
+              <p className="mt-4 text-gray-300 leading-relaxed">
+                An RC buggy time attack between Trackmania and real RC racing, in Godot 4.7 with Jolt physics. One lap of about 30 seconds, a standing start and instant restarts.
+              </p>
+              <p className="mt-3 text-gray-300 leading-relaxed">
+                Drifts and air control come from simple inputs, and every setup slider changes how you drive instead of just a number.
+              </p>
+              <a href="/blog/rc-time-attack-feel-before-features.html" className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/30 hover:border-white px-5 py-2.5 text-sm font-medium transition-colors">
+                Read the devlog <ArrowUpRight className="h-4 w-4" />
+              </a>
+            </div>
+            <div className="md:col-span-7">
+              <video src="/games/rc-time-attack.mp4" poster="/games/rc-time-attack.jpg" autoPlay muted loop playsInline preload="metadata" className="w-full rounded-lg" />
             </div>
           </div>
 
