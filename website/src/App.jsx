@@ -216,10 +216,10 @@ function VideoSlideshow({ clips, poster, className = "" }) {
 
 const rcClips = [
   { src: "/games/rc-hook.mp4", label: "Full-speed straight" },
-  { src: "/games/rc-land.mp4", label: "Banked turn at sunset" },
+  { src: "/games/rc-pack.mp4", label: "Racing in a pack" },
+  { src: "/games/rc-drone.mp4", label: "Grid start from the drone camera" },
+  { src: "/games/rc-onboard.mp4", label: "Onboard camera in the pack" },
   { src: "/games/rc-jump.mp4", label: "Jump with dust" },
-  { src: "/games/rc-lean.mp4", label: "Drift with body lean" },
-  { src: "/games/rc-antenna.mp4", label: "Close-up chase camera" },
 ];
 
 /* ---------- ratio utils ---------- */
