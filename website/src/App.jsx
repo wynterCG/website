@@ -215,10 +215,10 @@ function VideoSlideshow({ clips, poster, className = "" }) {
 }
 
 const rcClips = [
+  { src: "/games/rc-hook.mp4", label: "Full-speed straight" },
   { src: "/games/rc-land.mp4", label: "Banked turn at sunset" },
   { src: "/games/rc-jump.mp4", label: "Jump with dust" },
   { src: "/games/rc-lean.mp4", label: "Drift with body lean" },
-  { src: "/games/rc-hook.mp4", label: "Full-speed straight" },
   { src: "/games/rc-antenna.mp4", label: "Close-up chase camera" },
 ];
 
@@ -1231,7 +1231,7 @@ export default function App() {
               </a>
             </div>
             <div className="md:col-span-7">
-              <VideoSlideshow clips={rcClips} poster="/games/rc-land.jpg" />
+              <VideoSlideshow clips={rcClips} poster="/games/rc-hook.jpg" />
             </div>
           </div>
 
