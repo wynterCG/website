@@ -184,6 +184,44 @@ const prototypes = [
   },
 ];
 
+/* Plays a list of clips one after another, with dots to jump between them. */
+function VideoSlideshow({ clips, poster, className = "" }) {
+  const [i, setI] = useState(0);
+  return (
+    <div className={`relative ${className}`}>
+      <video
+        key={clips[i].src}
+        src={clips[i].src}
+        poster={i === 0 ? poster : undefined}
+        autoPlay muted playsInline preload="auto"
+        onEnded={() => setI((i + 1) % clips.length)}
+        aria-label={clips[i].label}
+        className="w-full rounded-lg aspect-[16/10] object-cover bg-black/40"
+      />
+      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+        {clips.map((c, n) => (
+          <button
+            key={c.src}
+            type="button"
+            onClick={() => setI(n)}
+            aria-label={`Show clip: ${c.label}`}
+            aria-current={n === i}
+            className={`h-2 rounded-full transition-all ${n === i ? "w-6 bg-[var(--accent)]" : "w-2 bg-white/60 hover:bg-white"}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const rcClips = [
+  { src: "/games/rc-land.mp4", label: "Banked turn at sunset" },
+  { src: "/games/rc-jump.mp4", label: "Jump with dust" },
+  { src: "/games/rc-lean.mp4", label: "Drift with body lean" },
+  { src: "/games/rc-hook.mp4", label: "Full-speed straight" },
+  { src: "/games/rc-antenna.mp4", label: "Close-up chase camera" },
+];
+
 /* ---------- ratio utils ---------- */
 const normRatio = (r) => {
   if (!r) return null;
@@ -1193,7 +1231,7 @@ export default function App() {
               </a>
             </div>
             <div className="md:col-span-7">
-              <video src="/games/rc-time-attack.mp4" poster="/games/rc-time-attack.jpg" autoPlay muted loop playsInline preload="metadata" className="w-full rounded-lg" />
+              <VideoSlideshow clips={rcClips} poster="/games/rc-land.jpg" />
             </div>
           </div>
 
