@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>RC Time Attack devlog #1: feel before features — Daniel Inverno</title>
+  <meta name="description" content="An RC buggy time attack between Trackmania and real RC racing. Why the car had to feel right before anything else, and the design calls that got it there." />
+
+  <link rel="canonical" href="https://daninverno.com/blog/rc-time-attack-feel-before-features.html" />
+  <link rel="alternate" type="application/feed+json" href="../feed.json" />
+
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="RC Time Attack devlog #1: feel before features" />
+  <meta property="og:description" content="An RC buggy time attack between Trackmania and real RC racing. Why the car had to feel right before anything else, and the design calls that got it there." />
+  <meta property="og:url" content="https://daninverno.com/blog/rc-time-attack-feel-before-features.html" />
+  <meta property="og:image" content="https://daninverno.com/blog/rc-time-attack/thumbnail.jpg" />
+  <meta property="og:site_name" content="Daniel Inverno — Dev Blog" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="RC Time Attack devlog #1: feel before features" />
+  <meta name="twitter:description" content="An RC buggy time attack between Trackmania and real RC racing. Why the car had to feel right before anything else, and the design calls that got it there." />
+  <meta name="twitter:image" content="https://daninverno.com/blog/rc-time-attack/thumbnail.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "RC Time Attack devlog #1: feel before features",
+  "description": "An RC buggy time attack between Trackmania and real RC racing. Why the car had to feel right before anything else, and the design calls that got it there.",
+  "author": {
+    "@type": "Person",
+    "name": "Daniel Inverno",
+    "url": "https://daninverno.com/"
+  },
+  "datePublished": "2026-11-10T12:00:00Z",
+  "dateModified": "2026-11-10T12:00:00Z",
+  "image": [
+    "https://daninverno.com/blog/rc-time-attack/thumbnail.jpg"
+  ],
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://daninverno.com/blog/rc-time-attack-feel-before-features.html"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Daniel Inverno"
+  }
+}
+  </script>
+
+  <style>
+    :root{
+      --bg1:#0b0f16; --bg2:#0e1219; --bg3:#11151c;
+      --card:#10141b; --paper:#13171f;
+      --text:#ffffff; --muted:#9aa3b2; --border:rgba(255,255,255,.08);
+      --accent:#c9a76c; --accent2:#d8bd8a;
+      --display:'Fraunces', ui-serif, Georgia, serif;
+      --body:'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      --maxw:72rem; --rad:22px; --shadow:0 10px 30px rgba(0,0,0,.45);
+      --ok:#34d399; --warn:#fbbf24;
+      scroll-padding-top: 90px;
+    }
+    @media (max-width:1023px){ :root{ scroll-padding-top: 70px; } }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(1200px 500px at 20% -10%, rgba(201,167,108,.10), transparent 55%),
+        radial-gradient(900px 500px at 80% -20%, rgba(216,189,138,.07), transparent 55%),
+        linear-gradient(to bottom, var(--bg1), var(--bg2) 35%, var(--bg3));
+      font:16px/1.7 var(--body);
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--maxw);margin:0 auto;padding:0 1rem}
+    header{position:sticky;top:0;z-index:50;background:rgba(11,15,22,.7);backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--border)}
+    .nav{height:64px;display:flex;align-items:center;justify-content:space-between}
+    .nav > a{font-family:var(--display);font-weight:500;letter-spacing:-.01em;text-transform:lowercase;font-size:1.15rem}
+    .links{display:none;gap:1.1rem;color:#cbd5e1}
+    @media(min-width:768px){.links{display:flex}}
+    .progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;z-index:60}
+    main{padding:2.25rem 0 3.25rem}
+    .heroWrap{position:relative}
+    .hero{width:100%;height:360px;object-fit:cover;border-radius:18px;border:1px solid var(--border);box-shadow:var(--shadow);background:linear-gradient(135deg,#13171f,#0b0f16)}
+    .heroBadge{position:absolute;left:16px;bottom:14px;background:rgba(11,15,22,.7);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:999px;padding:.25rem .65rem;font-size:.78rem;color:var(--accent2);font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.12em;text-transform:uppercase}
+    h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4vw,2.9rem);line-height:1.05;letter-spacing:-.01em;margin:1.3rem 0 .65rem;font-optical-sizing:auto}
+    .meta{color:var(--muted);font-size:.85rem;margin-bottom:1rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;letter-spacing:.18em;text-transform:uppercase}
+    .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin:.85rem 0 1.35rem}
+    .tag{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.72rem;color:var(--accent2);background:rgba(255,255,255,.04);letter-spacing:.05em}
+    article{display:grid;gap:1.25rem;grid-template-columns:1fr;align-items:start}
+    @media(min-width:1024px){article{grid-template-columns:260px 1fr;gap:1.75rem}}
+    .toc{position:sticky;top:88px;align-self:start;background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1rem}
+    .toc h3{margin:.2rem 0 .5rem;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.72rem;color:var(--accent);letter-spacing:.22em;text-transform:uppercase;font-weight:500}
+    .toc a{display:block;padding:.35rem .4rem;border-radius:10px;color:#aab4c6;font-size:.93rem;transition:color .2s, background .2s}
+    .toc a:hover{background:rgba(255,255,255,.04);color:var(--accent)}
+    @media (max-width:1023px){.toc{position:static;top:auto;max-height:none;overflow:visible;width:auto;margin:0 0 1rem 0;z-index:auto}}
+    .content{background:var(--card);border:1px solid var(--border);border-radius:var(--rad);padding:1.25rem}
+    @media(min-width:768px){.content{padding:2rem}}
+    .content h2{font-family:var(--display);font-weight:600;margin:1.5rem 0 .5rem;font-size:1.6rem;letter-spacing:-.005em;font-optical-sizing:auto}
+    .content h3{font-family:var(--display);font-weight:500;margin:1.1rem 0 .35rem;font-size:1.15rem;color:var(--accent2);font-optical-sizing:auto}
+    .content p{margin:.6rem 0}
+    .lead{color:#d1d5db}
+    .callout{border:1px solid var(--border);background:var(--paper);border-radius:16px;padding:1rem;margin:.85rem 0}
+    .callout.good{border-color:rgba(52,211,153,.28)}
+    .callout.warn{border-color:rgba(251,191,36,.28)}
+    .checklist{display:grid;grid-template-columns:1fr;gap:.5rem}
+    @media(min-width:768px){.checklist{grid-template-columns:repeat(2,1fr)}}
+    .card{border:1px solid var(--border);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,.0));border-radius:14px;padding:.85rem}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:1.5rem 0}
+    pre.code{background:#070a0f;border:1px solid var(--border);border-radius:12px;padding:1rem;overflow-x:auto;font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.85rem;line-height:1.55;color:#e5e7eb}
+    code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.88em;background:rgba(255,255,255,.06);padding:.08em .35em;border-radius:5px;color:var(--accent2)}
+    pre.code code{background:transparent;padding:0;color:inherit}
+    footer{border-top:1px solid var(--border);padding:2rem 0;color:#9ca3af}
+    .btn{display:inline-block;padding:.55rem 1.1rem;border-radius:999px;background:var(--accent);color:#000;font-weight:500;font-size:.9rem;transition:background .2s}
+    .btn:hover{background:var(--accent2)}
+  </style>
+  <style>
+    .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin:1rem 0}
+    .shots img,.media video{width:100%;border-radius:12px;border:1px solid var(--border)}
+    .media{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1rem 0}
+    @media(max-width:600px){.media{grid-template-columns:1fr}}
+    table.t{width:100%;border-collapse:collapse;font-size:.9rem;margin:.75rem 0}
+    table.t td,table.t th{border-bottom:1px solid var(--border);padding:.45rem .5rem;text-align:left;vertical-align:top}
+    table.t th{color:var(--accent2);font-weight:500}
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <header>
+    <div class="container nav">
+      <a href="../" aria-label="Home">daninverno</a>
+      <nav class="links" aria-label="Primary"></nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="heroWrap">
+      <img class="hero" src="./rc-time-attack/thumbnail.jpg" alt="RC buggy taking a banked turn at sunset" />
+      <span class="heroBadge">RC Time Attack • Devlog</span>
+    </div>
+
+    <h1>RC Time Attack devlog #1: feel before features</h1>
+    <div class="meta">Nov 10, 2026 · ~5 min read</div>
+
+    <div class="tags">
+      <span class="tag">RC Time Attack</span>
+      <span class="tag">Godot 4</span>
+      <span class="tag">Jolt</span>
+      <span class="tag">Game Design</span>
+      <span class="tag">Vehicle Feel</span>
+    </div>
+
+    <article>
+      <aside class="toc" aria-label="On this page">
+        <h3>On this page</h3>
+        <a href="#idea">The idea</a>
+        <a href="#rule">One rule</a>
+        <a href="#feel">Feel first</a>
+        <a href="#setup">Setup as technique</a>
+        <a href="#jumps">The jumps out of nowhere</a>
+        <a href="#next">What's next</a>
+      </aside>
+
+      <section class="content">
+        <p class="lead" id="idea">
+          RC Time Attack is a small racing game I'm creating in Godot 4.7, somewhere between Trackmania and real
+          RC racing. One lap of about thirty seconds, a standing start, and <strong>R</strong> restarts instantly.
+          The goal is simple: after twenty minutes you know the track, you lap consistently, and you still want two
+          more tenths.
+        </p>
+        <div class="media">
+          <video src="./rc-time-attack/land.mp4" autoplay muted loop playsinline></video>
+          <video src="./rc-time-attack/drift.mp4" autoplay muted loop playsinline></video>
+        </div>
+        <div class="divider"></div>
+        <h2 id="rule">One rule</h2>
+        <p>
+          Everything in the project answers to one sentence: <em>never harder through complicated controls, only
+          deeper through the physical consequences of simple inputs.</em> Keyboard first, no drift button, no
+          landing bonus, and no progression that changes lap times. It should be easy to keep on the track and hard
+          to take to the limit.
+        </p>
+        <div class="divider"></div>
+        <h2 id="feel">Feel first</h2>
+        <p>
+          The biggest risk in a game like this is physics that isn't fun, so nothing else was allowed in until a
+          single corner on a flat floor felt good. That took longer than expected. A fully emergent tyre model made
+          drifting realistic and completely uncontrollable, so I replaced it with a readable layer: a quick stab of
+          the brake while steering starts the slide, the steering key sets the nose angle, throttle holds it, and
+          letting go ends it.
+        </p>
+        <p>
+          In the air the car follows the same idea. Gas lifts the nose, brake drops it, and steering tilts the
+          roll. Jumps first felt unfair, so they gained a little arcade stability, while the controls stayed the
+          same.
+        </p>
+        <div class="divider"></div>
+        <h2 id="setup">Setup as technique</h2>
+        <p>
+          I like how Trackmania keeps everyone on the same car, so tuning here is open to everyone and nothing is a
+          straight upgrade. My first sliders only changed numbers, and that was boring. Now each slider has to
+          change <em>how you drive</em>:
+        </p>
+        <table class="t">
+          <tr><th>Slider</th><th>One end</th><th>Other end</th></tr>
+          <tr><td>Tyres</td><td>Slide: a lift of the throttle starts a wide drift</td><td>Grip: you need the brake, and corners get sharper</td></tr>
+          <tr><td>Weight</td><td>Front: wins the corner entry, brakes shorter</td><td>Rear: wins the exit, carries speed through the drift</td></tr>
+        </table>
+        <div class="callout good">
+          <strong>The balance rule:</strong> every advantage has a real cost. An excellent driver on the base
+          setup should still be competitive.
+        </div>
+        <div class="divider"></div>
+        <h2 id="jumps">The jumps out of nowhere</h2>
+        <p>
+          The track is built from modular pieces, like Trackmania blocks. At one point the car would suddenly hop
+          on a flat straight. Instead of guessing, I added a log that records every sudden change in the car's
+          motion. It showed the chassis catching the edge of the next piece at the joints: 20 hits in 360
+          crossings. Merging the whole track into one collision surface brought that to zero.
+        </p>
+        <p>
+          That became a rule for the future track editor: the pieces can be modular, but the collision has to be
+          one surface.
+        </p>
+        <div class="divider"></div>
+        <h2 id="next">What's next</h2>
+        <p>
+          A Trackmania-style track editor with pieces that snap together on a grid, more track pieces, and bots
+          that learn to drive the track so I can test new layouts quickly. Sound comes later, on purpose: the car
+          has to feel right without it first.
+        </p>
+
+        <a class="btn" href="./">← Back to the blog</a>
+      </section>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      © <span id="y"></span> Daniel Inverno. All rights reserved.
+    </div>
+  </footer>
+
+  <script>
+    const prog = document.getElementById('progress');
+    const onScroll = () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight);
+      prog.style.width = (scrolled * 100).toFixed(2) + '%';
+    };
+    document.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

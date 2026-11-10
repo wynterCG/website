@@ -13,6 +13,21 @@
   ],
   "items": [
     {
+      "id": "https://daninverno.com/blog/rc-time-attack-feel-before-features.html",
+      "url": "/blog/rc-time-attack-feel-before-features.html",
+      "title": "RC Time Attack devlog #1: feel before features",
+      "summary": "An RC buggy time attack between Trackmania and real RC racing. Why the car had to feel right before anything else, and the design calls that got it there.",
+      "image": "rc-time-attack/thumbnail.jpg",
+      "date_published": "2026-11-10T12:00:00Z",
+      "tags": [
+        "RC Time Attack",
+        "Godot 4",
+        "Jolt",
+        "Game Design",
+        "Vehicle Feel"
+      ]
+    },
+    {
       "id": "https://daninverno.com/blog/jigsaw-act-one.html",
       "url": "/blog/jigsaw-act-one.html",
       "title": "Jigsaw: designing Act One for a Steam demo",
