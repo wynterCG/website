@@ -155,6 +155,15 @@ const PLAY_URL = "https://play.google.com/store/apps/details?id=com.daninverno.t
 
 const prototypes = [
   {
+    title: "RC Time Attack",
+    stack: "Godot 4.7 · Jolt",
+    blurb: "RC buggy time attack between Trackmania and real RC racing. One 30-second lap, instant restarts, drifts and air control from simple inputs, and setup sliders that each change how you drive.",
+    video: "/games/rc-time-attack.mp4",
+    image: "/games/rc-time-attack.jpg",
+    link: "/blog/rc-time-attack-feel-before-features.html",
+    linkLabel: "Read the devlog",
+  },
+  {
     title: "Elsewhere",
     stack: "Godot 4.7",
     blurb: "First-person architectural puzzle adventure. Gravity follows authored paths around walls and undersides, and you reshape each monument from an isometric view.",
@@ -1163,7 +1172,7 @@ export default function App() {
               <span className="eyebrow">In development · Steam</span>
               <h3 className="display-serif mt-3 text-3xl md:text-4xl font-medium tracking-tight">Jigsaw</h3>
               <p className="mt-4 text-gray-300 leading-relaxed">
-                A first-person 3D jigsaw game in Godot 4.7. You solve puzzles of up to 2,000 pieces in a celestial atelier that I modelled in Blender and textured in Substance Designer.
+                A first-person 3D jigsaw game in Godot 4.7. You solve puzzles of up to 2,000 pieces in a celestial atelier built in Blender and Substance Designer.
               </p>
               <p className="mt-3 text-gray-300 leading-relaxed">
                 Progress lives in the room: unplayed puzzles wait as boxes, finished ones hang framed on the walls, and you can replay your whole build afterwards.
@@ -1199,7 +1208,7 @@ export default function App() {
                     <p className="mt-2 text-sm text-gray-300 leading-relaxed flex-1">{p.blurb}</p>
                     {p.link && (
                       <a href={p.link} target="_blank" rel="noreferrer noopener" className="mt-4 inline-flex items-center gap-1 text-sm text-[var(--accent)] hover:text-[var(--accent-soft)]">
-                        Source on GitHub <ArrowUpRight className="h-4 w-4" />
+                        {p.linkLabel || "Source on GitHub"} <ArrowUpRight className="h-4 w-4" />
                       </a>
                     )}
                   </div>
