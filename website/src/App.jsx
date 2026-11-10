@@ -216,9 +216,7 @@ function VideoSlideshow({ clips, poster, className = "" }) {
 
 const rcClips = [
   { src: "/games/rc-hook.mp4", label: "Full-speed straight" },
-  { src: "/games/rc-pack.mp4", label: "Racing in a pack" },
   { src: "/games/rc-drone.mp4", label: "Grid start from the drone camera" },
-  { src: "/games/rc-onboard.mp4", label: "Onboard camera in the pack" },
   { src: "/games/rc-jump.mp4", label: "Jump with dust" },
 ];
 
@@ -1081,9 +1079,9 @@ export default function App() {
               muted
               playsInline
               preload="metadata"
-              poster="/og-cover.png"
+              poster="/archviz-hero.jpg"
               className="absolute inset-0 h-full w-full object-cover"
-              src="/archviz.mp4"
+              src="/archviz-hero.mp4"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-black/40" />
           </div>
