@@ -6,7 +6,7 @@
   <meta name="robots" content="noindex, nofollow" />
 
   <title>CAD Portfolio — Daniel Inverno</title>
-  <meta name="description" content="Technical CAD and 3D modeling work by Daniel Inverno: a SolidWorks enclosure drawing set, engineering CAD data in production, and Mechatronics coursework." />
+  <meta name="description" content="Technical CAD and 3D modeling work by Daniel Inverno: recent Autodesk Inventor work, a SolidWorks enclosure drawing set, engineering CAD data in production, and Mechatronics coursework." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -158,6 +158,14 @@
     .chips{display:flex;flex-wrap:wrap;gap:.45rem;margin:1rem 0 0;padding:0;list-style:none}
     .chips li{border:1px solid var(--border);border-radius:999px;padding:.2rem .7rem;font-size:.76rem;color:var(--accent2);background:rgba(255,255,255,.04);letter-spacing:.03em}
 
+    /* Section jump nav */
+    .jump{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.25rem}
+    .jump a{border:1px solid var(--border);border-radius:999px;padding:.35rem .9rem;font-size:.86rem;color:var(--soft);background:rgba(255,255,255,.03);transition:border-color .2s,color .2s}
+    .jump a:hover{border-color:var(--accent);color:var(--accent2)}
+    .jump span{font-family:var(--mono);font-size:.7rem;color:var(--accent);margin-right:.35rem}
+    .photos video{width:100%;height:auto;aspect-ratio:4/3;object-fit:cover;display:block;border-radius:14px;border:1px solid var(--border);background:#0b0f16}
+    .wip + .feature{margin-top:1.25rem}
+
     /* Closing CTA */
     .closing{margin-top:3.5rem;text-align:center;padding:2.25rem 1.25rem;border:1px solid rgba(201,167,108,.3);border-radius:var(--rad);background:
       radial-gradient(600px 220px at 50% 0%, rgba(201,167,108,.12), transparent 70%), var(--card)}
@@ -219,17 +227,129 @@
             <dt>Name</dt><dd>Daniel Inverno</dd>
             <dt>Discipline</dt><dd>Technical CAD &amp; 3D Modeling</dd>
             <dt>Training</dt><dd>Mechatronics</dd>
-            <dt>Tools</dt><dd>SolidWorks · Autodesk Inventor · AutoCAD · 3ds Max</dd>
+            <dt>Tools</dt><dd>Autodesk Inventor · SolidWorks · AutoCAD · 3ds Max</dd>
             <dt>Based in</dt><dd>Hendrik-Ido-Ambacht, Netherlands (EU citizen)</dd>
           </dl>
         </div>
       </div>
     </section>
 
+    <nav class="jump" aria-label="Sections">
+      <a href="#recent"><span>01</span> Recent Inventor work</a>
+      <a href="#enclosure"><span>02</span> Enclosure drawing set</a>
+      <a href="#production"><span>03</span> Paid work</a>
+      <a href="#coursework"><span>04</span> Mechatronics coursework</a>
+    </nav>
+
     <!-- 01 -->
-    <section class="block" id="enclosure" aria-labelledby="h-enclosure">
+    <section class="block" id="recent" aria-labelledby="h-recent">
       <div class="shead">
         <span class="idx" aria-hidden="true">01</span>
+        <h2 id="h-recent">Recent work in Autodesk Inventor</h2>
+        <p class="sub">Autodesk Inventor 2027 · 2026</p>
+      </div>
+      <div class="rule" aria-hidden="true"></div>
+
+      <div class="card wip" id="hpu-01">
+        <h3 style="color:var(--text);font-size:1.35rem">HPU-01 <span class="badge">In progress</span></h3>
+        <p>
+          A hydraulic power unit on a skid, modeled in Autodesk Inventor from a design spec, with guided design input
+          on component selection and details. Scope: a tank, a Frame Generator skid, a motor-pump group, a CETOP 3
+          valve block, steel piping (Tube &amp; Pipe) and cable routing (Cable &amp; Harness), with a GA drawing, a
+          piping isometric and a frame cut list.
+        </p>
+        <p>
+          <strong>Done so far:</strong> a 40 L sheet-metal tank (3 mm steel) with its flat pattern, a bolted lid, weld-in
+          half sockets (ISO 4145), a level gauge and a vendor STEP return filter; a skid frame built with Frame Generator
+          from 60 × 40 × 3 rectangular hollow sections (EN 10219-2); the motor-pump group on a plate with four
+          anti-vibration mounts; and a CETOP 3 valve block on a sheet-metal bracket. Everything is constrained in one
+          assembly and checked for interferences.
+        </p>
+        <p><strong>Next:</strong> steel tube routing in Tube &amp; Pipe (ISO 10763 tube, ISO 8434-1 fittings), then the GA drawing.</p>
+        <div class="photos">
+          <figure>
+            <a href="hpu01-assembly.png" aria-label="Open the HPU-01 assembly full size">
+              <img src="hpu01-assembly.png" width="1600" height="1200" loading="lazy" decoding="async"
+                   alt="Inventor isometric view of the hydraulic power unit: a rectangular tank with a bolted lid, return filter and level gauge on a steel skid frame, next to an electric motor with a bell housing and gear pump, and a valve block with a solenoid valve and pressure gauge on a bracket." />
+            </a>
+            <figcaption>Current assembly: tank, skid frame, motor-pump group and valve block.</figcaption>
+          </figure>
+          <figure>
+            <a href="hpu01-tank-flat.png" aria-label="Open the tank flat pattern full size">
+              <img src="hpu01-tank-flat.png" width="1200" height="900" loading="lazy" decoding="async"
+                   alt="Inventor flat pattern of the tank: a cross-shaped sheet with yellow bend lines, the lid-flange bolt holes along the edges, and the suction and drain holes." />
+            </a>
+            <figcaption>Tank flat pattern (1245 × 1145 mm), with bend lines and port holes.</figcaption>
+          </figure>
+        </div>
+        <ul class="chips" aria-label="Planned deliverables">
+          <li>GA drawing</li>
+          <li>Piping isometric</li>
+          <li>Frame cut list</li>
+        </ul>
+      </div>
+
+      <article class="card feature" aria-labelledby="h-modelmania">
+        <div class="split">
+          <div>
+            <p class="label" style="margin:0 0 .35rem">Drawing-to-model exercise · 2026</p>
+            <h3 id="h-modelmania" style="font-size:1.45rem;color:var(--text)">Bracket, Model Mania 2003 (Phase 1)</h3>
+            <p>
+              Modeled in Autodesk Inventor from the SolidWorks Model Mania 2003 Phase 1 drawing, with guided help on
+              sketch constraints and checks.
+            </p>
+            <ul class="ticks">
+              <li>Fully constrained sketches, tied to the origin.</li>
+              <li>Spherical shell: a revolve, then a cut revolve that reuses the same shared sketch.</li>
+              <li>Profile extrusions for the bracket arm and the bolt boss.</li>
+              <li>Four counterbored holes for M6 socket head cap screws (Ø6.6 through, Ø11 × 6).</li>
+              <li>R3 fillets on all edges.</li>
+              <li>A3 drawing sheet, first angle: three views, section A-A, dimensions and a hole note.</li>
+            </ul>
+          </div>
+          <dl class="spec">
+            <dt>Software</dt><dd>Autodesk Inventor 2027</dd>
+            <dt>Source</dt><dd>Model Mania 2003, Phase 1 drawing</dd>
+            <dt>Envelope</dt><dd>145 × 85 × 50 mm</dd>
+            <dt>Volume</dt><dd>141,742 mm³</dd>
+          </dl>
+        </div>
+        <div class="photos">
+          <figure>
+            <video class="turn" src="modelmania-2003-turntable.mp4" poster="modelmania-2003-turntable-poster.png" width="960" height="720"
+                   autoplay loop muted playsinline preload="metadata"
+                   aria-label="The bracket model rotating through a full turn in Autodesk Inventor."></video>
+            <figcaption>The finished model, rotating through 360°.</figcaption>
+          </figure>
+          <figure>
+            <a href="modelmania-2003-drawing.png" aria-label="Open the bracket drawing sheet full size">
+              <img src="modelmania-2003-drawing.png" width="2316" height="1638" loading="lazy" decoding="async"
+                   alt="A3 drawing sheet of the bracket: front view, side view, top view, section A-A through the two boss holes and a shaded isometric view, with dimensions, a counterbore hole note, the note ALL FILLETS R3 and a title block." />
+            </a>
+            <figcaption>Drawing sheet made from the model: three views, section A-A and an isometric view. <a href="modelmania-2003-drawing.pdf">Open the PDF</a>.</figcaption>
+          </figure>
+          <figure>
+            <a href="modelmania-2003-front.png" aria-label="Open the bracket front isometric view full size">
+              <img src="modelmania-2003-front.png" width="1200" height="900" loading="lazy" decoding="async"
+                   alt="Inventor isometric view of a grey bracket: a flat mounting plate with two holes, an L-shaped arm and a boss with a large central bore and two counterbored bolt holes, sitting on a spherical shell." />
+            </a>
+            <figcaption>Boss side: Ø25 bore and two counterbored holes on a Ø46 bolt circle.</figcaption>
+          </figure>
+          <figure>
+            <a href="modelmania-2003-back.png" aria-label="Open the bracket rear isometric view full size">
+              <img src="modelmania-2003-back.png" width="1200" height="900" loading="lazy" decoding="async"
+                   alt="Inventor isometric view of the same bracket from the other side, showing the inside corner of the L-shaped arm, the R3 fillets and the two counterbored holes in the mounting plate." />
+            </a>
+            <figcaption>Arm side: mounting plate with two counterbored holes and R3 fillets.</figcaption>
+          </figure>
+        </div>
+      </article>
+    </section>
+
+    <!-- 02 -->
+    <section class="block" id="enclosure" aria-labelledby="h-enclosure">
+      <div class="shead">
+        <span class="idx" aria-hidden="true">02</span>
         <h2 id="h-enclosure">Electrical enclosure</h2>
         <p class="sub">SolidWorks · 2016 · Final project of the 3D CAD module</p>
       </div>
@@ -289,10 +409,10 @@
       </div>
     </section>
 
-    <!-- 02 -->
+    <!-- 03 -->
     <section class="block" id="production" aria-labelledby="h-production">
       <div class="shead">
-        <span class="idx" aria-hidden="true">02</span>
+        <span class="idx" aria-hidden="true">03</span>
         <h2 id="h-production">Engineering CAD data in paid work</h2>
         <p class="sub">Ad-pulse · Lead 3D Artist · 2022–2023</p>
       </div>
@@ -317,10 +437,10 @@
       </div>
     </section>
 
-    <!-- 03 -->
+    <!-- 04 -->
     <section class="block" id="coursework" aria-labelledby="h-coursework">
       <div class="shead">
-        <span class="idx" aria-hidden="true">03</span>
+        <span class="idx" aria-hidden="true">04</span>
         <h2 id="h-coursework">Mechatronics coursework</h2>
         <p class="sub">Cenfim · 2014–2016</p>
       </div>
@@ -405,52 +525,6 @@
           </figure>
         </div>
       </article>
-    </section>
-
-    <!-- 04 -->
-    <section class="block" id="in-progress" aria-labelledby="h-wip">
-      <div class="shead">
-        <span class="idx" aria-hidden="true">04</span>
-        <h2 id="h-wip">In progress</h2>
-        <p class="sub">Autodesk Inventor</p>
-      </div>
-      <div class="rule" aria-hidden="true"></div>
-
-      <div class="card wip">
-        <h3 style="color:var(--text);font-size:1.35rem">HPU-01 <span class="badge">In progress</span></h3>
-        <p>
-          A hydraulic power unit on a skid, modeled in Autodesk Inventor from a design spec, with guided design input
-          on component selection and details. Planned: Frame Generator base, motor-pump group, CETOP 3 valve block,
-          steel piping (Tube &amp; Pipe) and cable routing (Cable &amp; Harness), with a GA drawing, a piping isometric
-          and a frame cut list.
-        </p>
-        <p>
-          <strong>Done so far:</strong> a 40 L sheet-metal tank (3 mm steel, 0.5 mm weld gaps at the corners) with its
-          flat pattern; a 6 mm bolted lid; weld-in half sockets (ISO 4145) for the suction port and the drain; and a
-          vendor STEP return filter (MP Filtri MPTX), all constrained in one assembly with no interferences.
-        </p>
-        <div class="photos">
-          <figure>
-            <a href="hpu01-assembly.png" aria-label="Open the HPU-01 tank assembly full size">
-              <img src="hpu01-assembly.png" width="1200" height="900" loading="lazy" decoding="async"
-                   alt="Inventor isometric view of a grey rectangular hydraulic tank with a bolted lid, a return filter on top and a threaded suction port near the bottom of the front wall." />
-            </a>
-            <figcaption>Tank assembly: bolted lid, return filter on top and suction port in the front wall.</figcaption>
-          </figure>
-          <figure>
-            <a href="hpu01-tank-flat.png" aria-label="Open the tank flat pattern full size">
-              <img src="hpu01-tank-flat.png" width="1200" height="900" loading="lazy" decoding="async"
-                   alt="Inventor flat pattern of the tank: a cross-shaped sheet with yellow bend lines, the lid-flange bolt holes along the edges, and the suction and drain holes." />
-            </a>
-            <figcaption>Tank flat pattern (1245 × 1145 mm), with bend lines and port holes.</figcaption>
-          </figure>
-        </div>
-        <ul class="chips" aria-label="Planned deliverables">
-          <li>GA drawing</li>
-          <li>Piping isometric</li>
-          <li>Frame cut list</li>
-        </ul>
-      </div>
     </section>
 
     <section class="closing" id="contact" aria-labelledby="h-contact">
