@@ -251,10 +251,11 @@
       <div class="rule" aria-hidden="true"></div>
 
       <div class="card wip" id="hpu-01">
-        <h3 style="color:var(--text);font-size:1.35rem">HPU-01 <span class="badge">Phase 1</span></h3>
+        <h3 style="color:var(--text);font-size:1.35rem">HPU-01 <span class="badge">In progress</span></h3>
         <p>
           A hydraulic power unit on a skid, modeled in Autodesk Inventor from a design spec, with guided design input
-          on component selection and details. This phase covers the layout and the structure.
+          on component selection and details. The layout, the structure and the general arrangement drawing are done;
+          the detail drawings are next.
         </p>
         <p>
           <strong>Modeled:</strong> a 40 L sheet-metal tank (3 mm steel) with its flat pattern, a bolted lid, weld-in
@@ -263,8 +264,20 @@
           anti-vibration mounts; and a CETOP 3 valve block on a sheet-metal bracket. Everything is constrained in one
           assembly and checked for interferences.
         </p>
-        <p><strong>Not modeled:</strong> steel piping, cable routing and the drawing set.</p>
+        <p>
+          <strong>Drawn:</strong> an A3 general arrangement (first angle, 1:10) with front, top, side and isometric
+          views, a break-out showing the drain socket, overall dimensions (1050 × 500 × 533 mm), balloons and a parts
+          list with materials. The approximate weight of 85 kg uses vendor datasheet masses for the bought-in parts.
+        </p>
+        <p><strong>Not modeled:</strong> steel piping and cable routing.</p>
         <div class="photos">
+          <figure style="grid-column:1/-1">
+            <a href="hpu01-ga.png" aria-label="Open the HPU-01 general arrangement drawing full size">
+              <img src="hpu01-ga.png" width="2316" height="1638" loading="lazy" decoding="async" style="aspect-ratio:auto;object-fit:contain;background:#fff"
+                   alt="A3 general arrangement drawing of the hydraulic power unit: front, top and side views at 1:10 with ballooned parts, overall dimensions 1050, 500 and 533 mm, a shaded isometric view, a parts list of 18 items with materials, and a filled-in title block." />
+            </a>
+            <figcaption>General arrangement drawing, A3. <a href="hpu01-ga.pdf">Open the PDF</a>.</figcaption>
+          </figure>
           <figure>
             <a href="hpu01-assembly.png" aria-label="Open the HPU-01 assembly full size">
               <img src="hpu01-assembly.png" width="1600" height="1200" loading="lazy" decoding="async"
@@ -281,6 +294,7 @@
           </figure>
         </div>
         <ul class="chips" aria-label="Outputs">
+          <li>GA drawing</li>
           <li>Sheet-metal flat pattern</li>
           <li>Frame cut list</li>
           <li>Bill of materials</li>
