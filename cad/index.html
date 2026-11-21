@@ -254,8 +254,8 @@
         <h3 style="color:var(--text);font-size:1.35rem">HPU-01 <span class="badge">In progress</span></h3>
         <p>
           A hydraulic power unit on a skid, modeled in Autodesk Inventor from a design spec, with guided design input
-          on component selection and details. The layout, the structure and the general arrangement drawing are done;
-          the detail drawings are next.
+          on component selection and details. The layout, the structure, the general arrangement and the welded skid
+          drawing are done; the tank and part drawings are next.
         </p>
         <p>
           <strong>Modeled:</strong> a 40 L sheet-metal tank (3 mm steel) with its flat pattern, a bolted lid, weld-in
@@ -268,6 +268,8 @@
           <strong>Drawn:</strong> an A3 general arrangement (first angle, 1:10) with front, top, side and isometric
           views, a break-out showing the drain socket, overall dimensions (1050 × 500 × 533 mm), balloons and a parts
           list with materials. The approximate weight of 85 kg uses vendor datasheet masses for the bought-in parts.
+          A second A3 sheet details the welded skid: a cut list with lengths and S235JRH material, member and hole
+          positions dimensioned from the frame edges, a hole note, and ISO 2553 fillet weld symbols.
         </p>
         <p><strong>Not modeled:</strong> steel piping and cable routing.</p>
         <div class="photos">
@@ -277,6 +279,13 @@
                    alt="A3 general arrangement drawing of the hydraulic power unit: front, top and side views at 1:10 with ballooned parts, overall dimensions 1050, 500 and 533 mm, a shaded isometric view, a parts list of 18 items with materials, and a filled-in title block." />
             </a>
             <figcaption>General arrangement drawing, A3. <a href="hpu01-ga.pdf">Open the PDF</a>.</figcaption>
+          </figure>
+          <figure style="grid-column:1/-1">
+            <a href="hpu01-skid.png" aria-label="Open the HPU-01 skid weldment drawing full size">
+              <img src="hpu01-skid.png" width="2316" height="1638" loading="lazy" decoding="async" style="aspect-ratio:auto;object-fit:contain;background:#fff"
+                   alt="A3 weldment drawing of the skid frame: plan view at 1:10 with ballooned members, overall dimensions 1050 by 500, cross-member and hole positions from the frame edges, a 6x diameter 9 hole note, two a3 fillet weld symbols, a cut list of four profile lengths in S235JRH, notes and a filled-in title block." />
+            </a>
+            <figcaption>Skid weldment drawing with cut list, A3. <a href="hpu01-skid.pdf">Open the PDF</a>.</figcaption>
           </figure>
           <figure>
             <a href="hpu01-assembly.png" aria-label="Open the HPU-01 assembly full size">
@@ -295,6 +304,7 @@
         </div>
         <ul class="chips" aria-label="Outputs">
           <li>GA drawing</li>
+          <li>Weldment drawing</li>
           <li>Sheet-metal flat pattern</li>
           <li>Frame cut list</li>
           <li>Bill of materials</li>
